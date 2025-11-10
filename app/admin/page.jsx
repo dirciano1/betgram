@@ -21,7 +21,10 @@ export default function PainelAdmin() {
   const router = useRouter();
 
   useEffect(() => {
-    onAuthStateChanged(auth, async (user) => {
+    // 🚀 Só executa no navegador (evita erro no build da Vercel)
+    if (typeof window === "undefined") return;
+
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
         router.push("/login");
         return;
@@ -34,19 +37,26 @@ export default function PainelAdmin() {
         return;
       }
 
-      // Carregar todos os usuários
-      onSnapshot(collection(db, "users"), (snapshot) => {
+      // Carregar usuários e análises em tempo real
+      const unsubUsers = onSnapshot(collection(db, "users"), (snapshot) => {
         setUsuarios(snapshot.docs.map((d) => ({ id: d.id, ...d.data() })));
       });
 
-      // Carregar todas as análises
-      onSnapshot(collection(db, "analises"), (snapshot) => {
+      const unsubAnalises = onSnapshot(collection(db, "analises"), (snapshot) => {
         const lista = snapshot.docs
           .map((d) => d.data())
           .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
         setAnalises(lista);
       });
+
+      // 🔁 Limpa listeners ao desmontar
+      return () => {
+        unsubUsers();
+        unsubAnalises();
+      };
     });
+
+    return () => unsubscribe();
   }, [router]);
 
   async function adicionarCredito(uid, atual, qtd) {
@@ -55,9 +65,7 @@ export default function PainelAdmin() {
     alert(`✅ ${qtd} crédito(s) adicionado(s)!`);
   }
 
-  const filtradas = analises.filter((a) =>
-    filtro ? a.uid === filtro : true
-  );
+  const filtradas = analises.filter((a) => (filtro ? a.uid === filtro : true));
 
   return (
     <main style={styles.container}>
@@ -114,10 +122,7 @@ export default function PainelAdmin() {
         <h2 style={styles.subtitulo}>
           🧾 {filtro ? "Análises deste usuário" : "Todas as Análises"}
         </h2>
-        <button
-          style={styles.botaoLimpar}
-          onClick={() => setFiltro("")}
-        >
+        <button style={styles.botaoLimpar} onClick={() => setFiltro("")}>
           Mostrar todas
         </button>
 
@@ -127,12 +132,28 @@ export default function PainelAdmin() {
           <div style={styles.historico}>
             {filtradas.map((a, i) => (
               <div key={i} style={styles.card}>
-                <p><b>👤</b> {a.nome}</p>
-                <p><b>🗓️</b> {new Date(a.timestamp).toLocaleString()}</p>
-                <p><b>🏅 Esporte:</b> {a.esporte}</p>
-                <p><b>🎮 Confronto:</b> {a.confronto}</p>
-                {a.mercado && <p><b>🎯 Mercado:</b> {a.mercado}</p>}
-                {a.odd && <p><b>💰 Odd:</b> {a.odd}</p>}
+                <p>
+                  <b>👤</b> {a.nome}
+                </p>
+                <p>
+                  <b>🗓️</b> {new Date(a.timestamp).toLocaleString()}
+                </p>
+                <p>
+                  <b>🏅 Esporte:</b> {a.esporte}
+                </p>
+                <p>
+                  <b>🎮 Confronto:</b> {a.confronto}
+                </p>
+                {a.mercado && (
+                  <p>
+                    <b>🎯 Mercado:</b> {a.mercado}
+                  </p>
+                )}
+                {a.odd && (
+                  <p>
+                    <b>💰 Odd:</b> {a.odd}
+                  </p>
+                )}
                 <pre style={styles.resposta}>{a.resposta}</pre>
               </div>
             ))}
