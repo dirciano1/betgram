@@ -1,0 +1,42 @@
+/* === Tema Global Betgram === */
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #0b1324;
+  color: #fff;
+  font-family: monospace;
+}
+
+button {
+  background: #22c55e;
+  color: #0b1324;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  background: #16a34a;
+}
+
+input, select, textarea {
+  background: rgba(255,255,255,0.05);
+  color: #fff;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  padding: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+a {
+  color: #22c55e;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
