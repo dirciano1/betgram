@@ -400,7 +400,7 @@ export default function HomePage() {
     >
       <h2 style={{display: "flex",alignItems: "center",gap: "8px",justifyContent: "center",fontSize: "1.6rem",}}>
   <img src="/icon.png" alt="Logo BetGram" style={{ width: "36px", height: "36px", objectFit: "contain" }} />
-  <span style={{ color: "#22c55e" }}> BetGram -<span style={{ color: "#fff" }}> Analisador Inteligente</span></span>
+  <span style={{ color: "#22c55e" }}> BetGram -<span style={{ color: "#fff" }}> Analisador de Apostas Esportivas com IA</span></span>
      </h2>
 
       <div
@@ -799,4 +799,5 @@ export default function HomePage() {
     </main>
   );
 }
+
 
