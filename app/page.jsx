@@ -22,6 +22,9 @@ import {
 import { gerarAnalise } from "../lib/aiClient";
 import "./globals.css";
 
+// Importa o novo componente de modal de pagamento
+import BetgramPayModal from "./components/BetgramPayModal";
+
 const inputStyle = {
   width: "100%",
   padding: "8px 14px",
@@ -35,7 +38,7 @@ const inputStyle = {
   fontSize: "1rem",
 };
 
-// Novo estilo para o modal
+// Novo estilo para o modal de CONFIRMAÇÃO (mantido)
 const modalBackdropStyle = {
   position: "fixed",
   top: 0,
@@ -86,7 +89,7 @@ const buttonCancelStyle = {
   minWidth: "120px",
 };
 
-// Componente Modal de Confirmação
+// Componente Modal de Confirmação (mantido)
 function ConfirmacaoModal({
   show,
   onConfirm,
@@ -153,9 +156,22 @@ export default function HomePage() {
   const [panelFlip, setPanelFlip] = useState(false);
   const [historico, setHistorico] = useState([]);
   const [mostraHistorico, setMostraHistorico] = useState(false);
-  const [mostraCreditos, setMostraCreditos] = useState(false);
+  
+  // MUDANÇA: Novo estado para mostrar o modal de Pagamento Automático (BetgramPay)
+  const [showBetgramPayModal, setShowBetgramPayModal] = useState(false);
+
+  // ESTADO ANTIGO REMOVIDO: const [mostraCreditos, setMostraCreditos] = useState(false);
+  
   // NOVOS ESTADOS PARA O MODAL
   const [showConfirmacaoModal, setShowConfirmacaoModal] = useState(false);
+
+  // MUDANÇA: Função para fechar o modal de pagamento e RECARREGAR os dados do usuário
+  async function handleClosePayModal() {
+    setShowBetgramPayModal(false);
+    if (user) {
+      await carregarDadosUsuario(user); // Recarrega os dados para atualizar os créditos
+    }
+  }
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (u) => {
@@ -197,7 +213,7 @@ export default function HomePage() {
     setDadosUser(null);
     setPanelFlip(false);
     setMostraHistorico(false);
-    setMostraCreditos(false);
+    // setMostraCreditos(false); // REMOVIDO
   }
 
   // --- FUNÇÃO DE LÓGICA PRINCIPAL (SEPARADA DA CONFIRMAÇÃO) ---
@@ -253,7 +269,7 @@ export default function HomePage() {
   // --- FIM DA FUNÇÃO DE LÓGICA PRINCIPAL ---
 
   /**
-   * Função alterada para MOSTRAR O MODAL em vez de window.confirm.
+   * Função alterada para MOSTRAR O MODAL de Confirmação.
    */
   async function handleAnalise() {
     if (!user) return alert("⚠️ Faça login primeiro.");
@@ -335,9 +351,9 @@ export default function HomePage() {
           }}
         >
           <h2 style={{display: "flex",alignItems: "center",gap: "8px",justifyContent: "center",fontSize: "1.6rem",}}>
-        <img src="/icon.png" alt="Logo BetGram" style={{ width: "36px", height: "36px", objectFit: "contain" }} />
-        <span style={{ color: "#ffffff" }}> Bem-vindo à<span style={{ color: "#22c55e" }}> BetGram</span></span>
-        </h2>
+          <img src="/icon.png" alt="Logo BetGram" style={{ width: "36px", height: "36px", objectFit: "contain" }} />
+          <span style={{ color: "#ffffff" }}> Bem-vindo à<span style={{ color: "#22c55e" }}> BetGram</span></span>
+          </h2>
           <p style={{ color: "#ccc" }}>
             Gere análises inteligentes e descubra as melhores apostas esportivas em segundos.
           </p>
@@ -401,7 +417,7 @@ export default function HomePage() {
       <h2 style={{display: "flex",alignItems: "center",gap: "8px",justifyContent: "center",fontSize: "1.6rem",}}>
   <img src="/icon.png" alt="Logo BetGram" style={{ width: "36px", height: "36px", objectFit: "contain" }} />
   <span style={{ color: "#22c55e" }}> BetGram -<span style={{ color: "#fff" }}> Analisador Esportivo</span></span>
-     </h2>
+      </h2>
 
       <div
         style={{
@@ -501,8 +517,9 @@ export default function HomePage() {
               🕓 Histórico
             </button>
 
+            {/* MUDANÇA: Chama o modal de pagamento ao invés de setMostraCreditos(true) */}
             <button
-              onClick={() => setMostraCreditos(true)}
+              onClick={() => setShowBetgramPayModal(true)}
               style={{
                 flex: "1 1 48%",
                 minWidth: "140px",
@@ -521,7 +538,8 @@ export default function HomePage() {
         </div>
 
         {/* === CONTEÚDO PRINCIPAL === */}
-        {!mostraHistorico && !mostraCreditos && (
+        {/* MUDANÇA: Condição para mostrar o formulário/resultado */}
+        {!mostraHistorico && !showBetgramPayModal && (
           <>
             {!panelFlip ? (
               <>
@@ -741,50 +759,11 @@ export default function HomePage() {
           </div>
         )}
 
-        {/* === CRÉDITOS === */}
-        {mostraCreditos && (
-          <div>
-            <h3 style={{ color: "#22c55e" }}>💳 Adicionar Créditos</h3>
-            <p style={{ color: "#ccc", marginBottom: "16px" }}>
-              Entre em contato no WhatsApp para adicionar créditos à sua conta.
-            </p>
-
-            <a
-              href="https://wa.me/5599999999999?text=Olá,+quero+adicionar+créditos+na+Betgram+IA!"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                display: "inline-block",
-                background:
-                  "linear-gradient(90deg,rgba(37,211,102,0.9),rgba(16,185,129,0.9))",
-                color: "#fff",
-                fontWeight: 600,
-                borderRadius: "10px",
-                padding: "14px 20px",
-                textDecoration: "none",
-                marginBottom: "20px",
-              }}
-            >
-              💬 Falar no WhatsApp
-            </a>
-
-            <button
-              onClick={() => setMostraCreditos(false)}
-              style={{
-                background: "rgba(14,165,233,0.2)",
-                border: "1px solid #0ea5e955",
-                borderRadius: "8px",
-                padding: "10px 14px",
-                color: "#38bdf8",
-                fontWeight: 600,
-                cursor: "pointer",
-                width: "100%",
-              }}
-            >
-              ↩ Voltar
-            </button>
-          </div>
-        )}
+        {/* === CRÉDITOS (SEÇÃO ANTIGA REMOVIDA) === */}
+        {/* Você não precisa mais desta seção:
+        {mostraCreditos && ( ... )} 
+        Ela foi substituída pelo BetgramPayModal
+        */}
       </div>
 
       {/* RENDERIZAÇÃO DO MODAL DE CONFIRMAÇÃO */}
@@ -796,9 +775,14 @@ export default function HomePage() {
         timeB={timeB}
         creditos={dadosUser?.creditos ?? 0}
       />
+      
+      {/* RENDERIZAÇÃO DO NOVO MODAL DE PAGAMENTO */}
+      {showBetgramPayModal && user && (
+        <BetgramPayModal
+          onClose={handleClosePayModal} // Chama a nova função para fechar e recarregar dados
+          user={user}
+        />
+      )}
     </main>
   );
 }
-
-
-
