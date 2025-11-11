@@ -339,7 +339,7 @@ export default function HomePage() {
         <span style={{ color: "#ffffff" }}> Bem-vindo à<span style={{ color: "#22c55e" }}> BetGram</span></span>
         </h2>
           <p style={{ color: "#ccc" }}>
-            Gere análises inteligentes e descubra as melhores apostas em segundos.
+            Gere análises inteligentes e descubra as melhores apostas esportivas em segundos.
           </p>
           <div
             style={{
@@ -799,3 +799,4 @@ export default function HomePage() {
     </main>
   );
 }
+
