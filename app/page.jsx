@@ -334,9 +334,10 @@ export default function HomePage() {
             boxShadow: "0 0 25px rgba(34,197,94,0.15)",
           }}
         >
-          <h2 style={{ fontSize: "2rem", fontWeight: 700 }}>
-            🤖 Bem-vindo a <span style={{ color: "#22c55e" }}>BetGram</span>
-          </h2>
+          <h2 style={{display: "flex",alignItems: "center",gap: "8px",justifyContent: "center",fontSize: "1.6rem",}}>
+        <img src="/icon.png" alt="Logo BetGram" style={{ width: "36px", height: "36px", objectFit: "contain" }} />
+        <span style={{ color: "#ffffff" }}> Bem-vindo à<span style={{ color: "#22c55e" }}> BetGram</span></span>
+        </h2>
           <p style={{ color: "#ccc" }}>
             Gere análises inteligentes e descubra as melhores apostas em segundos.
           </p>
@@ -397,18 +398,10 @@ export default function HomePage() {
         alignItems: "center",
       }}
     >
-      <h1
-        style={{
-          fontSize: "2rem",
-          fontWeight: 700,
-          marginBottom: "10px",
-          color: "#22c55e",
-          textShadow: "0 0 10px rgba(34,197,94,0.4)",
-          textAlign: "center",
-        }}
-      >
-        🤖 BetGram - Analisador Esportivo Inteligente
-      </h1>
+      <h2 style={{display: "flex",alignItems: "center",gap: "8px",justifyContent: "center",fontSize: "1.6rem",}}>
+  <img src="/icon.png" alt="Logo BetGram" style={{ width: "36px", height: "36px", objectFit: "contain" }} />
+  <span style={{ color: "#22c55e" }}> BetGram -<span style={{ color: "#fff" }}> Analisador Inteligente</span></span>
+     </h2>
 
       <div
         style={{
