@@ -35,6 +35,110 @@ const inputStyle = {
   fontSize: "1rem",
 };
 
+// Novo estilo para o modal
+const modalBackdropStyle = {
+  position: "fixed",
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  background: "rgba(0, 0, 0, 0.7)",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  zIndex: 1000,
+};
+
+const modalContentStyle = {
+  background: "#111827",
+  border: "2px solid #22c55e",
+  borderRadius: "16px",
+  padding: "30px",
+  width: "90%",
+  maxWidth: "350px",
+  textAlign: "center",
+  boxShadow: "0 0 30px rgba(34,197,94,0.3)",
+};
+
+const buttonConfirmStyle = {
+  background: "linear-gradient(90deg, #22c55e, #16a34a)",
+  border: "none",
+  color: "#fff",
+  fontWeight: 700,
+  borderRadius: "8px",
+  padding: "12px 20px",
+  cursor: "pointer",
+  marginTop: "15px",
+  flex: 1,
+  minWidth: "120px",
+};
+
+const buttonCancelStyle = {
+  background: "rgba(239,68,68,0.15)",
+  border: "1px solid #ef444455",
+  color: "#f87171",
+  fontWeight: 600,
+  borderRadius: "8px",
+  padding: "12px 20px",
+  cursor: "pointer",
+  marginTop: "15px",
+  flex: 1,
+  minWidth: "120px",
+};
+
+// Componente Modal de Confirmação
+function ConfirmacaoModal({
+  show,
+  onConfirm,
+  onCancel,
+  timeA,
+  timeB,
+  creditos,
+}) {
+  if (!show) return null;
+
+  return (
+    <div style={modalBackdropStyle}>
+      <div style={modalContentStyle}>
+        <h3 style={{ color: "#22c55e", marginBottom: "15px" }}>
+          Confirmar Análise 🤖
+        </h3>
+        <p style={{ color: "#ccc", marginBottom: "20px" }}>
+          Você está prestes a gerar a análise para:
+          <br />
+          <b style={{ color: "#38bdf8" }}>{timeA} x {timeB}</b>
+        </p>
+        <div
+          style={{
+            background: "rgba(251,191,36,0.1)",
+            border: "1px solid #facc1555",
+            borderRadius: "8px",
+            padding: "10px",
+            marginBottom: "20px",
+            color: "#facc15",
+            fontWeight: 600,
+          }}
+        >
+          ⚠️ Esta ação consumirá <b style={{ color: "#fff" }}>1 crédito</b>. O
+          crédito <b style={{ color: "#fff" }}>NÃO É REEMBOLSÁVEL</b>.
+        </div>
+        <p style={{ color: "#fff", marginBottom: "20px" }}>
+          Seus créditos restantes: <b>{creditos - 1}</b>
+        </p>
+
+        <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
+          <button onClick={onCancel} style={buttonCancelStyle}>
+            ❌ Cancelar
+          </button>
+          <button onClick={onConfirm} style={buttonConfirmStyle}>
+            ✅ Continuar
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function HomePage() {
   const [user, setUser] = useState(null);
   const [dadosUser, setDadosUser] = useState(null);
@@ -50,6 +154,8 @@ export default function HomePage() {
   const [historico, setHistorico] = useState([]);
   const [mostraHistorico, setMostraHistorico] = useState(false);
   const [mostraCreditos, setMostraCreditos] = useState(false);
+  // NOVOS ESTADOS PARA O MODAL
+  const [showConfirmacaoModal, setShowConfirmacaoModal] = useState(false);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (u) => {
@@ -94,14 +200,64 @@ export default function HomePage() {
     setMostraCreditos(false);
   }
 
+  // --- FUNÇÃO DE LÓGICA PRINCIPAL (SEPARADA DA CONFIRMAÇÃO) ---
+  async function gerarEsalvarAnalise() {
+    setShowConfirmacaoModal(false); // Fecha o modal
+    setCarregando(true);
+
+    try {
+      const ref = doc(db, "users", user.uid);
+      const snap = await getDoc(ref);
+      const dados = snap.data();
+
+      // Dupla checagem de créditos antes de prosseguir
+      if (dados.creditos <= 0) {
+        alert("❌ Você não tem créditos suficientes.");
+        return;
+      }
+
+      const confronto = `${timeA} x ${timeB}`;
+      const modulo = await import(`../prompts/${esporte}.js`);
+      const prompt = modulo.gerarPrompt(confronto, mercado, competicao, odd);
+
+      const resposta = await gerarAnalise(prompt);
+
+      // 1. Salva a análise
+      await addDoc(collection(db, "analises"), {
+        uid: user.uid,
+        nome: dados.nome,
+        timestamp: new Date().toISOString(),
+        esporte,
+        competicao,
+        confronto,
+        mercado,
+        odd,
+        modelo: "gpt-4o-mini",
+        resposta,
+      });
+
+      // 2. Decrementa o crédito
+      await updateDoc(ref, { creditos: dados.creditos - 1 });
+      setDadosUser({ ...dados, creditos: dados.creditos - 1 });
+
+      // 3. Mostra o resultado
+      setResultado(resposta);
+      setPanelFlip(true);
+    } catch (error) {
+      alert("Ocorreu um erro ao gerar a análise. Tente novamente mais tarde.");
+      console.error("Erro na análise:", error);
+    } finally {
+      setCarregando(false);
+    }
+  }
+  // --- FIM DA FUNÇÃO DE LÓGICA PRINCIPAL ---
+
+  /**
+   * Função alterada para MOSTRAR O MODAL em vez de window.confirm.
+   */
   async function handleAnalise() {
     if (!user) return alert("⚠️ Faça login primeiro.");
     if (!timeA || !timeB) return alert("Preencha os dois times.");
-
-    setCarregando(true);
-    const confronto = `${timeA} x ${timeB}`;
-    const modulo = await import(`../prompts/${esporte}.js`);
-    const prompt = modulo.gerarPrompt(confronto, mercado, competicao, odd);
 
     const ref = doc(db, "users", user.uid);
     const snap = await getDoc(ref);
@@ -109,29 +265,11 @@ export default function HomePage() {
 
     if (dados.creditos <= 0) {
       alert("❌ Você não tem créditos suficientes.");
-      setCarregando(false);
       return;
     }
 
-    const resposta = await gerarAnalise(prompt);
-    await addDoc(collection(db, "analises"), {
-      uid: user.uid,
-      nome: dados.nome,
-      timestamp: new Date().toISOString(),
-      esporte,
-      competicao,
-      confronto,
-      mercado,
-      odd,
-      modelo: "gpt-4o-mini",
-      resposta,
-    });
-
-    await updateDoc(ref, { creditos: dados.creditos - 1 });
-    setDadosUser({ ...dados, creditos: dados.creditos - 1 });
-    setResultado(resposta);
-    setCarregando(false);
-    setPanelFlip(true);
+    // Mostra o modal de confirmação
+    setShowConfirmacaoModal(true);
   }
 
   async function handleHistorico() {
@@ -150,10 +288,22 @@ export default function HomePage() {
 
   function formatAnaliseTexto(texto = "") {
     return texto
-      .replace(/(Mercado|Mercados)/gi, '<span style="color:#38bdf8;font-weight:600;">$1</span>')
-      .replace(/(Odd[s]?:?\s*\d+(\.\d+)?)/gi, '<span style="color:#facc15;font-weight:600;">$1</span>')
-      .replace(/(Recomendação|Aposta|Sugestão|Valor)/gi, '<span style="color:#22c55e;font-weight:600;">$1</span>')
-      .replace(/(Justificativa|Análise|Contexto|Resumo)/gi, '<span style="color:#fb923c;font-weight:600;">$1</span>')
+      .replace(
+        /(Mercado|Mercados)/gi,
+        '<span style="color:#38bdf8;font-weight:600;">$1</span>'
+      )
+      .replace(
+        /(Odd[s]?:?\s*\d+(\.\d+)?)/gi,
+        '<span style="color:#facc15;font-weight:600;">$1</span>'
+      )
+      .replace(
+        /(Recomendação|Aposta|Sugestão|Valor)/gi,
+        '<span style="color:#22c55e;font-weight:600;">$1</span>'
+      )
+      .replace(
+        /(Justificativa|Análise|Contexto|Resumo)/gi,
+        '<span style="color:#fb923c;font-weight:600;">$1</span>'
+      )
       .replace(/###\s*(.*)/g, '<br><strong style="color:#0ea5e9;">📘 $1</strong>')
       .replace(/\n/g, "<br>");
   }
@@ -192,7 +342,8 @@ export default function HomePage() {
           </p>
           <div
             style={{
-              background: "linear-gradient(90deg, rgba(34,197,94,0.2), rgba(34,197,94,0.05))",
+              background:
+                "linear-gradient(90deg, rgba(34,197,94,0.2), rgba(34,197,94,0.05))",
               border: "1px solid #22c55e55",
               borderRadius: "12px",
               padding: "10px 20px",
@@ -200,7 +351,8 @@ export default function HomePage() {
               margin: "20px 0",
             }}
           >
-            🎁 <b style={{ color: "#22c55e" }}>Ganhe 10 análises grátis</b> ao criar sua conta Google.
+            🎁 <b style={{ color: "#22c55e" }}>Ganhe 10 análises grátis</b> ao
+            criar sua conta Google.
           </div>
           <button
             onClick={handleLogin}
@@ -232,7 +384,7 @@ export default function HomePage() {
   }
 
   const primeiroNome = user?.displayName?.split(" ")[0] || "Usuário";
-    return (
+  return (
     <main
       style={{
         minHeight: "100vh",
@@ -475,7 +627,9 @@ export default function HomePage() {
                     scrollbarWidth: "thin",
                     scrollbarColor: "rgba(34,197,94,0.4) transparent",
                   }}
-                  dangerouslySetInnerHTML={{ __html: formatAnaliseTexto(resultado) }}
+                  dangerouslySetInnerHTML={{
+                    __html: formatAnaliseTexto(resultado),
+                  }}
                 />
                 <button
                   onClick={() => setPanelFlip(false)}
@@ -509,7 +663,9 @@ export default function HomePage() {
                 marginBottom: "15px",
               }}
             >
-              <h3 style={{ color: "#22c55e", margin: 0 }}>📜 Últimas análises</h3>
+              <h3 style={{ color: "#22c55e", margin: 0 }}>
+                📜 Últimas análises
+              </h3>
               <button
                 onClick={() => setMostraHistorico(false)}
                 style={{
@@ -637,7 +793,16 @@ export default function HomePage() {
           </div>
         )}
       </div>
+
+      {/* RENDERIZAÇÃO DO MODAL DE CONFIRMAÇÃO */}
+      <ConfirmacaoModal
+        show={showConfirmacaoModal}
+        onConfirm={gerarEsalvarAnalise}
+        onCancel={() => setShowConfirmacaoModal(false)}
+        timeA={timeA}
+        timeB={timeB}
+        creditos={dadosUser?.creditos ?? 0}
+      />
     </main>
   );
 }
-
