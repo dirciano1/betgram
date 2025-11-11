@@ -335,7 +335,7 @@ export default function HomePage() {
           }}
         >
           <h2 style={{ fontSize: "2rem", fontWeight: 700 }}>
-            🤖 Bem-vindo ao <span style={{ color: "#22c55e" }}>Betgram IA</span>
+            🤖 Bem-vindo a <span style={{ color: "#22c55e" }}>BetGram</span>
           </h2>
           <p style={{ color: "#ccc" }}>
             Gere análises inteligentes e descubra as melhores apostas em segundos.
@@ -351,8 +351,8 @@ export default function HomePage() {
               margin: "20px 0",
             }}
           >
-            🎁 <b style={{ color: "#22c55e" }}>Ganhe 10 análises grátis</b> ao
-            criar sua conta Google.
+            🎁 <b style={{ color: "#22c55e" }}>Ganhe 10 Análises grátis</b> ao
+            Criar Sua Conta
           </div>
           <button
             onClick={handleLogin}
@@ -407,7 +407,7 @@ export default function HomePage() {
           textAlign: "center",
         }}
       >
-        🎯 Betgram IA — Analisador Esportivo
+        🤖 BetGram - Analisador Esportivo Inteligente
       </h1>
 
       <div
