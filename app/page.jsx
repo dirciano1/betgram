@@ -201,7 +201,7 @@ export default function HomePage() {
   }
 
   // --- FUNÇÃO DE LÓGICA PRINCIPAL (SEPARADA DA CONFIRMAÇÃO) ---
-  async function gerarEsalvarAnalise() {
+  async function gerarESalvarAnalise() {
     setShowConfirmacaoModal(false); // Fecha o modal
     setCarregando(true);
 
@@ -797,7 +797,7 @@ export default function HomePage() {
       {/* RENDERIZAÇÃO DO MODAL DE CONFIRMAÇÃO */}
       <ConfirmacaoModal
         show={showConfirmacaoModal}
-        onConfirm={gerarEsalvarAnalise}
+        onConfirm={gerarESalvarAnalise}
         onCancel={() => setShowConfirmacaoModal(false)}
         timeA={timeA}
         timeB={timeB}
