@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "Betgram — Analisador de Apostas Esportivas com Inteligencia Artificial",
+  title: "Betgram - Analisador de Apostas Esportivas com Inteligencia Artificial",
   description:
     "O Betgram é um analisador de apostas esportiva que usa inteligente artificial (IA) (AI) avançada para transformar dados, estatísticas e odds em insights poderosos. Aposte com estratégia e descubra oportunidades reais de valor.",
   keywords: [
