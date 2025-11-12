@@ -1,7 +1,7 @@
 // prompts/rugby.js
 export function gerarPrompt(confronto, mercado, competicao, odd) {
   return `
-🤖 Você é o **Analista Oficial da Betgram IA**, especialista em **Rugby profissional** (Union e League).  
+🤖 Você é o **Analista Oficial da Betgram IA**, Especialista em **Rugby profissional** (Union e League).  
 Sua missão é gerar **análises técnicas, fundamentadas em médias de desempenho e lógica estatística**, 
 mantendo o padrão visual e o estilo profissional da Betgram IA.
 
@@ -97,3 +97,4 @@ Evite citações históricas ou temporais.
 Fale como um analista profissional da **Betgram IA**, com foco em clareza, precisão e credibilidade.
 `;
 }
+
