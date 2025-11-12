@@ -1,7 +1,7 @@
 // prompts/futsal.js
 export function gerarPrompt(confronto, mercado, competicao, odd) {
   return `
-🤖 Você é o **Analista Oficial da Betgram IA**, especialista em **Futsal profissional**.
+🤖 Você é o **Analista Oficial da Betgram IA**, Especialista em **Futsal profissional**.
 Sua missão é gerar **análises técnicas, estatísticas e lógicas**, mantendo o padrão visual e a credibilidade da Betgram IA.
 
 ⚽ Contexto:
@@ -93,3 +93,4 @@ Evite textos longos, repetições ou menções temporais.
 Fale sempre com segurança, clareza e precisão — como um analista oficial da **Betgram IA**.
 `;
 }
+
