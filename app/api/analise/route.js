@@ -2,15 +2,14 @@ import "dotenv/config";
 import OpenAI from "openai";
 
 /**
- * API interna que processa requisições da Betgram IA.
- * Utiliza GPT-5-nano-2025-08-07 (rápido e econômico).
- * Possui tratamento detalhado de erros e logs de diagnóstico.
+ * API interna da Betgram IA — usa GPT-5-nano-2025-08-07.
+ * Corrigido para compatibilidade com o novo parâmetro max_completion_tokens.
  */
 export async function POST(req) {
   try {
     const { prompt } = await req.json();
 
-    // 🧠 Validação do prompt
+    // 🧠 Verificação básica do prompt
     if (!prompt || typeof prompt !== "string" || prompt.trim().length < 3) {
       return new Response(
         JSON.stringify({ error: "Prompt inválido. Envie um texto mais detalhado." }),
@@ -18,7 +17,7 @@ export async function POST(req) {
       );
     }
 
-    // 🔑 Recupera a chave da OpenAI do ambiente
+    // 🔑 Recupera a chave da OpenAI
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
       console.error("❌ Variável OPENAI_API_KEY ausente no ambiente Vercel.");
@@ -30,14 +29,14 @@ export async function POST(req) {
       );
     }
 
-    // 🚀 Inicializa o cliente OpenAI
+    // 🚀 Inicializa o cliente
     const openai = new OpenAI({ apiKey });
 
-    console.log("✅ Conectado à OpenAI, gerando resposta com GPT-5-nano-2025-08-07...");
+    console.log("✅ Conectado à OpenAI — gerando análise com GPT-5-nano-2025-08-07...");
 
-    // 💬 Cria a conclusão
+    // 💬 Criação da resposta
     const completion = await openai.chat.completions.create({
-      model: "gpt-5-nano-2025-08-07", // 🔹 Modelo liberado e leve
+      model: "gpt-5-nano-2025-08-07",
       messages: [
         {
           role: "system",
@@ -47,19 +46,18 @@ export async function POST(req) {
         { role: "user", content: prompt },
       ],
       temperature: 0.4,
-      max_tokens: 2500,
+      max_completion_tokens: 2500, // 🔹 Parâmetro atualizado
     });
 
     const resposta = completion.choices?.[0]?.message?.content?.trim() || "Sem resposta gerada.";
 
-    console.log("✅ Resposta gerada com sucesso:", resposta.slice(0, 120) + "...");
+    console.log("✅ Resposta gerada:", resposta.slice(0, 120) + "...");
 
     return new Response(JSON.stringify({ resposta }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
   } catch (err) {
-    // 🔍 Log de erro detalhado para depuração
     console.error("🚨 Erro completo /api/analise:", err?.response?.data || err);
 
     const mensagemErro =
