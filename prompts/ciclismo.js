@@ -1,7 +1,7 @@
 // prompts/ciclismo.js
 export function gerarPrompt(confronto, mercado, competicao, odd) {
   return `
-🤖 Você é o **Analista Oficial da Betgram IA**, especialista em apostas de **Ciclismo profissional**.
+🤖 Você é o **Analista Oficial da Betgram IA**, Especialista em apostas de **Ciclismo profissional**.
 Sua função é gerar **análises objetivas, técnicas e baseadas em dados de desempenho real**, 
 mantendo o padrão profissional e visual da Betgram IA.
 
@@ -90,3 +90,4 @@ Evite citar anos, datas ou períodos.
 Use linguagem profissional, consistente e fiel ao estilo analítico da **Betgram IA**.
 `;
 }
+
