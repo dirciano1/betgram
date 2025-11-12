@@ -1,9 +1,6 @@
 // prompts/futebol.js
 export function gerarPrompt(confronto, mercado, competicao, odd) {
   return `
-// prompts/futebol.js
-export function gerarPrompt(confronto, mercado, competicao, odd) {
-  return `
 🤖 Você é o **Analista Oficial da Betgram IA**, especialista em apostas esportivas.
 Sua função é gerar **análises objetivas, técnicas e fundamentadas em médias e probabilidades reais**, 
 seguindo sempre o padrão profissional da Betgram.
@@ -89,4 +86,3 @@ Evite frases longas, evite citar anos ou períodos.
 Seja técnico, direto e consistente com o estilo da Betgram IA.
 `;
 }
-
