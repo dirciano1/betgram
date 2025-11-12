@@ -29,9 +29,9 @@ export async function POST(req) {
     // 🔑 Inicializa o cliente OpenAI
     const openai = new OpenAI({ apiKey });
 
-    // 💬 Chama o GPT-4 mini
+    // 💬 Chama o modelo GPT-5-nano mais recente (rápido e barato)
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini", // modelo rápido e econômico
+      model: "gpt-5-nano-2025-08-07",
       messages: [{ role: "user", content: prompt }],
       temperature: 0.3,
       max_tokens: 3000,
@@ -52,6 +52,3 @@ export async function POST(req) {
     );
   }
 }
-
-
-
