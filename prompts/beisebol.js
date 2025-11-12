@@ -90,6 +90,6 @@ Siga este formato fixo:
 
 🧩 **Importante:**  
 Raciocine passo a passo internamente, mas mostre apenas o resultado final formatado.  
-Evite textos longos. Seja técnico, direto e consistente com o estilo analítico da Betgram IA.
+Evite textos longos e evite citar datas e periodos. Seja técnico, direto e consistente com o estilo analítico da Betgram IA.
 `;
 }
