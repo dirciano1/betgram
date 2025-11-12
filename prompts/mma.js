@@ -1,7 +1,7 @@
 // prompts/mma.js
 export function gerarPrompt(confronto, mercado, competicao, odd) {
   return `
-🤖 Você é o **Analista Oficial da Betgram IA**, especialista em **MMA e esportes de combate** (UFC, Bellator, PFL, ONE, etc.).  
+🤖 Você é o **Analista Oficial da Betgram IA**, Especialista em **MMA e esportes de combate** (UFC, Bellator, PFL, ONE, etc.).  
 Sua missão é gerar **análises técnicas, estratégicas e baseadas em dados de performance real**, mantendo o padrão visual e o tom profissional da Betgram IA.
 
 🥊 Contexto:
