@@ -2,8 +2,7 @@ import "dotenv/config";
 import OpenAI from "openai";
 
 /**
- * API da Betgram IA — fallback automático entre GPT-5-nano e GPT-5-mini.
- * Garante resposta mesmo que o modelo nano retorne vazio.
+ * API da Betgram IA — agora usando o endpoint responses.create (compatível com GPT-5)
  */
 export async function POST(req) {
   try {
@@ -17,47 +16,34 @@ export async function POST(req) {
     if (!apiKey) {
       console.error("❌ OPENAI_API_KEY ausente no ambiente Vercel.");
       return new Response(
-        JSON.stringify({ error: "Chave da OpenAI ausente. Configure nas variáveis da Vercel." }),
+        JSON.stringify({
+          error: "Chave da OpenAI ausente. Configure nas variáveis do projeto na Vercel.",
+        }),
         { status: 500 }
       );
     }
 
     const openai = new OpenAI({ apiKey });
 
-    // 🔹 Função auxiliar para tentar um modelo e retornar resposta
-    const gerarComModelo = async (modelo) => {
-      console.log(`🧠 Gerando análise com ${modelo}...`);
-      const completion = await openai.chat.completions.create({
-        model: modelo,
-        messages: [
-          {
-            role: "system",
-            content:
-              "Você é a Betgram IA — analista esportivo profissional. Gere previsões e análises claras e objetivas sobre apostas esportivas.",
-          },
-          { role: "user", content: prompt },
-        ],
-        max_completion_tokens: 2500,
-      });
+    console.log("🧠 Enviando prompt via responses.create (GPT-5-mini-2025-08-07)...");
 
-      return completion.choices?.[0]?.message?.content?.trim() || "";
-    };
+    // 🆕 Novo formato para GPT-5
+    const respostaOpenAI = await openai.responses.create({
+      model: "gpt-5-mini-2025-08-07",
+      input: [
+        {
+          role: "user",
+          content: `Analise o confronto esportivo a seguir com base em estatísticas, valor de odd e contexto recente:\n\n${prompt}`,
+        },
+      ],
+      max_output_tokens: 2000,
+    });
 
-    // 🧠 1ª tentativa com GPT-5-nano
-    let resposta = await gerarComModelo("gpt-5-nano-2025-08-07");
+    const respostaTexto = respostaOpenAI.output_text?.trim() || "(sem resposta textual)";
 
-    // 🔁 Se o modelo nano não gerar nada, tenta o mini
-    if (!resposta || resposta.length < 3) {
-      console.warn("⚠️ Nano retornou vazio — tentando gpt-5-mini-2025-08-07...");
-      resposta = await gerarComModelo("gpt-5-mini-2025-08-07");
-    }
+    console.log("✅ Resposta da OpenAI:", respostaTexto.slice(0, 150) + "...");
 
-    // 🔚 Se mesmo assim não houver resposta, informa
-    if (!resposta) resposta = "(sem resposta gerada pelos modelos)";
-
-    console.log("✅ Resposta final:", resposta.slice(0, 120) + "...");
-
-    return new Response(JSON.stringify({ resposta }), {
+    return new Response(JSON.stringify({ resposta: respostaTexto }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
