@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import IndiqueModal from "./IndiqueModal"; // Novo modal de indicação
 
 const modalBackdropStyle = {
   position: "fixed",
@@ -54,6 +55,7 @@ export default function BetgramPayModal({ onClose, user }) {
   const [qr, setQr] = useState(null);
   const [txid, setTxid] = useState(null);
   const [carregando, setCarregando] = useState(false);
+  const [showIndique, setShowIndique] = useState(false);
 
   async function gerarPix(valor) {
     try {
@@ -88,6 +90,10 @@ export default function BetgramPayModal({ onClose, user }) {
     return () => clearInterval(i);
   }, [txid]);
 
+  if (showIndique) {
+    return <IndiqueModal onClose={() => setShowIndique(false)} user={user} />;
+  }
+
   return (
     <div style={modalBackdropStyle}>
       <div style={modalContentStyle}>
@@ -104,6 +110,18 @@ export default function BetgramPayModal({ onClose, user }) {
             <button style={buttonConfirmStyle} onClick={() => gerarPix(50)}>
               700 Análises – R$ 50,00
             </button>
+
+            {/* Novo botão de indicação */}
+            <button
+              style={{
+                ...buttonConfirmStyle,
+                background: "linear-gradient(90deg, #3b82f6, #2563eb)",
+              }}
+              onClick={() => setShowIndique(true)}
+            >
+              🎁 Indique um amigo e ganhe 20 análises grátis
+            </button>
+
             <button onClick={onClose} style={buttonCancelStyle}>
               ↩ Voltar
             </button>
