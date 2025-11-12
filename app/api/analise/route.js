@@ -27,7 +27,7 @@ export async function POST(req) {
       model: "gpt-4o-mini", // rápido e barato
       messages: [{ role: "user", content: prompt }],
       temperature: 0.7,
-      max_tokens: 800,
+      max_tokens: 2500,
     });
 
     const resposta = completion.choices?.[0]?.message?.content || "Sem resposta.";
@@ -37,3 +37,4 @@ export async function POST(req) {
     return new Response(JSON.stringify({ error: "Falha ao gerar análise." }), { status: 500 });
   }
 }
+
