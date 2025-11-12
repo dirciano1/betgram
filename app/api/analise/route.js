@@ -9,7 +9,7 @@ export async function POST(req) {
   try {
     const { prompt } = await req.json();
 
-    // 🔒 Validação de entrada
+    // 🧩 Verifica se o prompt é válido
     if (!prompt || typeof prompt !== "string" || prompt.trim().length < 3) {
       return new Response(JSON.stringify({ error: "Prompt inválido." }), {
         status: 400,
@@ -26,21 +26,24 @@ export async function POST(req) {
       );
     }
 
-    // ✅ Instancia o cliente OpenAI
+    // 🔑 Inicializa o cliente OpenAI
     const openai = new OpenAI({ apiKey });
 
-    // ⚙️ Chamada à API
+    // 💬 Chama o GPT-5 mini
     const completion = await openai.chat.completions.create({
       model: "gpt-5-mini", // modelo rápido e econômico
       messages: [{ role: "user", content: prompt }],
       temperature: 0.3,
-      max_tokens: 3500, // ajuste para o limite que você definiu
+      max_tokens: 3500,
     });
 
-    // ✅ Garante que há resposta antes de enviar
     const resposta =
       completion.choices?.[0]?.message?.content?.trim() || "Sem resposta.";
-    return new Response(JSON.stringify({ resposta }), { status: 200 });
+
+    return new Response(JSON.stringify({ resposta }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (err) {
     console.error("🚨 Erro /api/analise:", err);
     return new Response(
