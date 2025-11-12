@@ -2,8 +2,8 @@ import "dotenv/config";
 import OpenAI from "openai";
 
 /**
- * API interna da Betgram IA — usa GPT-5-nano-2025-08-07.
- * Corrigido para compatibilidade total (sem temperature).
+ * API da Betgram IA — compatível com GPT-5-nano, mini e pro.
+ * Retorna mensagens mesmo se o modelo responder vazio.
  */
 export async function POST(req) {
   try {
@@ -11,60 +11,51 @@ export async function POST(req) {
 
     // 🧠 Validação do prompt
     if (!prompt || typeof prompt !== "string" || prompt.trim().length < 3) {
-      return new Response(
-        JSON.stringify({ error: "Prompt inválido. Envie um texto mais detalhado." }),
-        { status: 400 }
-      );
+      return new Response(JSON.stringify({ error: "Prompt inválido." }), { status: 400 });
     }
 
-    // 🔑 Recupera a chave
+    // 🔑 Recupera a chave da OpenAI
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
-      console.error("❌ Variável OPENAI_API_KEY ausente no ambiente Vercel.");
+      console.error("❌ OPENAI_API_KEY ausente no ambiente Vercel.");
       return new Response(
-        JSON.stringify({
-          error: "Chave da OpenAI ausente. Verifique as variáveis no painel da Vercel.",
-        }),
+        JSON.stringify({ error: "Chave da OpenAI ausente. Configure nas variáveis do projeto." }),
         { status: 500 }
       );
     }
 
-    // 🚀 Inicializa o cliente
+    // 🚀 Inicializa o cliente OpenAI
     const openai = new OpenAI({ apiKey });
 
-    console.log("✅ Conectado à OpenAI — gerando análise com GPT-5-nano-2025-08-07...");
+    console.log("🔄 Enviando prompt ao GPT-5-nano-2025-08-07…");
 
-    // 💬 Criação da resposta (sem 'temperature')
+    // 💬 Chamada ao modelo — sem parâmetros não suportados
     const completion = await openai.chat.completions.create({
       model: "gpt-5-nano-2025-08-07",
       messages: [
-        {
-          role: "system",
-          content:
-            "Você é a Betgram IA — uma inteligência esportiva especialista em apostas e análises de valor.",
-        },
-        { role: "user", content: prompt },
+        { role: "user", content: `Analise detalhadamente: ${prompt}` }
       ],
-      max_completion_tokens: 2500, // ✅ parâmetro correto
+      max_completion_tokens: 2000,
     });
 
-    const resposta = completion.choices?.[0]?.message?.content?.trim() || "Sem resposta gerada.";
+    // ✅ Garante que há texto na resposta
+    const resposta =
+      completion.choices?.[0]?.message?.content?.trim() ||
+      "(sem texto retornado pelo modelo)";
 
-    console.log("✅ Resposta gerada:", resposta.slice(0, 120) + "...");
+    console.log("✅ Resposta recebida:", resposta.slice(0, 150) + "...");
 
     return new Response(JSON.stringify({ resposta }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
   } catch (err) {
-    console.error("🚨 Erro completo /api/analise:", err?.response?.data || err);
-
-    const mensagemErro =
+    console.error("🚨 Erro /api/analise:", err?.response?.data || err);
+    const msg =
       err?.response?.data?.error?.message ||
       err?.message ||
-      "Falha ao gerar análise. Tente novamente mais tarde.";
-
-    return new Response(JSON.stringify({ error: mensagemErro }), {
+      "Falha ao gerar análise.";
+    return new Response(JSON.stringify({ error: msg }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
     });
