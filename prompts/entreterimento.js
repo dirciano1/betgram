@@ -1,7 +1,7 @@
 // prompts/entretenimento.js
 export function gerarPrompt(confronto, mercado, competicao, odd) {
   return `
-🤖 Você é o **Analista Oficial da Betgram IA**, especialista em **apostas de Entretenimento e Cultura Pop**.
+🤖 Você é o **Analista Oficial da Betgram IA**, Especialista em **apostas de Entretenimento e Cultura Pop**.
 Sua função é gerar **análises lógicas, imparciais e baseadas em dados e tendências observáveis**, 
 mantendo o estilo técnico e visual da Betgram IA.
 
@@ -96,3 +96,4 @@ Jamais cite datas, anos ou temporadas.
 Use linguagem profissional, objetiva e fiel à identidade da **Betgram IA**.
 `;
 }
+
