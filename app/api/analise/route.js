@@ -31,7 +31,7 @@ export async function POST(req) {
 
     // 💬 Chama o GPT-4 mini
     const completion = await openai.chat.completions.create({
-      model: "gpt-5-nano", // modelo rápido e econômico
+      model: "gpt-4o-mini", // modelo rápido e econômico
       messages: [{ role: "user", content: prompt }],
       temperature: 0.3,
       max_tokens: 3000,
@@ -52,5 +52,6 @@ export async function POST(req) {
     );
   }
 }
+
 
 
