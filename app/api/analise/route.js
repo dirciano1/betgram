@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 /**
- * API da Betgram IA usando Gemini 2.5 Flash com busca (Grounding)
+ * API da Betgram IA usando Gemini 2.5 Flash com tentativa de busca (quando disponível)
  */
 export async function POST(req) {
   try {
@@ -16,12 +16,12 @@ export async function POST(req) {
     // 🔑 Inicializa o cliente Gemini
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-    // ⚙️ O modelo DEVE ser configurado AQUI, sem o 'tools' (correção)
+    // ⚙️ Modelo configurado com ferramentas (se habilitado no projeto)
     const model = genAI.getGenerativeModel({
       model: "gemini-2.5-flash",
-      // ❌ REMOVIDO: tools: [{ googleSearch: {} }], <--- Não é aceito neste método
+      tools: [{ googleSearch: {} }], // este campo é ignorado se o recurso não estiver ativo
     });
-    
+
     // 🧠 Prompt com instrução de busca e contexto
     const fullPrompt = `
 Você é um analista esportivo com acesso à internet.
@@ -31,19 +31,10 @@ Evite respostas hipotéticas; baseie-se em dados reais e atualizados.
 ${prompt}
 `;
 
-    // 🛠️ CONFIGURAÇÃO DE BUSCA: Adicionada ao objeto 'config'
-    const searchConfig = {
-      tools: [{ googleSearch: {} }],
-    };
+    // 🧩 Gera o conteúdo
+    const result = await model.generateContent(fullPrompt);
+    const resposta = result.response.text();
 
-    // 🧩 Gera o conteúdo, passando o prompt e a configuração de busca
-    const result = await model.generateContent({
-      contents: fullPrompt, // Seu prompt com a persona e instrução de busca
-      config: searchConfig, // <--- A busca é ativada neste ponto
-    });
-    
-    const resposta = result.response.text;
-    
     // ✅ Retorna resposta JSON
     return new Response(JSON.stringify({ resposta }), {
       status: 200,
