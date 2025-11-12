@@ -31,7 +31,7 @@ export async function POST(req) {
           model,
           // Use a nova Responses API (nada de temperature / max_tokens antigos)
           input: prompt,
-          max_output_tokens: 1200, // ajuste se quiser respostas mais longas/curtas
+          max_output_tokens: 3000, // ajuste se quiser respostas mais longas/curtas
         });
 
         // Helper do SDK v6: r.output_text retorna todo o texto já concatenado
@@ -60,3 +60,4 @@ export async function POST(req) {
     return new Response(JSON.stringify({ error: err?.message || "Falha ao gerar análise." }), { status: 500 });
   }
 }
+
