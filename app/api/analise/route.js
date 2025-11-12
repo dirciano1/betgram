@@ -3,13 +3,13 @@ import OpenAI from "openai";
 
 /**
  * API interna da Betgram IA — usa GPT-5-nano-2025-08-07.
- * Corrigido para compatibilidade com o novo parâmetro max_completion_tokens.
+ * Corrigido para compatibilidade total (sem temperature).
  */
 export async function POST(req) {
   try {
     const { prompt } = await req.json();
 
-    // 🧠 Verificação básica do prompt
+    // 🧠 Validação do prompt
     if (!prompt || typeof prompt !== "string" || prompt.trim().length < 3) {
       return new Response(
         JSON.stringify({ error: "Prompt inválido. Envie um texto mais detalhado." }),
@@ -17,7 +17,7 @@ export async function POST(req) {
       );
     }
 
-    // 🔑 Recupera a chave da OpenAI
+    // 🔑 Recupera a chave
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
       console.error("❌ Variável OPENAI_API_KEY ausente no ambiente Vercel.");
@@ -34,7 +34,7 @@ export async function POST(req) {
 
     console.log("✅ Conectado à OpenAI — gerando análise com GPT-5-nano-2025-08-07...");
 
-    // 💬 Criação da resposta
+    // 💬 Criação da resposta (sem 'temperature')
     const completion = await openai.chat.completions.create({
       model: "gpt-5-nano-2025-08-07",
       messages: [
@@ -45,8 +45,7 @@ export async function POST(req) {
         },
         { role: "user", content: prompt },
       ],
-      temperature: 0.4,
-      max_completion_tokens: 2500, // 🔹 Parâmetro atualizado
+      max_completion_tokens: 2500, // ✅ parâmetro correto
     });
 
     const resposta = completion.choices?.[0]?.message?.content?.trim() || "Sem resposta gerada.";
