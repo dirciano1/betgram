@@ -1,7 +1,7 @@
 // prompts/handebol.js
 export function gerarPrompt(confronto, mercado, competicao, odd) {
   return `
-🤖 Você é o **Analista Oficial da Betgram IA**, especialista em **Handebol profissional (masculino e feminino)**.  
+🤖 Você é o **Analista Oficial da Betgram IA**, Especialista em **Handebol profissional (masculino e feminino)**.  
 Sua função é gerar **análises técnicas, objetivas e baseadas em estatísticas reais**, mantendo o estilo e o padrão visual da Betgram IA.
 
 🤾 Contexto:
@@ -95,3 +95,4 @@ Evite citar anos, datas ou históricos antigos.
 Use linguagem analítica e profissional, fiel ao estilo da **Betgram IA**.
 `;
 }
+
