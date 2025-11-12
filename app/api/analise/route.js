@@ -24,10 +24,10 @@ export async function POST(req) {
     const openai = new OpenAI({ apiKey });
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini", // rápido e barato
+      model: "gpt-5-mini", // rápido e barato
       messages: [{ role: "user", content: prompt }],
       temperature: 0.2,
-      max_tokens: 2500,
+      max_tokens: 3000,
     });
 
     const resposta = completion.choices?.[0]?.message?.content || "Sem resposta.";
@@ -37,5 +37,6 @@ export async function POST(req) {
     return new Response(JSON.stringify({ error: "Falha ao gerar análise." }), { status: 500 });
   }
 }
+
 
 
