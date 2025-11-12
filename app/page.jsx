@@ -412,7 +412,10 @@ export default function HomePage() {
               border:"1px solid #22c55e55",borderRadius:"8px",padding:"8px",color:"#22c55e",
               fontWeight:600,cursor:"pointer"
             }}>➕ Adicionar Créditos</button>
-            
+            <button onClick={() => setShowIndiqueModal(true)} style={{
+              flex:"1 1 100%",background:"rgba(251,191,36,0.12)",border:"1px solid #facc1555",
+              borderRadius:"8px",padding:"8px",color:"#facc15",fontWeight:600,cursor:"pointer"
+            }}>🎁 Indique um amigo e ganhe 20 análises</button>
           </div>
         </div>
 
@@ -424,24 +427,11 @@ export default function HomePage() {
               <select style={inputStyle} value={esporte} onChange={(e) => setEsporte(e.target.value)}>
                 <option value="futebol">⚽ Futebol</option>
                 <option value="basquete">🏀 Basquete</option>
-                  <option value="tenis">🎾 Tênis</option>
-                  <option value="volei">🏐 Vôlei</option>
-                  <option value="mma">🥊 MMA / UFC</option>
-                  <option value="boxe">🥊 Boxe</option>
-                  <option value="eSports">🎮 eSports (CS2, LoL, Valorant...)</option>
-                  <option value="handebol">🤾 Handebol</option>
-                  <option value="futsal">⚽ Futsal</option>
-                  <option value="beisebol">⚾ Beisebol (MLB)</option>
-                  <option value="rugby">🏉 Rugby</option>
-                  <option value="hoquei">🏒 Hóquei no Gelo</option>
-                  <option value="corrida">🏎️ Corridas / Fórmula 1</option>
-                  <option value="ciclismo">🚴 Ciclismo</option>
-                  <option value="golfe">🏌️ Golfe</option>
-                  <option value="criquete">🏏 Críquete</option>
-                  <option value="snooker">🎱 Snooker / Bilhar</option>
-                  <option value="dardos">🎯 Dardos</option>
-                  <option value="política">🏛️ Política</option>
-                  <option value="entretenimento">🎬 Entretenimento</option>
+                <option value="tenis">🎾 Tênis</option>
+                <option value="volei">🏐 Vôlei</option>
+                <option value="mma">🥊 MMA / UFC</option>
+                <option value="boxe">🥊 Boxe</option>
+                <option value="eSports">🎮 eSports</option>
               </select>
               <label>🏆 Competição:</label>
               <input style={inputStyle} value={competicao} onChange={(e) => setCompeticao(e.target.value)} placeholder="Ex: Brasileirão, NBA..."/>
@@ -529,4 +519,5 @@ export default function HomePage() {
       <IndiqueModal/>
     </main>
   );
-}
+                }
+      
