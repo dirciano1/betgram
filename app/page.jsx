@@ -137,6 +137,7 @@ export default function HomePage() {
   const [odd, setOdd] = useState("");
   const [resultado, setResultado] = useState("");
   const [carregando, setCarregando] = useState(false);
+  const [carregandoFrase, setCarregandoFrase] = useState("Analisando...");
   const [panelFlip, setPanelFlip] = useState(false);
   const [historico, setHistorico] = useState([]);
   const [mostraHistorico, setMostraHistorico] = useState(false);
@@ -151,6 +152,40 @@ export default function HomePage() {
     setShowBetgramPayModal(false);
     if (user) await carregarDadosUsuario(user);
   }
+   
+  useEffect(() => {
+  if (!carregando) return;
+
+  const frases = [
+    "Analisando banco de dados…",
+    "Cruzando informações estatísticas…",
+    "Calculando probabilidades…",
+    "Avaliando desempenho recente…",
+    "Gerando previsão de valor…",
+    "Estimando odd justa…",
+    "Processando padrões do confronto…",
+    "Refinando o cálculo final…",
+    "Tudo pronto! Estamos finalizando a análise…",
+    "A Analise Completa já será entregue…"
+  ];
+
+  let i = 0;
+
+  const intervalo = setInterval(() => {
+    setCarregandoFrase(frases[i]);
+
+    // 👉 quando chegar no final, para o loop automático
+    if (i === frases.length - 1) {
+      clearInterval(intervalo);
+      return;
+    }
+
+    i++;
+  }, 5000); // tempo entre cada frase
+
+  return () => clearInterval(intervalo);
+}, [carregando]);
+
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (u) => {
@@ -456,10 +491,33 @@ export default function HomePage() {
                   <input style={inputStyle} type="number" value={odd} onChange={(e) => setOdd(e.target.value)} placeholder="Ex: 1.85"/>
                 </>
               )}
-              <button onClick={handleAnalise} disabled={carregando} style={{
-                width:"100%",padding:"8px",borderRadius:"12px",background:"linear-gradient(90deg,#22c55e,#16a34a)",
-                border:"none",color:"#fff",fontWeight:"700",fontSize:"1.2rem",cursor:"pointer",marginTop:"10px"
-              }}>{carregando ? "⏳ Analisando..." : "🚀 Analisar"}</button>
+              <button
+  onClick={handleAnalise}
+  disabled={carregando}
+  className={carregando ? "botao-loading" : ""}
+  style={{
+    width: "100%",
+    padding: "12px",
+    borderRadius: "12px",
+    border: "none",
+    background: carregando ? "#15803d" : "linear-gradient(90deg,#22c55e,#16a34a)",
+    color: "#fff",
+    fontWeight: "700",
+    fontSize: "1.2rem",
+    cursor: carregando ? "not-allowed" : "pointer",
+    marginTop: "10px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "10px",
+    opacity: carregando ? 0.9 : 1,
+    transition: "0.2s",
+  }}
+>
+  {carregando && <div className="spinner"></div>}
+  {carregando ? carregandoFrase : "Analisar"}
+</button>
+
             </>
           ) : (
             <>
