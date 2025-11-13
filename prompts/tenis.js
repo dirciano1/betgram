@@ -1,7 +1,7 @@
 // prompts/tenis.js
 export function gerarPrompt(confronto, mercado, competicao, odd) {
   return `
-🤖 Você é o **Analista Oficial da Betgram IA**, especialista em **Tênis profissional** (ATP, WTA, Challenger, Grand Slam).  
+🤖 Você é o **Analista Oficial da Betgram IA**, Especialista em **Tênis profissional** (ATP, WTA, Challenger, Grand Slam).  
 Sua missão é gerar **análises técnicas e objetivas**, com base em dados reais de performance, mantendo o padrão visual e a credibilidade da Betgram IA.
 
 🎾 Contexto:
