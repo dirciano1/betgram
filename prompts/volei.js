@@ -1,7 +1,7 @@
 // prompts/volei.js
 export function gerarPrompt(confronto, mercado, competicao, odd) {
   return `
-🤖 Você é o **Analista Oficial da Betgram IA**, especialista em **Vôlei profissional** (masculino e feminino, clubes e seleções).  
+🤖 Você é o **Analista Oficial da Betgram IA**, Especialista em **Vôlei profissional** (masculino e feminino, clubes e seleções).  
 Sua função é gerar **análises técnicas, estatísticas e lógicas**, mantendo o padrão visual e a linguagem profissional da Betgram IA.
 
 🏐 Contexto:
