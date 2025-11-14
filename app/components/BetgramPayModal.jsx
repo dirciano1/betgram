@@ -1,194 +1,143 @@
 "use client";
-import { useState, useEffect } from "react";
-import IndiqueModal from "./IndiqueModal";
 
-const modalBackdropStyle = {
-  position: "fixed",
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  background: "rgba(0,0,0,0.7)",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  zIndex: 1000,
-};
+import { useEffect, useState } from "react";
+import { doc, onSnapshot } from "../../../lib/firebase";
 
-const modalContentStyle = {
-  background: "#111827",
-  border: "2px solid #22c55e",
-  borderRadius: "16px",
-  padding: "30px",
-  width: "90%",
-  maxWidth: "350px",
-  textAlign: "center",
-  boxShadow: "0 0 30px rgba(34,197,94,0.3)",
-};
-
-const buttonConfirmStyle = {
-  background: "linear-gradient(90deg, #22c55e, #16a34a)",
-  border: "none",
-  color: "#fff",
-  fontWeight: 700,
-  borderRadius: "8px",
-  padding: "12px 20px",
-  cursor: "pointer",
-  marginTop: "15px",
-  width: "100%",
-};
-
-const buttonCancelStyle = {
-  background: "rgba(239,68,68,0.15)",
-  border: "1px solid #ef444455",
-  color: "#f87171",
-  fontWeight: 600,
-  borderRadius: "8px",
-  padding: "12px 20px",
-  cursor: "pointer",
-  marginTop: "15px",
-  width: "100%",
-};
-
-export default function BetgramPayModal({ onClose, user }) {
-  const [etapa, setEtapa] = useState("planos");
-  const [qr, setQr] = useState(null);
-  const [txid, setTxid] = useState(null);
-  const [carregando, setCarregando] = useState(false);
-  const [showIndique, setShowIndique] = useState(false);
-
-  async function gerarPix(valor) {
-    try {
-      setCarregando(true);
-      const res = await fetch("/api/pix/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uid: user.uid, valor }),
-      });
-
-      const data = await res.json();
-
-      setTxid(data.txid);
-
-      // 👇 AJUSTE PARA ABACATEPAY
-      setQr({
-        img: data.qrcode,
-        copia: data.qrcode_text
-      });
-
-      setEtapa("pagamento");
-    } catch (e) {
-      alert("Erro ao gerar PIX.");
-      console.error(e);
-    } finally {
-      setCarregando(false);
-    }
-  }
+export default function BetgramPayModal({
+  user,
+  qrCodeBase64,
+  valor,
+  fecharModal,
+}) {
+  const [statusPagamento, setStatusPagamento] = useState("aguardando"); 
+  // aguardando | confirmado | cancelado
 
   useEffect(() => {
-    if (!txid) return;
+    if (!user) return;
 
-    const i = setInterval(async () => {
-      const r = await fetch(`/api/pix/status?txid=${txid}`);
-      const d = await r.json();
+    const userRef = doc(
+      (await import("../../../lib/firebase")).db,
+      "users",
+      user.uid
+    );
 
-      if (d.status === "pago") {
-        setEtapa("pago");
-        clearInterval(i);
+    // 🔥 LISTENER REAL-TIME (ATUALIZA MESMO COM MODAL ABERTO)
+    const unsub = onSnapshot(userRef, (snap) => {
+      if (!snap.exists()) return;
+      const data = snap.data();
+
+      if (data.creditos > user.creditos) {
+        console.log("🔥 Pagamento confirmado pelo webhook!");
+        setStatusPagamento("confirmado");
       }
-    }, 3000);
+    });
 
-    return () => clearInterval(i);
-  }, [txid]);
-
-  if (showIndique) {
-    return <IndiqueModal onClose={() => setShowIndique(false)} user={user} />;
-  }
+    return () => unsub();
+  }, [user]);
 
   return (
-    <div style={modalBackdropStyle}>
-      <div style={modalContentStyle}>
-        {etapa === "planos" && (
+    <div
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        background: "rgba(0,0,0,0.7)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 9999,
+      }}
+    >
+      <div
+        style={{
+          width: "90%",
+          maxWidth: "420px",
+          background: "#111827",
+          padding: "24px",
+          borderRadius: "14px",
+          border: "1px solid rgba(255,255,255,0.1)",
+          textAlign: "center",
+          color: "#fff",
+          boxShadow: "0 0 20px rgba(0,0,0,0.4)",
+        }}
+      >
+        {/* ESTADO 1 — Aguardando Pagamento */}
+        {statusPagamento === "aguardando" && (
           <>
-            <h3 style={{ color: "#22c55e" }}>💳 Betgram Pay</h3>
-            <p style={{ color: "#ccc" }}>Escolha um plano de créditos:</p>
+            <h2 style={{ fontSize: "1.3rem", marginBottom: "8px" }}>
+              Finalizar Pagamento
+            </h2>
 
-            <button style={buttonConfirmStyle} onClick={() => gerarPix(10)}>
-              100 Análises – R$ 10,00
-            </button>
-            <button style={buttonConfirmStyle} onClick={() => gerarPix(25)}>
-              300 Análises – R$ 25,00
-            </button>
-            <button style={buttonConfirmStyle} onClick={() => gerarPix(50)}>
-              700 Análises – R$ 50,00
-            </button>
+            <p style={{ opacity: 0.8, marginBottom: "14px" }}>
+              Escaneie o QR Code para pagar{" "}
+              <strong style={{ color: "#4ade80" }}>R$ {valor}</strong>
+            </p>
+
+            <img
+              src={`data:image/png;base64,${qrCodeBase64}`}
+              alt="QR Code PIX"
+              style={{
+                width: "200px",
+                height: "200px",
+                margin: "0 auto",
+                borderRadius: "8px",
+                boxShadow: "0 0 12px rgba(0,0,0,0.6)",
+              }}
+            />
+
+            <p style={{ fontSize: "0.9rem", marginTop: "12px", opacity: 0.8 }}>
+              Assim que o pagamento for confirmado, liberaremos seus créditos
+              automaticamente.
+            </p>
 
             <button
+              onClick={() => fecharModal()}
               style={{
-                ...buttonConfirmStyle,
-                background: "linear-gradient(90deg, #3b82f6, #2563eb)",
+                marginTop: "18px",
+                width: "100%",
+                padding: "12px",
+                background: "#ef4444",
+                borderRadius: "8px",
+                border: "none",
+                color: "#fff",
+                fontSize: "1rem",
+                cursor: "pointer",
+                fontWeight: "600",
               }}
-              onClick={() => setShowIndique(true)}
             >
-              🎁 Indique um amigo e ganhe 20 análises grátis
-            </button>
-
-            <button onClick={onClose} style={buttonCancelStyle}>
-              ↩ Voltar
+              Cancelar
             </button>
           </>
         )}
 
-        {etapa === "pagamento" && (
+        {/* ESTADO 2 — Pagamento Confirmado */}
+        {statusPagamento === "confirmado" && (
           <>
-            <h3 style={{ color: "#22c55e" }}>Escaneie o QR PIX</h3>
+            <h2 style={{ fontSize: "1.5rem", marginBottom: "10px", color: "#4ade80" }}>
+              Pagamento Confirmado!
+            </h2>
 
-            {carregando ? (
-              <p>Gerando QR...</p>
-            ) : (
-              <>
-                {/* QR CODE — Ajustado */}
-                <img src={qr.img} width="180" />
+            <p style={{ opacity: 0.9, marginBottom: "20px" }}>
+              Seus créditos foram liberados automaticamente ✔
+            </p>
 
-                {/* COPIA E COLA — Ajustado */}
-                <textarea
-                  readOnly
-                  value={qr.copia}
-                  style={{
-                    width: "100%",
-                    height: "80px",
-                    marginTop: "10px",
-                    background: "#0b1324",
-                    color: "#fff",
-                    border: "1px solid #22c55e55",
-                    borderRadius: "8px",
-                    padding: "6px",
-                    fontSize: "0.8rem",
-                  }}
-                />
-
-                <button
-                  onClick={() => navigator.clipboard.writeText(qr.copia)}
-                  style={buttonConfirmStyle}
-                >
-                  Copiar Código PIX
-                </button>
-
-                <p style={{ color: "#ccc" }}>Aguardando pagamento...</p>
-
-                <button onClick={onClose} style={buttonCancelStyle}>
-                  Cancelar
-                </button>
-              </>
-            )}
-          </>
-        )}
-
-        {etapa === "pago" && (
-          <>
-            <h3 style={{ color: "#22c55e" }}>✅ Pagamento confirmado!</h3>
-            <p style={{ color: "#ccc" }}>Créditos adicionados com sucesso.</p>
-            <button onClick={onClose} style={buttonConfirmStyle}>
+            <button
+              onClick={fecharModal}
+              style={{
+                marginTop: "12px",
+                width: "100%",
+                padding: "12px",
+                background: "#22c55e",
+                borderRadius: "8px",
+                border: "none",
+                color: "#fff",
+                fontSize: "1rem",
+                cursor: "pointer",
+                fontWeight: "600",
+              }}
+            >
               Fechar
             </button>
           </>
