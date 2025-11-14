@@ -11,22 +11,15 @@ export async function POST(req) {
       );
     }
 
-    // ================================
-    // NOVO PAYLOAD DA API ABACATEPAY
-    // ================================
     const payload = {
-      amount: Math.round(valor * 100), // R$ -> centavos
+      amount: Math.round(valor * 100),
       description: `Créditos Betgram - Usuário ${uid}`,
-      methods: ["PIX"],
-      metadata: {
-        uid
-      }
+      method: "PIX",
+      metadata: { uid }
     };
 
-    // ================================
-    //  NOVO ENDPOINT OFICIAL
-    // ================================
-    const res = await fetch("https://api.abacatepay.com/v1/payments", {
+    // 🔥 ENDPOINT CORRETO NOVA API:
+    const res = await fetch("https://api.abacatepay.com/payments", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -46,9 +39,6 @@ export async function POST(req) {
       );
     }
 
-    // ================================
-    //  RETORNO PADRÃO PARA O FRONT
-    // ================================
     return NextResponse.json({
       txid: result.data.id,
       qrcode: result.data.qrCodeImage,
@@ -56,7 +46,6 @@ export async function POST(req) {
     });
 
   } catch (e) {
-    console.error("❌ ERRO CREATE PIX:", e);
     return NextResponse.json(
       { error: true, message: e.message },
       { status: 500 }
