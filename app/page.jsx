@@ -143,6 +143,30 @@ export default function HomePage() {
   const [mostraHistorico, setMostraHistorico] = useState(false);
   const [showBetgramPayModal, setShowBetgramPayModal] = useState(false);
   const [showConfirmacaoModal, setShowConfirmacaoModal] = useState(false);
+  
+  // 📌 DETECTAR CONFIRMAÇÃO DE PAGAMENTO (ATUALIZA A PÁGINA AUTOMATICAMENTE)
+useEffect(() => {
+  if (!user) return;
+
+  const userRef = doc(db, "users", user.uid);
+
+  const unsub = onSnapshot(userRef, (snap) => {
+    if (!snap.exists()) return;
+
+    const data = snap.data();
+
+    // Se os créditos aumentarem → recarrega a página inteira
+    if (data.creditos > (userData?.creditos || 0)) {
+      console.log("🔥 Pagamento confirmado! Atualizando página...");
+      window.location.reload();
+    }
+
+    // Atualiza estado normalmente
+    setUserData(data);
+  });
+
+  return () => unsub();
+}, [user]);
 
   useEffect(() => {
     capturarIndicadorURL();
@@ -588,4 +612,5 @@ export default function HomePage() {
     </main>
   );
 }
+
 
