@@ -181,7 +181,7 @@ export default function HomePage() {
     }
 
     i++;
-  }, 5000); // Tempo entre cada frase
+  }, 5000); // tempo entre cada frase
 
   return () => clearInterval(intervalo);
 }, [carregando]);
