@@ -1,57 +1,67 @@
 import { NextResponse } from "next/server";
-import { db, doc, updateDoc, increment } from "../../../../../lib/firebase";
+import { db, doc, updateDoc, increment } from "../../../lib/firebase";
 
 export async function POST(req) {
   try {
-    // 1. Verificar assinatura do webhook
+    // 1. Pegar assinatura enviada pelo AbacatePay
     const signature = req.headers.get("x-abacatepay-signature");
-    const secret = process.env.ABACATEPAY_WEBHOOK_SECRET;
 
-    if (!signature || signature !== secret) {
+    if (!signature) {
       return NextResponse.json(
-        { error: "Invalid signature" },
+        { error: true, message: "Missing signature" },
         { status: 401 }
       );
     }
 
-    // 2. Ler JSON recebido
-    const body = await req.json();
-    console.log("📩 WEBHOOK RECEBIDO:", body);
+    // 2. Validar chave secreta do webhook
+    const expectedSecret = process.env.ABACATEPAY_WEBHOOK_SECRET;
 
-    // 3. Verificar tipo do evento
-    if (body.event !== "billing.paid") {
-      return NextResponse.json({ ok: true, ignored: true });
+    if (signature !== expectedSecret) {
+      return NextResponse.json(
+        { error: true, message: "Invalid secret" },
+        { status: 401 }
+      );
     }
 
-    // 4. Extrair metadata correta
-    const meta = body.data?.pixQrCode?.metadata;
+    // 3. Ler corpo JSON enviado pelo AbacatePay
+    const body = await req.json();
 
-    if (!meta?.uid || !meta?.valor) {
+    console.log("🔥 WEBHOOK RECEBIDO:", body);
+
+    // 4. Garantir que é o evento billing.paid
+    if (body?.event !== "billing.paid") {
+      return NextResponse.json({ ok: true, ignore: true });
+    }
+
+    // 5. Extrair UID e valor enviados no metadata
+    const uid = body?.data?.pixQrCode?.metadata?.uid;
+    const valor = body?.data?.pixQrCode?.amount; // já vem em centavos
+
+    if (!uid || !valor) {
       return NextResponse.json(
-        { error: "Missing metadata" },
+        { error: true, message: "Missing UID or amount" },
         { status: 400 }
       );
     }
 
-    const uid = meta.uid;
-    const creditos = Number(meta.valor);
+    // 6. Converter centavos → créditos
+    const creditos = Math.floor(valor / 100);
 
-    // 5. Atualizar créditos no Firestore
-    const ref = doc(db, "users", uid);
-    await updateDoc(ref, {
+    // 7. Atualizar créditos no Firestore
+    const userRef = doc(db, "users", uid);
+
+    await updateDoc(userRef, {
       creditos: increment(creditos),
-      jaComprou: true
     });
 
-    console.log(`🎉 Créditos adicionados: +${creditos} para UID ${uid}`);
+    console.log("✅ CREDITADO:", creditos, "créditos → UID:", uid);
 
-    // 6. Enviar OK para AbacatePay
+    // 8. Resposta OK para o AbacatePay
     return NextResponse.json({ ok: true });
-
   } catch (error) {
-    console.error("🔥 ERRO NO WEBHOOK:", error);
+    console.error("❌ ERRO WEBHOOK:", error);
     return NextResponse.json(
-      { error: error.message },
+      { error: true, message: error.message },
       { status: 500 }
     );
   }
