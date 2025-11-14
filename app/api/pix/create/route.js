@@ -4,30 +4,35 @@ export async function POST(req) {
   try {
     const { uid, valor } = await req.json();
 
-    if (!uid || !valor)
-      return NextResponse.json({ error: "Dados inválidos." }, { status: 400 });
+    if (!uid || !valor) {
+      return NextResponse.json(
+        { error: "Dados inválidos." },
+        { status: 400 }
+      );
+    }
 
     const API_KEY =
       process.env.ABACATEPAY_KEY_TESTE ||
       "abc_dev_UarpsjrXmT4mwr04EkECbbZH";
 
-    // 🚀 NOVO ENDPOINT CORRETO
-    const response = await fetch("https://api.abacatepay.com/v1/charge", {
+    // 🚀 ENDPOINT CORRETO PARA PAINEL "COBRANÇAS"
+    const resposta = await fetch("https://api.abacatepay.com/v1/billing", {
       method: "POST",
       headers: {
         Authorization: API_KEY,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        txid: `${uid}_${Date.now()}`,
-        value: Number(valor),
         description: "Créditos BetGram",
+        value: Number(valor),
+        txid: `${uid}_${Date.now()}`,
         callbackUrl:
           "https://betgram.com.br/api/betgrampay/pay?secret=betgrampix_4b2fA9x7Qw",
+        pix: true // 👈 obrigatório para gerar QR
       }),
     });
 
-    const data = await response.json();
+    const data = await resposta.json();
     console.log("RETORNO ABACATEPAY:", data);
 
     if (!data || data.error) {
@@ -37,11 +42,11 @@ export async function POST(req) {
       );
     }
 
-    // PEGANDO O PIX DA COBRANÇA
+    // Estrutura do retorno do AbacatePay (painel Cobranças)
     return NextResponse.json({
-      txid: data.txid || data.id,
-      qrcode: data.pix?.qrcode || null,
-      qrcode_text: data.pix?.qrcode_text || null,
+      txid: data.txid,
+      qrcode: data.pix?.qrcode,
+      qrcode_text: data.pix?.qrcode_text,
     });
   } catch (err) {
     console.error("ERRO AO GERAR PIX:", err);
