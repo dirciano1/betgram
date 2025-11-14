@@ -4,21 +4,15 @@ export async function POST(req) {
   try {
     const { uid, valor } = await req.json();
 
-    // Validação básica
-    if (!uid || !valor) {
-      return NextResponse.json(
-        { error: "Parâmetros inválidos." },
-        { status: 400 }
-      );
-    }
+    if (!uid || !valor)
+      return NextResponse.json({ error: "Dados inválidos." }, { status: 400 });
 
-    // API KEY do AbacatePay (sandbox enquanto a conta está em análise)
     const API_KEY =
       process.env.ABACATEPAY_KEY_TESTE ||
       "abc_dev_UarpsjrXmT4mwr04EkECbbZH";
 
-    // Requisição para criar o PIX
-    const resposta = await fetch("https://api.abacatepay.com/v1/pix/create", {
+    // 🚀 NOVO ENDPOINT CORRETO
+    const response = await fetch("https://api.abacatepay.com/v1/charge", {
       method: "POST",
       headers: {
         Authorization: API_KEY,
@@ -26,31 +20,28 @@ export async function POST(req) {
       },
       body: JSON.stringify({
         txid: `${uid}_${Date.now()}`,
-        value: Number(valor), // 👈 TEM QUE SER value, NÃO amount
+        value: Number(valor),
+        description: "Créditos BetGram",
         callbackUrl:
           "https://betgram.com.br/api/betgrampay/pay?secret=betgrampix_4b2fA9x7Qw",
-        info: `Créditos BetGram - UID: ${uid}`,
       }),
     });
 
-    const data = await resposta.json();
-
-    // Log para debug rápido
+    const data = await response.json();
     console.log("RETORNO ABACATEPAY:", data);
 
-    // Se der erro no AbacatePay
     if (!data || data.error) {
       return NextResponse.json(
-        { error: "Erro no AbacatePay", detalhes: data },
+        { error: "Erro ao criar cobrança", detalhes: data },
         { status: 500 }
       );
     }
 
-    // Retorno EXATO que seu modal espera
+    // PEGANDO O PIX DA COBRANÇA
     return NextResponse.json({
-      txid: data.txid,
-      qrcode: data.qrcode, // URL imagem do QR Code
-      qrcode_text: data.qrcode_text, // Código copia e cola
+      txid: data.txid || data.id,
+      qrcode: data.pix?.qrcode || null,
+      qrcode_text: data.pix?.qrcode_text || null,
     });
   } catch (err) {
     console.error("ERRO AO GERAR PIX:", err);
