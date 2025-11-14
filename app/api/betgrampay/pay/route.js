@@ -3,69 +3,54 @@ import { db, doc, updateDoc, increment } from "../../../../lib/firebase";
 
 export async function POST(req) {
   try {
-    // 1. Validar SECRET vindo como querystring ?secret=...
-    const url = new URL(req.url);
-    const secret = url.searchParams.get("secret");
-    const expectedSecret = process.env.ABACATEPAY_WEBHOOK_SECRET;
-
-    if (!secret) {
-      return NextResponse.json(
-        { error: true, message: "Missing secret in query" },
-        { status: 401 }
-      );
-    }
-
-    if (secret !== expectedSecret) {
-      return NextResponse.json(
-        { error: true, message: "Invalid secret" },
-        { status: 401 }
-      );
-    }
-
-    // 2. Ler corpo JSON do evento
+    // 👀 Só pra debug: ver tudo que está chegando
     const body = await req.json();
-    console.log("WEBHOOK ABACATEPAY:", JSON.stringify(body));
+    console.log("WEBHOOK ABACATEPAY RECEBIDO:", JSON.stringify(body));
 
-    // 3. Garantir que é evento de cobrança paga
+    // 1. Garante que é billing.paid
     if (body?.event !== "billing.paid") {
+      console.log("Evento ignorado:", body?.event);
       return NextResponse.json({ ok: true, ignore: true });
     }
 
-    // 4. Pegar metadata que mandamos na criação do PIX
+    // 2. Pega os dados do pixQrCode
     const pixQrCode = body?.data?.pixQrCode;
-    const metadata = pixQrCode?.metadata || {};
+    if (!pixQrCode) {
+      console.log("Sem pixQrCode em data!");
+      return NextResponse.json({ error: true, message: "Sem pixQrCode" }, { status: 400 });
+    }
 
+    const metadata = pixQrCode.metadata || {};
     const uid = metadata.uid;
-    const valorMeta = metadata.valor; // o que mandamos no create (10, 25, 50, etc)
+    const valorMeta = metadata.valor;
+
+    console.log("METADATA:", metadata);
 
     if (!uid || valorMeta == null) {
-      console.log("Webhook sem uid ou valor:", metadata);
+      console.log("Faltando uid ou valor em metadata:", metadata);
       return NextResponse.json(
-        { error: true, message: "Missing uid or valor in metadata" },
+        { error: true, message: "Faltando uid ou valor em metadata" },
         { status: 400 }
       );
     }
 
-    // Se quiser, também pode conferir o amount em centavos:
-    // const creditos = Math.round((pixQrCode.amount || 0) / 100);
-    // mas como já mandamos 'valor' no metadata, usamos ele direto:
     const creditos = Number(valorMeta);
+    console.log(`Vai creditar +${creditos} para UID ${uid}`);
 
-    // 5. Atualizar créditos no Firestore
+    // 3. Atualiza no Firestore
     const userRef = doc(db, "users", uid);
     await updateDoc(userRef, {
       creditos: increment(creditos),
       jaComprou: true,
     });
 
-    console.log(`PIX CREDITADO: +${creditos} créditos para UID ${uid}`);
+    console.log(`Créditos atualizados com sucesso para ${uid}`);
 
-    // 6. Responder sucesso para o AbacatePay
     return NextResponse.json({ ok: true });
   } catch (e) {
-    console.error("ERRO WEBHOOK:", e);
+    console.error("ERRO NO WEBHOOK:", e);
     return NextResponse.json(
-      { error: true, message: e.message },
+      { error: true, message: e.message || "Erro interno" },
       { status: 500 }
     );
   }
