@@ -197,6 +197,29 @@ export default function HomePage() {
     return () => unsub();
   }, []);
 
+  useEffect(() => {
+  if (!user) return;
+
+  const userRef = doc(db, "users", user.uid);
+
+  const unsub = onSnapshot(userRef, (snap) => {
+    if (!snap.exists()) return;
+
+    const data = snap.data();
+
+    // SE O CRÉDITO AUMENTAR → recarrega a página automaticamente
+    if (data.creditos > (dadosUser?.creditos || 0)) {
+      console.log("🔥 Pagamento confirmado! Atualizando a página…");
+      window.location.reload();
+    }
+
+    // Sempre atualizar os dados em tela para manter consistência
+    setDadosUser(data);
+  });
+
+  return () => unsub();
+}, [user]);
+
   async function carregarDadosUsuario(u) {
     const ref = doc(db, "users", u.uid);
     const snap = await getDoc(ref);
@@ -588,5 +611,6 @@ export default function HomePage() {
     </main>
   );
 }
+
 
 
