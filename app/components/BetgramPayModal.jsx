@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import IndiqueModal from "./IndiqueModal"; // Novo modal de indicação
+import IndiqueModal from "./IndiqueModal";
 
 const modalBackdropStyle = {
   position: "fixed",
@@ -51,7 +51,7 @@ const buttonCancelStyle = {
 };
 
 export default function BetgramPayModal({ onClose, user }) {
-  const [etapa, setEtapa] = useState("planos"); // planos | pagamento | pago
+  const [etapa, setEtapa] = useState("planos");
   const [qr, setQr] = useState(null);
   const [txid, setTxid] = useState(null);
   const [carregando, setCarregando] = useState(false);
@@ -63,11 +63,19 @@ export default function BetgramPayModal({ onClose, user }) {
       const res = await fetch("/api/pix/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uid: user.uid, amount: valor }),
+        body: JSON.stringify({ uid: user.uid, valor }),
       });
+
       const data = await res.json();
+
       setTxid(data.txid);
-      setQr(data.qr);
+
+      // 👇 AJUSTE PARA ABACATEPAY
+      setQr({
+        img: data.qrcode,
+        copia: data.qrcode_text
+      });
+
       setEtapa("pagamento");
     } catch (e) {
       alert("Erro ao gerar PIX.");
@@ -79,14 +87,17 @@ export default function BetgramPayModal({ onClose, user }) {
 
   useEffect(() => {
     if (!txid) return;
+
     const i = setInterval(async () => {
-      const r = await fetch(`/api/pix/status?id=${txid}`);
+      const r = await fetch(`/api/pix/status?txid=${txid}`);
       const d = await r.json();
-      if (d.status === "paid") {
+
+      if (d.status === "pago") {
         setEtapa("pago");
         clearInterval(i);
       }
     }, 3000);
+
     return () => clearInterval(i);
   }, [txid]);
 
@@ -101,6 +112,7 @@ export default function BetgramPayModal({ onClose, user }) {
           <>
             <h3 style={{ color: "#22c55e" }}>💳 Betgram Pay</h3>
             <p style={{ color: "#ccc" }}>Escolha um plano de créditos:</p>
+
             <button style={buttonConfirmStyle} onClick={() => gerarPix(10)}>
               100 Análises – R$ 10,00
             </button>
@@ -111,7 +123,6 @@ export default function BetgramPayModal({ onClose, user }) {
               700 Análises – R$ 50,00
             </button>
 
-            {/* Novo botão de indicação */}
             <button
               style={{
                 ...buttonConfirmStyle,
@@ -131,14 +142,18 @@ export default function BetgramPayModal({ onClose, user }) {
         {etapa === "pagamento" && (
           <>
             <h3 style={{ color: "#22c55e" }}>Escaneie o QR PIX</h3>
+
             {carregando ? (
               <p>Gerando QR...</p>
             ) : (
               <>
-                <img src={`data:image/png;base64,${qr}`} width="180" />
+                {/* QR CODE — Ajustado */}
+                <img src={qr.img} width="180" />
+
+                {/* COPIA E COLA — Ajustado */}
                 <textarea
                   readOnly
-                  value={qr}
+                  value={qr.copia}
                   style={{
                     width: "100%",
                     height: "80px",
@@ -151,7 +166,16 @@ export default function BetgramPayModal({ onClose, user }) {
                     fontSize: "0.8rem",
                   }}
                 />
+
+                <button
+                  onClick={() => navigator.clipboard.writeText(qr.copia)}
+                  style={buttonConfirmStyle}
+                >
+                  Copiar Código PIX
+                </button>
+
                 <p style={{ color: "#ccc" }}>Aguardando pagamento...</p>
+
                 <button onClick={onClose} style={buttonCancelStyle}>
                   Cancelar
                 </button>
@@ -163,9 +187,7 @@ export default function BetgramPayModal({ onClose, user }) {
         {etapa === "pago" && (
           <>
             <h3 style={{ color: "#22c55e" }}>✅ Pagamento confirmado!</h3>
-            <p style={{ color: "#ccc" }}>
-              Seus créditos foram adicionados com sucesso.
-            </p>
+            <p style={{ color: "#ccc" }}>Créditos adicionados com sucesso.</p>
             <button onClick={onClose} style={buttonConfirmStyle}>
               Fechar
             </button>
