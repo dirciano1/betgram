@@ -1,33 +1,24 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { doc, onSnapshot } from "../../../lib/firebase";
+import { db, doc, onSnapshot } from "../../../lib/firebase";
 
-export default function BetgramPayModal({
-  user,
-  qrCodeBase64,
-  valor,
-  fecharModal,
-}) {
-  const [statusPagamento, setStatusPagamento] = useState("aguardando"); 
-  // aguardando | confirmado | cancelado
+export default function BetgramPayModal({ user, qrCodeBase64, valor, onClose }) {
+  const [statusPagamento, setStatusPagamento] = useState("aguardando");
 
   useEffect(() => {
     if (!user) return;
 
-    const userRef = doc(
-      (await import("../../../lib/firebase")).db,
-      "users",
-      user.uid
-    );
+    const userRef = doc(db, "users", user.uid);
 
-    // 🔥 LISTENER REAL-TIME (ATUALIZA MESMO COM MODAL ABERTO)
+    // 🔥 Escuta em tempo real — funciona mesmo com modal aberto
     const unsub = onSnapshot(userRef, (snap) => {
       if (!snap.exists()) return;
       const data = snap.data();
 
-      if (data.creditos > user.creditos) {
-        console.log("🔥 Pagamento confirmado pelo webhook!");
+      // Se os créditos aumentarem → pagamento confirmado
+      if (data.creditos > (user.creditos || 0)) {
+        console.log("🔥 Pagamento confirmado automaticamente!");
         setStatusPagamento("confirmado");
       }
     });
@@ -63,12 +54,9 @@ export default function BetgramPayModal({
           boxShadow: "0 0 20px rgba(0,0,0,0.4)",
         }}
       >
-        {/* ESTADO 1 — Aguardando Pagamento */}
         {statusPagamento === "aguardando" && (
           <>
-            <h2 style={{ fontSize: "1.3rem", marginBottom: "8px" }}>
-              Finalizar Pagamento
-            </h2>
+            <h2 style={{ fontSize: "1.3rem", marginBottom: "8px" }}>Finalizar Pagamento</h2>
 
             <p style={{ opacity: 0.8, marginBottom: "14px" }}>
               Escaneie o QR Code para pagar{" "}
@@ -88,12 +76,11 @@ export default function BetgramPayModal({
             />
 
             <p style={{ fontSize: "0.9rem", marginTop: "12px", opacity: 0.8 }}>
-              Assim que o pagamento for confirmado, liberaremos seus créditos
-              automaticamente.
+              Assim que o pagamento for confirmado, seus créditos serão liberados automaticamente.
             </p>
 
             <button
-              onClick={() => fecharModal()}
+              onClick={onClose}
               style={{
                 marginTop: "18px",
                 width: "100%",
@@ -112,7 +99,6 @@ export default function BetgramPayModal({
           </>
         )}
 
-        {/* ESTADO 2 — Pagamento Confirmado */}
         {statusPagamento === "confirmado" && (
           <>
             <h2 style={{ fontSize: "1.5rem", marginBottom: "10px", color: "#4ade80" }}>
@@ -124,7 +110,7 @@ export default function BetgramPayModal({
             </p>
 
             <button
-              onClick={fecharModal}
+              onClick={onClose}
               style={{
                 marginTop: "12px",
                 width: "100%",
