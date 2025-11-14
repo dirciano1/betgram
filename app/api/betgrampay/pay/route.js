@@ -10,21 +10,31 @@ import {
 
 export async function POST(req) {
   try {
-    const data = await req.json();
+    const { searchParams } = new URL(req.url);
 
-    // Dados enviados pelo AbacatePay
+    // SECRET enviado pelo AbacatePay
+    const secretRecebido = searchParams.get("secret");
+
+    // O mesmo SECRET que você colocou no painel
+    const SECRET_CORRETO = "betgrampix_4b2fA9x7Qw"; // <-- troque aqui
+
+    if (!secretRecebido || secretRecebido !== SECRET_CORRETO) {
+      return NextResponse.json({ error: "Secret inválido" }, { status: 401 });
+    }
+
+    const data = await req.json();
     const { txid, value, status } = data;
 
     if (!txid || !value) {
       return NextResponse.json({ error: "Callback inválido" }, { status: 400 });
     }
 
-    // Processa somente quando estiver aprovado/pago
-    if (status !== "approved") {
+    // Processa somente se estiver aprovado
+    if (status !== "approved" && status !== "paid" && status !== "billing.paid") {
       return NextResponse.json({ status: "ignorado" });
     }
 
-    // UID do usuário — foi enviado no txid
+    // UID do usuário — veio dentro do txid
     const uid = txid.split("_")[0];
 
     const userRef = doc(db, "users", uid);
@@ -34,7 +44,7 @@ export async function POST(req) {
       return NextResponse.json({ error: "Usuário não encontrado" }, { status: 404 });
     }
 
-    // Evitar duplicação de créditos
+    // Verificar duplicação
     const historicoRef = doc(db, "pagamentos", txid);
     const historicoSnap = await getDoc(historicoRef);
 
@@ -42,14 +52,13 @@ export async function POST(req) {
       return NextResponse.json({ status: "duplicado" });
     }
 
-    // Créditos adicionados = valor pago
     const creditosAdicionados = Number(value);
 
     await updateDoc(userRef, {
       creditos: (userSnap.data().creditos || 0) + creditosAdicionados,
     });
 
-    // Salvar histórico do pagamento
+    // Salvar histórico
     await setDoc(historicoRef, {
       uid,
       txid,
@@ -61,7 +70,7 @@ export async function POST(req) {
     return NextResponse.json({ status: "ok" });
   } catch (err) {
     return NextResponse.json(
-      { error: "Erro ao processar callback", details: err.message },
+      { error: "Erro no callback", details: err.message },
       { status: 500 }
     );
   }
