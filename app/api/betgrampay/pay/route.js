@@ -23,12 +23,12 @@ export async function POST(req) {
 
     const metadata = pixQrCode.metadata || {};
     const uid = metadata.uid;
-    const valorMeta = metadata.valor;
+    const valorPago = Number(metadata.valor); // valor em reais
 
     console.log("📦 METADATA RECEBIDA:", metadata);
 
     // 3. Validar UID e valor
-    if (!uid || valorMeta == null) {
+    if (!uid || isNaN(valorPago)) {
       console.log("❌ ERRO: UID ou valor não vieram no metadata");
       return NextResponse.json(
         { error: true, message: "UID ou valor ausente em metadata" },
@@ -36,10 +36,30 @@ export async function POST(req) {
       );
     }
 
-    const creditos = Number(valorMeta);
-    console.log(`💰 Vai creditar +${creditos} créditos para UID: ${uid}`);
+    // 🎯 4. TABELA DE CONVERSÃO (Plano → Créditos)
+    let creditos = 0;
 
-    // 4. Atualizar no Firestore
+    const tabela = {
+      10: 100,
+      20: 230,
+      30: 360,
+      50: 650,
+      100: 1400,
+    };
+
+    creditos = tabela[valorPago] || 0;
+
+    if (creditos === 0) {
+      console.log("⚠️ Valor não encontrado na tabela:", valorPago);
+      return NextResponse.json(
+        { error: true, message: "Valor inválido para tabela de créditos" },
+        { status: 400 }
+      );
+    }
+
+    console.log(`💰 Vai creditar ${creditos} créditos para UID: ${uid}`);
+
+    // 5. Atualizar no Firestore
     const userRef = doc(db, "users", uid);
 
     await updateDoc(userRef, {
@@ -49,7 +69,7 @@ export async function POST(req) {
 
     console.log(`✅ Créditos adicionados com sucesso para ${uid}`);
 
-    // 5. Resposta final para o Abacatepay
+    // 6. Resposta final para o Abacatepay
     return NextResponse.json({ ok: true });
 
   } catch (e) {
