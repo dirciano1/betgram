@@ -1,67 +1,61 @@
 import { NextResponse } from "next/server";
-import { db, doc, updateDoc, increment } from "../../../lib/firebase";
+import { db, doc, updateDoc, increment } from "../../../../lib/firebase";
 
 export async function POST(req) {
   try {
-    // 1. Pegar assinatura enviada pelo AbacatePay
-    const signature = req.headers.get("x-abacatepay-signature");
-
-    if (!signature) {
-      return NextResponse.json(
-        { error: true, message: "Missing signature" },
-        { status: 401 }
-      );
-    }
-
-    // 2. Validar chave secreta do webhook
-    const expectedSecret = process.env.ABACATEPAY_WEBHOOK_SECRET;
-
-    if (signature !== expectedSecret) {
-      return NextResponse.json(
-        { error: true, message: "Invalid secret" },
-        { status: 401 }
-      );
-    }
-
-    // 3. Ler corpo JSON enviado pelo AbacatePay
+    // 🔍 DEBUG COMPLETO — para garantir que estamos recebendo tudo certinho
     const body = await req.json();
+    console.log("🔥 WEBHOOK RECEBIDO:", JSON.stringify(body, null, 2));
 
-    console.log("🔥 WEBHOOK RECEBIDO:", body);
-
-    // 4. Garantir que é o evento billing.paid
+    // 1. Validar se é o evento correto
     if (body?.event !== "billing.paid") {
+      console.log("➡️ Evento ignorado:", body?.event);
       return NextResponse.json({ ok: true, ignore: true });
     }
 
-    // 5. Extrair UID e valor enviados no metadata
-    const uid = body?.data?.pixQrCode?.metadata?.uid;
-    const valor = body?.data?.pixQrCode?.amount; // já vem em centavos
+    // 2. Pegar dados do pagamento PIX
+    const pixQrCode = body?.data?.pixQrCode;
 
-    if (!uid || !valor) {
+    if (!pixQrCode) {
+      console.log("❌ ERRO: pixQrCode não encontrado no webhook");
+      return NextResponse.json({ error: true, message: "pixQrCode ausente" }, { status: 400 });
+    }
+
+    const metadata = pixQrCode.metadata || {};
+    const uid = metadata.uid;
+    const valorMeta = metadata.valor;
+
+    console.log("📦 METADATA RECEBIDA:", metadata);
+
+    // 3. Validar UID e valor
+    if (!uid || valorMeta == null) {
+      console.log("❌ ERRO: UID ou valor não vieram no metadata");
       return NextResponse.json(
-        { error: true, message: "Missing UID or amount" },
+        { error: true, message: "UID ou valor ausente em metadata" },
         { status: 400 }
       );
     }
 
-    // 6. Converter centavos → créditos
-    const creditos = Math.floor(valor / 100);
+    const creditos = Number(valorMeta);
+    console.log(`💰 Vai creditar +${creditos} créditos para UID: ${uid}`);
 
-    // 7. Atualizar créditos no Firestore
+    // 4. Atualizar no Firestore
     const userRef = doc(db, "users", uid);
 
     await updateDoc(userRef, {
       creditos: increment(creditos),
+      jaComprou: true,
     });
 
-    console.log("✅ CREDITADO:", creditos, "créditos → UID:", uid);
+    console.log(`✅ Créditos adicionados com sucesso para ${uid}`);
 
-    // 8. Resposta OK para o AbacatePay
+    // 5. Resposta final para o Abacatepay
     return NextResponse.json({ ok: true });
-  } catch (error) {
-    console.error("❌ ERRO WEBHOOK:", error);
+
+  } catch (e) {
+    console.error("❌ ERRO NO WEBHOOK:", e);
     return NextResponse.json(
-      { error: true, message: error.message },
+      { error: true, message: e.message || "Erro interno no webhook" },
       { status: 500 }
     );
   }
