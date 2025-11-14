@@ -5,13 +5,14 @@ export async function POST(req) {
     const { uid, valor } = await req.json();
 
     const payload = {
-      amount: Math.round(valor * 100), 
+      amount: Math.round(valor * 100),
       description: `Créditos Betgram - Usuário ${uid}`,
       methods: ["PIX"],
       frequency: "ONE_TIME"
     };
 
-    const res = await fetch("https://api.abacatepay.com/v1/billing/create", {
+    // URL CORRETA PARA MODO DEV DA ABACATEPAY
+    const res = await fetch("https://api.dev.abacatepay.com/billing/create", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -31,7 +32,6 @@ export async function POST(req) {
       );
     }
 
-    // CAMPOS QUE O ABACATEPAY RETORNA
     return NextResponse.json({
       txid: result.data.id,
       qrcode: result.data.qrCodeImage,
