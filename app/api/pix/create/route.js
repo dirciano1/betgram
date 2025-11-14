@@ -8,29 +8,35 @@ export async function POST(req) {
       return NextResponse.json({ error: "Dados inválidos." }, { status: 400 });
     }
 
-    // API Key (modo teste)
     const API_KEY = process.env.ABACATEPAY_KEY_TESTE || "abc_dev_UarpsjrXmT4mwr04EkECbbZH";
 
-    const resposta = await fetch("https://api.abacatepay.com/v1/pix/create", {
+    const response = await fetch("https://api.abacatepay.com/v1/pix/create", {
       method: "POST",
       headers: {
+        Authorization: API_KEY,
         "Content-Type": "application/json",
-        Authorization: `${API_KEY}`,
       },
       body: JSON.stringify({
         txid: `${uid}_${Date.now()}`,
-        value: Number(valor),
-        callbackUrl: "https://betgram.com.br/api/betgrampay/pay",
-        info: `Créditos BetGram - user: ${uid}`,
+        value: Number(valor),   // 👈 IMPORTANTE
+        callbackUrl: "https://betgram.com.br/api/betgrampay/pay?secret=betgrampix_4b2fA9x7Qw",
+        info: `créditos Betgram / user: ${uid}`,
       }),
     });
 
-    const data = await resposta.json();
+    const data = await response.json();
 
-    return NextResponse.json(data);
-  } catch (err) {
+    console.log("RETORNO ABACATEPAY:", data);
+
+    return NextResponse.json({
+      txid: data.txid,
+      qrcode: data.qrcode,
+      qrcode_text: data.qrcode_text,
+    });
+
+  } catch (error) {
     return NextResponse.json(
-      { error: "Erro ao gerar PIX", details: err.message },
+      { error: "Erro ao gerar PIX", details: error.message },
       { status: 500 }
     );
   }
