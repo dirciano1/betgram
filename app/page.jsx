@@ -22,7 +22,7 @@ import {
 } from "../lib/firebase";
 import { gerarAnalise } from "../lib/aiClient";
 import "./globals.css";
-
+import { onSnapshot } from "firebase/firestore";
 import BetgramPayModal from "./components/BetgramPayModal";
 import { capturarIndicadorURL } from "../lib/utils";
 
@@ -588,3 +588,4 @@ export default function HomePage() {
     </main>
   );
 }
+
