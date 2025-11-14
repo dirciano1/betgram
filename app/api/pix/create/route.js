@@ -4,55 +4,37 @@ export async function POST(req) {
   try {
     const { uid, valor } = await req.json();
 
-    if (!uid || !valor) {
-      return NextResponse.json(
-        { error: "Dados inválidos." },
-        { status: 400 }
-      );
-    }
+    const payload = {
+      amount: Math.round(valor * 100), // 10.00 => 1000 centavos
+      description: `Créditos Betgram - Usuário ${uid}`,
+      methods: ["PIX"],
+      frequency: "ONE_TIME"
+    };
 
-    const API_KEY =
-      process.env.ABACATEPAY_KEY_TESTE ||
-      "abc_dev_UarpsjrXmT4mwr04EkECbbZH";
-
-    // 🚀 ENDPOINT CORRETO PARA PAINEL "COBRANÇAS"
-    const resposta = await fetch("https://api.abacatepay.com/v1/billing", {
+    const res = await fetch("https://api.abacatepay.com/billing/create", {
       method: "POST",
       headers: {
-        Authorization: API_KEY,
         "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.ABACATEPAY_SECRET}`
       },
-      body: JSON.stringify({
-        description: "Créditos BetGram",
-        value: Number(valor),
-        txid: `${uid}_${Date.now()}`,
-        callbackUrl:
-          "https://betgram.com.br/api/betgrampay/pay?secret=betgrampix_4b2fA9x7Qw",
-        pix: true // 👈 obrigatório para gerar QR
-      }),
+      body: JSON.stringify(payload)
     });
 
-    const data = await resposta.json();
-    console.log("RETORNO ABACATEPAY:", data);
+    const data = await res.json();
 
-    if (!data || data.error) {
-      return NextResponse.json(
-        { error: "Erro ao criar cobrança", detalhes: data },
-        { status: 500 }
-      );
+    if (data.error) {
+      console.error("ERRO ABACATEPAY:", data.error);
+      return NextResponse.json({ error: true, message: data.error }, { status: 500 });
     }
 
-    // Estrutura do retorno do AbacatePay (painel Cobranças)
     return NextResponse.json({
-      txid: data.txid,
-      qrcode: data.pix?.qrcode,
-      qrcode_text: data.pix?.qrcode_text,
+      txid: data.data.id,
+      qrcode: data.data.qrCodeImage,
+      qrcode_text: data.data.qrCodeText
     });
-  } catch (err) {
-    console.error("ERRO AO GERAR PIX:", err);
-    return NextResponse.json(
-      { error: "Erro inesperado", detalhes: err.message },
-      { status: 500 }
-    );
+
+  } catch (e) {
+    console.error("ERRO NO SERVIDOR:", e);
+    return NextResponse.json({ error: true, message: e.message }, { status: 500 });
   }
 }
