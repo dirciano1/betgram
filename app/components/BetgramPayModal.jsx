@@ -180,8 +180,9 @@ export default function BetgramPayModal({ onClose, user }) {
                 <button onClick={onClose} style={buttonCancelStyle}>
                   Cancelar
                 </button>
-                <button onClick={onClose} style={buttonCancelStyle}>
-                  Já Fiz o Pagamento
+                <button
+                onClick={onClose} style={{...buttonCancelStyle,background: "linear-gradient(90deg, #3b82f6, #2563eb)", // azul igual ao botão de indicar border: "1px solid #60a5fa",color: "#fff",fontWeight: 700,}}>
+                Já Fiz o Pagamento
                 </button>
               </>
             )}
@@ -201,3 +202,4 @@ export default function BetgramPayModal({ onClose, user }) {
     </div>
   );
 }
+
