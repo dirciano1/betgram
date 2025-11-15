@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { db, doc, onSnapshot } from "../../../lib/firebase";
+import { db, doc, onSnapshot } from "../../lib/firebase";
 
 export default function BetgramPayModal({ user, qrCodeBase64, valor, onClose }) {
   const [statusPagamento, setStatusPagamento] = useState("aguardando");
@@ -132,4 +132,5 @@ export default function BetgramPayModal({ user, qrCodeBase64, valor, onClose }) 
     </div>
   );
 }
+
 
