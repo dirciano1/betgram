@@ -22,7 +22,7 @@ import {
 } from "../lib/firebase";
 import { gerarAnalise } from "../lib/aiClient";
 import "./globals.css";
-import { onSnapshot } from "firebase/firestore";
+
 import BetgramPayModal from "./components/BetgramPayModal";
 import { capturarIndicadorURL } from "../lib/utils";
 
@@ -174,13 +174,14 @@ export default function HomePage() {
   const intervalo = setInterval(() => {
     setCarregandoFrase(frases[i]);
 
+    // 👉 quando chegar no final, para o loop automático
     if (i === frases.length - 1) {
       clearInterval(intervalo);
       return;
     }
 
     i++;
-  }, 5000);
+  }, 5000); // tempo entre cada frase
 
   return () => clearInterval(intervalo);
 }, [carregando]);
@@ -312,6 +313,7 @@ export default function HomePage() {
       .replace(/\n/g, "<br>");
   }
 
+  // === Modal “Indique um amigo” ===
   const [showIndiqueModal, setShowIndiqueModal] = useState(false);
   const linkIndicacao = `${typeof window !== "undefined" ? window.location.origin : ""}/?ref=${user?.uid || ""}`;
 
@@ -357,6 +359,7 @@ export default function HomePage() {
     );
   }
 
+  // === Tela inicial de login ===
   if (!user) {
     return (
       <main style={{
@@ -392,6 +395,7 @@ export default function HomePage() {
     );
   }
 
+  // === Painel principal ===
   const primeiroNome = user?.displayName?.split(" ")[0] || "Usuário";
   return (
     <main style={{
@@ -409,6 +413,7 @@ export default function HomePage() {
         border: "1px solid rgba(34,197,94,0.25)", borderRadius: "16px",
         boxShadow: "0 0 25px rgba(34,197,94,0.08)", padding: "10px", backdropFilter: "blur(8px)",
       }}>
+        {/* Cabeçalho */}
         <div style={{ marginBottom: "25px" }}>
           <div style={{
             display:"flex",alignItems:"center",justifyContent:"space-between",gap:"10px",flexWrap:"nowrap"
@@ -422,11 +427,13 @@ export default function HomePage() {
               {dadosUser?.creditos ?? "0"}</span>
             </div>
           </div>
-                  <button onClick={handleLogout} style={{
+
+          <button onClick={handleLogout} style={{
             background:"rgba(239,68,68,0.15)",border:"1px solid #ef444455",borderRadius:"8px",
             padding:"8px 14px",color:"#f87171",fontWeight:600,cursor:"pointer",marginTop:"10px",width:"100%"
           }}>🚪 Sair</button>
 
+          {/* Botões principais */}
           <div style={{
             display:"flex",flexWrap:"wrap",gap:"10px",marginTop:"12px",justifyContent:"center",
           }}>
@@ -440,9 +447,11 @@ export default function HomePage() {
               border:"1px solid #22c55e55",borderRadius:"8px",padding:"8px",color:"#22c55e",
               fontWeight:600,cursor:"pointer"
             }}>➕ Adicionar Créditos</button>
+            
           </div>
         </div>
 
+        {/* Formulário / Resultado / Histórico */}
         {!mostraHistorico && !showBetgramPayModal && (
           !panelFlip ? (
             <>
@@ -450,69 +459,65 @@ export default function HomePage() {
               <select style={inputStyle} value={esporte} onChange={(e) => setEsporte(e.target.value)}>
                 <option value="futebol">⚽ Futebol</option>
                 <option value="basquete">🏀 Basquete</option>
-                <option value="tenis">🎾 Tênis</option>
-                <option value="volei">🏐 Vôlei</option>
-                <option value="mma">🥊 MMA / UFC</option>
-                <option value="boxe">🥊 Boxe</option>
-                <option value="eSports">🎮 eSports (CS2, LoL, Valorant...)</option>
-                <option value="handebol">🤾 Handebol</option>
-                <option value="futsal">⚽ Futsal</option>
-                <option value="beisebol">⚾ Beisebol (MLB)</option>
-                <option value="rugby">🏉 Rugby</option>
-                <option value="hoquei">🏒 Hóquei no Gelo</option>
-                <option value="corrida">🏎️ Corridas / Fórmula 1</option>
-                <option value="ciclismo">🚴 Ciclismo</option>
-                <option value="golfe">🏌️ Golfe</option>
-                <option value="criquete">🏏 Críquete</option>
-                <option value="snooker">🎱 Snooker / Bilhar</option>
-                <option value="dardos">🎯 Dardos</option>
-                <option value="política">🏛️ Política</option>
-                <option value="entretenimento">🎬 Entretenimento</option>
+                  <option value="tenis">🎾 Tênis</option>
+                  <option value="volei">🏐 Vôlei</option>
+                  <option value="mma">🥊 MMA / UFC</option>
+                  <option value="boxe">🥊 Boxe</option>
+                  <option value="eSports">🎮 eSports (CS2, LoL, Valorant...)</option>
+                  <option value="handebol">🤾 Handebol</option>
+                  <option value="futsal">⚽ Futsal</option>
+                  <option value="beisebol">⚾ Beisebol (MLB)</option>
+                  <option value="rugby">🏉 Rugby</option>
+                  <option value="hoquei">🏒 Hóquei no Gelo</option>
+                  <option value="corrida">🏎️ Corridas / Fórmula 1</option>
+                  <option value="ciclismo">🚴 Ciclismo</option>
+                  <option value="golfe">🏌️ Golfe</option>
+                  <option value="criquete">🏏 Críquete</option>
+                  <option value="snooker">🎱 Snooker / Bilhar</option>
+                  <option value="dardos">🎯 Dardos</option>
+                  <option value="política">🏛️ Política</option>
+                  <option value="entretenimento">🎬 Entretenimento</option>
               </select>
-
               <label>🏆 Competição:</label>
               <input style={inputStyle} value={competicao} onChange={(e) => setCompeticao(e.target.value)} placeholder="Ex: Brasileirão, NBA..."/>
-
               <label>🎮 Confronto:</label>
               <input style={inputStyle} value={timeA} onChange={(e) => setTimeA(e.target.value)} placeholder="Time A"/>
               <input style={inputStyle} value={timeB} onChange={(e) => setTimeB(e.target.value)} placeholder="Time B"/>
-
               <label>🎯 Mercado (opcional):</label>
               <input style={inputStyle} value={mercado} onChange={(e) => setMercado(e.target.value)} placeholder="Ex: Over 2.5"/>
-
               {mercado && (
                 <>
                   <label>💰 Odd (opcional):</label>
                   <input style={inputStyle} type="number" value={odd} onChange={(e) => setOdd(e.target.value)} placeholder="Ex: 1.85"/>
                 </>
               )}
-
               <button
-                onClick={handleAnalise}
-                disabled={carregando}
-                className={carregando ? "botao-loading" : ""}
-                style={{
-                  width: "100%",
-                  padding: "12px",
-                  borderRadius: "12px",
-                  border: "none",
-                  background: carregando ? "#15803d" : "linear-gradient(90deg,#22c55e,#16a34a)",
-                  color: "#fff",
-                  fontWeight: "700",
-                  fontSize: "1.2rem",
-                  cursor: carregando ? "not-allowed" : "pointer",
-                  marginTop: "10px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  gap: "10px",
-                  opacity: carregando ? 0.9 : 1,
-                  transition: "0.2s",
-                }}
-              >
-                {carregando && <div className="spinner"></div>}
-                {carregando ? carregandoFrase : "Analisar"}
-              </button>
+  onClick={handleAnalise}
+  disabled={carregando}
+  className={carregando ? "botao-loading" : ""}
+  style={{
+    width: "100%",
+    padding: "12px",
+    borderRadius: "12px",
+    border: "none",
+    background: carregando ? "#15803d" : "linear-gradient(90deg,#22c55e,#16a34a)",
+    color: "#fff",
+    fontWeight: "700",
+    fontSize: "1.2rem",
+    cursor: carregando ? "not-allowed" : "pointer",
+    marginTop: "10px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "10px",
+    opacity: carregando ? 0.9 : 1,
+    transition: "0.2s",
+  }}
+>
+  {carregando && <div className="spinner"></div>}
+  {carregando ? carregandoFrase : "Analisar"}
+</button>
+
             </>
           ) : (
             <>
@@ -538,7 +543,6 @@ export default function HomePage() {
                 padding:"6px 10px",color:"#f87171"
               }}>❌ Fechar</button>
             </div>
-
             <div style={{
               maxHeight:"400px",overflowY:"auto",background:"rgba(11,19,36,0.6)",
               borderRadius:"10px",padding:"15px"
@@ -558,7 +562,7 @@ export default function HomePage() {
                       marginTop:"10px",background:"rgba(11,19,36,0.75)",border:"1px solid rgba(34,197,94,0.2)",
                       borderRadius:"8px",padding:"10px 12px",color:"#e5e7eb",fontSize:"0.95rem",lineHeight:"1.5",
                       maxHeight:"200px",overflowY:"auto"
-                    }} dangerouslySetInnerHTML={{__html:formatAnaliseTexto(h.resposta)}} />
+                    }} dangerouslySetInnerHTML={{__html:formatAnaliseTexto(h.resposta)}}/>
                   )}
                 </div>
               ))}
@@ -585,4 +589,4 @@ export default function HomePage() {
   );
 }
 
-        
+
