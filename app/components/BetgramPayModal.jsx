@@ -175,9 +175,13 @@ export default function BetgramPayModal({ onClose, user }) {
                 </button>
 
                 <p style={{ color: "#ccc" }}>Aguardando pagamento...</p>
+                
 
                 <button onClick={onClose} style={buttonCancelStyle}>
                   Cancelar
+                </button>
+                <button onClick={onClose} style={buttonCancelStyle}>
+                  Já Fiz o Pagamento
                 </button>
               </>
             )}
