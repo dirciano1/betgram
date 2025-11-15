@@ -1,24 +1,25 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { db, doc, onSnapshot } from "../../lib/firebase";
 
-export default function BetgramPayModal({ user, qrCodeBase64, valor, onClose }) {
-  const [statusPagamento, setStatusPagamento] = useState("aguardando");
+export default function BetgramPayModal({ user, onClose }) {
+  const [planoSelecionado, setPlanoSelecionado] = useState(null);
+  const [qrCodeBase64, setQrCodeBase64] = useState("");
+  const [statusPagamento, setStatusPagamento] = useState("inicial");
 
+  // 🔥 ESCUTA EM TEMPO REAL PARA DETECTAR PAGAMENTO
   useEffect(() => {
     if (!user) return;
 
-    const userRef = doc(db, "users", user.uid);
-
-    // 🔥 Escuta em tempo real — funciona mesmo com modal aberto
-    const unsub = onSnapshot(userRef, (snap) => {
+    const ref = doc(db, "users", user.uid);
+    const unsub = onSnapshot(ref, (snap) => {
       if (!snap.exists()) return;
-      const data = snap.data();
 
-      // Se os créditos aumentarem → pagamento confirmado
-      if (data.creditos > (user.creditos || 0)) {
-        console.log("🔥 Pagamento confirmado Automaticamente!");
+      const dados = snap.data();
+
+      // Se o crédito aumentou → pagamento confirmado
+      if (dados.creditos > (user.creditos || 0)) {
         setStatusPagamento("confirmado");
       }
     });
@@ -26,72 +27,147 @@ export default function BetgramPayModal({ user, qrCodeBase64, valor, onClose }) 
     return () => unsub();
   }, [user]);
 
+  async function gerarPagamento() {
+    if (!planoSelecionado) return alert("Selecione um plano");
+
+    setStatusPagamento("gerando");
+
+    try {
+      const res = await fetch("/api/pix/create", {
+        method: "POST",
+        body: JSON.stringify({
+          uid: user.uid,
+          valor: planoSelecionado.valor,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!data.qrCodeBase64) {
+        alert("Erro ao gerar pagamento.");
+        return;
+      }
+
+      setQrCodeBase64(data.qrCodeBase64);
+      setStatusPagamento("aguardando");
+    } catch (e) {
+      console.error(e);
+      alert("Erro ao gerar pagamento.");
+    }
+  }
+
+  // Estilos
+  const fundo = {
+    position: "fixed",
+    inset: 0,
+    background: "rgba(0,0,0,0.75)",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 9999,
+  };
+
+  const box = {
+    background: "#0b1324",
+    padding: "30px",
+    borderRadius: "16px",
+    width: "90%",
+    maxWidth: "420px",
+    border: "1px solid rgba(34,197,94,0.3)",
+    boxShadow: "0 0 20px rgba(34,197,94,0.2)",
+    textAlign: "center",
+  };
+
+  const botao = {
+    width: "100%",
+    padding: "12px",
+    borderRadius: "10px",
+    border: "none",
+    fontWeight: "700",
+    cursor: "pointer",
+    marginTop: "10px",
+  };
+
+  const planos = [
+    { creditos: 10, valor: 10 },
+    { creditos: 25, valor: 20 },
+    { creditos: 70, valor: 50 },
+    { creditos: 150, valor: 99 },
+  ];
+
   return (
-    <div
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
-        background: "rgba(0,0,0,0.7)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 9999,
-      }}
-    >
-      <div
-        style={{
-          width: "90%",
-          maxWidth: "420px",
-          background: "#111827",
-          padding: "24px",
-          borderRadius: "14px",
-          border: "1px solid rgba(255,255,255,0.1)",
-          textAlign: "center",
-          color: "#fff",
-          boxShadow: "0 0 20px rgba(0,0,0,0.4)",
-        }}
-      >
-        {statusPagamento === "aguardando" && (
+    <div style={fundo}>
+      <div style={box}>
+        {/* ================================ */}
+        {/* ESTADO: PAGAMENTO CONFIRMADO */}
+        {/* ================================ */}
+        {statusPagamento === "confirmado" && (
           <>
-            <h2 style={{ fontSize: "1.3rem", marginBottom: "8px" }}>Finalizar Pagamento</h2>
-
-            <p style={{ opacity: 0.8, marginBottom: "14px" }}>
-              Escaneie o QR Code para pagar{" "}
-              <strong style={{ color: "#4ade80" }}>R$ {valor}</strong>
-            </p>
-
-            <img
-              src={`data:image/png;base64,${qrCodeBase64}`}
-              alt="QR Code PIX"
-              style={{
-                width: "200px",
-                height: "200px",
-                margin: "0 auto",
-                borderRadius: "8px",
-                boxShadow: "0 0 12px rgba(0,0,0,0.6)",
-              }}
-            />
-
-            <p style={{ fontSize: "0.9rem", marginTop: "12px", opacity: 0.8 }}>
-              Assim que o pagamento for confirmado, seus créditos serão liberados automaticamente.
+            <h2 style={{ color: "#22c55e" }}>Pagamento Confirmado!</h2>
+            <p style={{ color: "#ccc" }}>
+              Seus créditos foram liberados automaticamente ✔
             </p>
 
             <button
               onClick={onClose}
+              style={{ ...botao, background: "#22c55e", color: "#fff" }}
+            >
+              Fechar
+            </button>
+          </>
+        )}
+
+        {/* ================================ */}
+        {/* ESTADO INICIAL → ESCOLHA DE PLANO */}
+        {/* ================================ */}
+        {statusPagamento === "inicial" && (
+          <>
+            <h2 style={{ color: "#22c55e" }}>Adicionar Créditos</h2>
+            <p style={{ color: "#ccc", marginBottom: "10px" }}>
+              Escolha um plano para gerar o pagamento PIX.
+            </p>
+
+            {planos.map((p, i) => (
+              <div
+                key={i}
+                onClick={() => setPlanoSelecionado(p)}
+                style={{
+                  padding: "10px",
+                  borderRadius: "10px",
+                  margin: "8px 0",
+                  cursor: "pointer",
+                  border:
+                    planoSelecionado?.valor === p.valor
+                      ? "2px solid #22c55e"
+                      : "1px solid rgba(255,255,255,0.1)",
+                  background:
+                    planoSelecionado?.valor === p.valor
+                      ? "rgba(34,197,94,0.15)"
+                      : "rgba(255,255,255,0.05)",
+                }}
+              >
+                <b style={{ color: "#fff" }}>{p.creditos} créditos</b>
+                <div style={{ color: "#22c55e" }}>R$ {p.valor}</div>
+              </div>
+            ))}
+
+            <button
+              onClick={gerarPagamento}
               style={{
-                marginTop: "18px",
-                width: "100%",
-                padding: "12px",
-                background: "#ef4444",
-                borderRadius: "8px",
-                border: "none",
+                ...botao,
+                background: "#22c55e",
                 color: "#fff",
-                fontSize: "1rem",
-                cursor: "pointer",
-                fontWeight: "600",
+              }}
+            >
+              Gerar Pagamento
+            </button>
+
+            <button
+              onClick={onClose}
+              style={{
+                ...botao,
+                background: "rgba(239,68,68,0.2)",
+                color: "#f87171",
               }}
             >
               Cancelar
@@ -99,32 +175,60 @@ export default function BetgramPayModal({ user, qrCodeBase64, valor, onClose }) 
           </>
         )}
 
-        {statusPagamento === "confirmado" && (
+        {/* ================================ */}
+        {/* ESTADO: GERANDO PAGAMENTO */}
+        {/* ================================ */}
+        {statusPagamento === "gerando" && (
           <>
-            <h2 style={{ fontSize: "1.5rem", marginBottom: "10px", color: "#4ade80" }}>
-              Pagamento Confirmado!
-            </h2>
+            <h2 style={{ color: "#22c55e" }}>Gerando pagamento…</h2>
+            <p style={{ color: "#ccc" }}>Aguarde um momento…</p>
+          </>
+        )}
 
-            <p style={{ opacity: 0.9, marginBottom: "20px" }}>
-              Seus créditos foram liberados automaticamente ✔
+        {/* ================================ */}
+        {/* ESTADO: AGUARDANDO PAGAMENTO */}
+        {/* ================================ */}
+        {statusPagamento === "aguardando" && (
+          <>
+            <h2 style={{ color: "#22c55e" }}>Aguardando Pagamento…</h2>
+            <p style={{ color: "#ccc" }}>
+              Escaneie o QR Code abaixo para pagar com PIX.
             </p>
+
+            {qrCodeBase64 && (
+              <img
+                src={`data:image/png;base64,${qrCodeBase64}`}
+                alt="QR Code"
+                style={{
+                  width: "220px",
+                  height: "220px",
+                  margin: "15px auto",
+                  display: "block",
+                  borderRadius: "10px",
+                }}
+              />
+            )}
+
+            <button
+              onClick={() => setStatusPagamento("gerando")}
+              style={{
+                ...botao,
+                background: "rgba(14,165,233,0.2)",
+                color: "#38bdf8",
+              }}
+            >
+              Já paguei
+            </button>
 
             <button
               onClick={onClose}
               style={{
-                marginTop: "12px",
-                width: "100%",
-                padding: "12px",
-                background: "#22c55e",
-                borderRadius: "8px",
-                border: "none",
-                color: "#fff",
-                fontSize: "1rem",
-                cursor: "pointer",
-                fontWeight: "600",
+                ...botao,
+                background: "rgba(239,68,68,0.2)",
+                color: "#f87171",
               }}
             >
-              Fechar
+              Cancelar
             </button>
           </>
         )}
@@ -132,5 +236,3 @@ export default function BetgramPayModal({ user, qrCodeBase64, valor, onClose }) 
     </div>
   );
 }
-
-
