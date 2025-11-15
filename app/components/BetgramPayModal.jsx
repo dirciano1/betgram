@@ -1,234 +1,195 @@
 "use client";
-
 import { useState, useEffect } from "react";
-import { db, doc, onSnapshot } from "../../lib/firebase";
+import IndiqueModal from "./IndiqueModal";
 
-export default function BetgramPayModal({ user, onClose }) {
-  const [planoSelecionado, setPlanoSelecionado] = useState(null);
-  const [qrCodeBase64, setQrCodeBase64] = useState("");
-  const [statusPagamento, setStatusPagamento] = useState("inicial");
+const modalBackdropStyle = {
+  position: "fixed",
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  background: "rgba(0,0,0,0.7)",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  zIndex: 1000,
+};
 
-  // 🔥 ESCUTA EM TEMPO REAL PARA DETECTAR PAGAMENTO
-  useEffect(() => {
-    if (!user) return;
+const modalContentStyle = {
+  background: "#111827",
+  border: "2px solid #22c55e",
+  borderRadius: "16px",
+  padding: "30px",
+  width: "90%",
+  maxWidth: "350px",
+  textAlign: "center",
+  boxShadow: "0 0 30px rgba(34,197,94,0.3)",
+};
 
-    const ref = doc(db, "users", user.uid);
-    const unsub = onSnapshot(ref, (snap) => {
-      if (!snap.exists()) return;
+const buttonConfirmStyle = {
+  background: "linear-gradient(90deg, #22c55e, #16a34a)",
+  border: "none",
+  color: "#fff",
+  fontWeight: 700,
+  borderRadius: "8px",
+  padding: "12px 20px",
+  cursor: "pointer",
+  marginTop: "15px",
+  width: "100%",
+};
 
-      const dados = snap.data();
+const buttonCancelStyle = {
+  background: "rgba(239,68,68,0.15)",
+  border: "1px solid #ef444455",
+  color: "#f87171",
+  fontWeight: 600,
+  borderRadius: "8px",
+  padding: "12px 20px",
+  cursor: "pointer",
+  marginTop: "15px",
+  width: "100%",
+};
 
-      // Se o crédito aumentou → pagamento confirmado
-      if (dados.creditos > (user.creditos || 0)) {
-        setStatusPagamento("confirmado");
-      }
-    });
+export default function BetgramPayModal({ onClose, user }) {
+  const [etapa, setEtapa] = useState("planos");
+  const [qr, setQr] = useState(null);
+  const [txid, setTxid] = useState(null);
+  const [carregando, setCarregando] = useState(false);
+  const [showIndique, setShowIndique] = useState(false);
 
-    return () => unsub();
-  }, [user]);
-
-  async function gerarPagamento() {
-    if (!planoSelecionado) return alert("Selecione um plano");
-
-    setStatusPagamento("gerando");
-
+  async function gerarPix(valor) {
     try {
+      setCarregando(true);
       const res = await fetch("/api/pix/create", {
         method: "POST",
-        body: JSON.stringify({
-          uid: user.uid,
-          valor: planoSelecionado.valor,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ uid: user.uid, valor }),
       });
 
       const data = await res.json();
 
-      if (!data.qrCodeBase64) {
-        alert("Erro ao gerar pagamento.");
-        return;
-      }
+      setTxid(data.txid);
 
-      setQrCodeBase64(data.qrCodeBase64);
-      setStatusPagamento("aguardando");
+      // 👇 AJUSTE PARA ABACATEPAY
+      setQr({
+        img: data.qrcode,
+        copia: data.qrcode_text
+      });
+
+      setEtapa("pagamento");
     } catch (e) {
+      alert("Erro ao gerar PIX.");
       console.error(e);
-      alert("Erro ao gerar pagamento.");
+    } finally {
+      setCarregando(false);
     }
   }
 
-  // Estilos
-  const fundo = {
-    position: "fixed",
-    inset: 0,
-    background: "rgba(0,0,0,0.75)",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 9999,
-  };
+  useEffect(() => {
+    if (!txid) return;
 
-  const box = {
-    background: "#0b1324",
-    padding: "30px",
-    borderRadius: "16px",
-    width: "90%",
-    maxWidth: "420px",
-    border: "1px solid rgba(34,197,94,0.3)",
-    boxShadow: "0 0 20px rgba(34,197,94,0.2)",
-    textAlign: "center",
-  };
+    const i = setInterval(async () => {
+      const r = await fetch(`/api/pix/status?txid=${txid}`);
+      const d = await r.json();
 
-  const botao = {
-    width: "100%",
-    padding: "12px",
-    borderRadius: "10px",
-    border: "none",
-    fontWeight: "700",
-    cursor: "pointer",
-    marginTop: "10px",
-  };
+      if (d.status === "pago") {
+        setEtapa("pago");
+        clearInterval(i);
+      }
+    }, 3000);
 
-  const planos = [
-    { creditos: 10, valor: 10 },
-    { creditos: 25, valor: 20 },
-    { creditos: 70, valor: 50 },
-    { creditos: 150, valor: 99 },
-  ];
+    return () => clearInterval(i);
+  }, [txid]);
+
+  if (showIndique) {
+    return <IndiqueModal onClose={() => setShowIndique(false)} user={user} />;
+  }
 
   return (
-    <div style={fundo}>
-      <div style={box}>
-        {/* ================================ */}
-        {/* ESTADO: PAGAMENTO CONFIRMADO */}
-        {/* ================================ */}
-        {statusPagamento === "confirmado" && (
+    <div style={modalBackdropStyle}>
+      <div style={modalContentStyle}>
+        {etapa === "planos" && (
           <>
-            <h2 style={{ color: "#22c55e" }}>Pagamento Confirmado!</h2>
-            <p style={{ color: "#ccc" }}>
-              Seus créditos foram liberados automaticamente ✔
-            </p>
+            <h3 style={{ color: "#22c55e" }}>💳 Betgram Pay</h3>
+            <p style={{ color: "#ccc" }}>Escolha um plano de créditos:</p>
 
-            <button
-              onClick={onClose}
-              style={{ ...botao, background: "#22c55e", color: "#fff" }}
-            >
-              Fechar
+            <button style={buttonConfirmStyle} onClick={() => gerarPix(10)}>
+              100 Análises – R$ 10,00
             </button>
-          </>
-        )}
-
-        {/* ================================ */}
-        {/* ESTADO INICIAL → ESCOLHA DE PLANO */}
-        {/* ================================ */}
-        {statusPagamento === "inicial" && (
-          <>
-            <h2 style={{ color: "#22c55e" }}>Adicionar Créditos</h2>
-            <p style={{ color: "#ccc", marginBottom: "10px" }}>
-              Escolha um plano para gerar o pagamento PIX.
-            </p>
-
-            {planos.map((p, i) => (
-              <div
-                key={i}
-                onClick={() => setPlanoSelecionado(p)}
-                style={{
-                  padding: "10px",
-                  borderRadius: "10px",
-                  margin: "8px 0",
-                  cursor: "pointer",
-                  border:
-                    planoSelecionado?.valor === p.valor
-                      ? "2px solid #22c55e"
-                      : "1px solid rgba(255,255,255,0.1)",
-                  background:
-                    planoSelecionado?.valor === p.valor
-                      ? "rgba(34,197,94,0.15)"
-                      : "rgba(255,255,255,0.05)",
-                }}
-              >
-                <b style={{ color: "#fff" }}>{p.creditos} créditos</b>
-                <div style={{ color: "#22c55e" }}>R$ {p.valor}</div>
-              </div>
-            ))}
+            <button style={buttonConfirmStyle} onClick={() => gerarPix(25)}>
+              300 Análises – R$ 25,00
+            </button>
+            <button style={buttonConfirmStyle} onClick={() => gerarPix(50)}>
+              700 Análises – R$ 50,00
+            </button>
 
             <button
-              onClick={gerarPagamento}
               style={{
-                ...botao,
-                background: "#22c55e",
-                color: "#fff",
+                ...buttonConfirmStyle,
+                background: "linear-gradient(90deg, #3b82f6, #2563eb)",
               }}
+              onClick={() => setShowIndique(true)}
             >
-              Gerar Pagamento
+              🎁 Indique um amigo e ganhe 20 análises grátis
             </button>
 
-            <button
-              onClick={onClose}
-              style={{
-                ...botao,
-                background: "rgba(239,68,68,0.2)",
-                color: "#f87171",
-              }}
-            >
-              Cancelar
+            <button onClick={onClose} style={buttonCancelStyle}>
+              ↩ Voltar
             </button>
           </>
         )}
 
-        {/* ================================ */}
-        {/* ESTADO: GERANDO PAGAMENTO */}
-        {/* ================================ */}
-        {statusPagamento === "gerando" && (
+        {etapa === "pagamento" && (
           <>
-            <h2 style={{ color: "#22c55e" }}>Gerando pagamento…</h2>
-            <p style={{ color: "#ccc" }}>Aguarde um momento…</p>
-          </>
-        )}
+            <h3 style={{ color: "#22c55e" }}>Escaneie o QR PIX</h3>
 
-        {/* ================================ */}
-        {/* ESTADO: AGUARDANDO PAGAMENTO */}
-        {/* ================================ */}
-        {statusPagamento === "aguardando" && (
-          <>
-            <h2 style={{ color: "#22c55e" }}>Aguardando Pagamento…</h2>
-            <p style={{ color: "#ccc" }}>
-              Escaneie o QR Code abaixo para pagar com PIX.
-            </p>
+            {carregando ? (
+              <p>Gerando QR...</p>
+            ) : (
+              <>
+                {/* QR CODE — Ajustado */}
+                <img src={qr.img} width="180" />
 
-            {qrCodeBase64 && (
-              <img
-                src={`data:image/png;base64,${qrCodeBase64}`}
-                alt="QR Code"
-                style={{
-                  width: "220px",
-                  height: "220px",
-                  margin: "15px auto",
-                  display: "block",
-                  borderRadius: "10px",
-                }}
-              />
+                {/* COPIA E COLA — Ajustado */}
+                <textarea
+                  readOnly
+                  value={qr.copia}
+                  style={{
+                    width: "100%",
+                    height: "80px",
+                    marginTop: "10px",
+                    background: "#0b1324",
+                    color: "#fff",
+                    border: "1px solid #22c55e55",
+                    borderRadius: "8px",
+                    padding: "6px",
+                    fontSize: "0.8rem",
+                  }}
+                />
+
+                <button
+                  onClick={() => navigator.clipboard.writeText(qr.copia)}
+                  style={buttonConfirmStyle}
+                >
+                  Copiar Código PIX
+                </button>
+
+                <p style={{ color: "#ccc" }}>Aguardando pagamento...</p>
+
+                <button onClick={onClose} style={buttonCancelStyle}>
+                  Cancelar
+                </button>
+              </>
             )}
+          </>
+        )}
 
-            <button
-              onClick={() => setStatusPagamento("gerando")}
-              style={{
-                ...botao,
-                background: "rgba(14,165,233,0.2)",
-                color: "#38bdf8",
-              }}
-            >
-              Já paguei
-            </button>
-
-            <button
-              onClick={onClose}
-              style={{
-                ...botao,
-                background: "rgba(239,68,68,0.2)",
-                color: "#f87171",
-              }}
-            >
-              Cancelar
+        {etapa === "pago" && (
+          <>
+            <h3 style={{ color: "#22c55e" }}>✅ Pagamento confirmado!</h3>
+            <p style={{ color: "#ccc" }}>Créditos adicionados com sucesso.</p>
+            <button onClick={onClose} style={buttonConfirmStyle}>
+              Fechar
             </button>
           </>
         )}
