@@ -6,60 +6,58 @@ export async function POST(req) {
     const { prompt } = await req.json();
 
     if (!prompt || typeof prompt !== "string" || prompt.trim().length < 3) {
-      return new Response(JSON.stringify({ error: "Prompt inválido." }), { status: 400 });
+      return new Response(JSON.stringify({ error: "Prompt invÃ¡lido." }), { status: 400 });
     }
-
     if (!process.env.OPENAI_API_KEY) {
       return new Response(JSON.stringify({ error: "OPENAI_API_KEY ausente no servidor." }), { status: 500 });
     }
 
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-    // 🔥 Agora sempre usa só o gpt-4o-mini
-    const model = "gpt-4o-mini";
+    // Tenta o mais novo e recua para os anteriores se necessÃ¡rio
+    const modelos = [
+      "gpt-5-mini-2025-08-07",
+      "gpt-5-mini",
+      "gpt-4o-mini"
+    ];
 
-    const r = await openai.responses.create({
-      model,
-      input: [
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
+    let resposta = null;
+    let usado = null;
+    let ultimoErro = null;
 
-      // 🧠 PESQUISA NA INTERNET ATIVADA
-      tools: [
-        {
-          type: "web_search",
-          web_search: {
-            engine: "google",
-          },
-        },
-      ],
-      tool_choice: "auto",
+    for (const model of modelos) {
+      try {
+        const r = await openai.responses.create({
+          model,
+          // Use a nova Responses API (nada de temperature / max_tokens antigos)
+          input: prompt,
+          max_output_tokens: 3000, // ajuste se quiser respostas mais longas/curtas
+        });
 
-      max_output_tokens: 3000,
-    });
-
-    const texto = r.output_text?.trim();
-
-    if (!texto) {
-      throw new Error("Nenhum texto retornado do modelo.");
+        // Helper do SDK v6: r.output_text retorna todo o texto jÃ¡ concatenado
+        const texto = r.output_text?.trim();
+        if (texto) {
+          resposta = texto;
+          usado = model;
+          break;
+        }
+      } catch (e) {
+        ultimoErro = e;
+        // tenta o prÃ³ximo modelo
+      }
     }
 
-    return new Response(
-      JSON.stringify({ resposta: texto, modelo }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    if (!resposta) {
+      throw ultimoErro || new Error("Sem resposta do modelo.");
+    }
 
+    return new Response(JSON.stringify({ resposta, modelo: usado }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (err) {
-    console.error("🚨 Erro /api/analise:", err);
-    return new Response(
-      JSON.stringify({ error: err?.message || "Falha ao gerar análise." }),
-      { status: 500 }
-    );
+    console.error("ðŸš¨ Erro /api/analise:", err);
+    return new Response(JSON.stringify({ error: err?.message || "Falha ao gerar anÃ¡lise." }), { status: 500 });
   }
 }
+
