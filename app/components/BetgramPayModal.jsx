@@ -18,7 +18,7 @@ export default function BetgramPayModal({ user, qrCodeBase64, valor, onClose }) 
 
       // Se os créditos aumentarem → pagamento confirmado
       if (data.creditos > (user.creditos || 0)) {
-        console.log("🔥 Pagamento confirmado automaticamente!");
+        console.log("🔥 Pagamento confirmado Automaticamente!");
         setStatusPagamento("confirmado");
       }
     });
@@ -132,3 +132,4 @@ export default function BetgramPayModal({ user, qrCodeBase64, valor, onClose }) 
     </div>
   );
 }
+
