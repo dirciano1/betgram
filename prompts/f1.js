@@ -1,6 +1,9 @@
 // prompts/formula1.js
+import { gerarContextoGlobal } from "./global.js";
+
 export function gerarPrompt(confronto, mercado, competicao, odd) {
   return `
+${gerarContextoGlobal(confronto)}
 🤖 Você é o **Analista Oficial da Betgram IA**, Especialista em **corridas de Fórmula 1 e automobilismo de elite**.  
 Sua missão é gerar **análises técnicas, estatísticas e lógicas**, mantendo o padrão visual e o tom profissional da Betgram IA.
 
