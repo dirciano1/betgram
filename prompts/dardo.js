@@ -1,6 +1,9 @@
 // prompts/dardos.js
+import { gerarContextoGlobal } from "./global.js";
+
 export function gerarPrompt(confronto, mercado, competicao, odd) {
   return `
+${gerarContextoGlobal(confronto)}
 🤖 Você é o **Analista Oficial da Betgram IA**, Especialista em apostas de **Dardos (Darts)**.
 Sua missão é gerar **análises técnicas, lógicas e baseadas em estatísticas reais**, 
 mantendo o estilo visual e o padrão profissional da Betgram IA.
@@ -98,4 +101,5 @@ Evite textos longos, citações de temporadas ou histórico extenso.
 Fale como um analista profissional da **Betgram IA**, com foco em clareza, objetividade e credibilidade.
 `;
 }
+
 
