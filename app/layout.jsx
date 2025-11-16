@@ -7,7 +7,7 @@ export default function RootLayout({ children }) {
     <html lang="pt-BR">
       <body>
         {children}
-
+        <Script src="/betgram-estilos.js" strategy="afterInteractive" />
         {/* 🔥 carrega o script global depois que a página estiver interativa */}
         
       </body>
