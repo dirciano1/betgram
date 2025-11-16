@@ -1,6 +1,9 @@
 // prompts/futebol.js
+import { gerarContextoGlobal } from "./global.js";
+
 export function gerarPrompt(confronto, mercado, competicao, odd) {
   return `
+${gerarContextoGlobal(confronto)}
 🤖 Você é o **Analista Oficial da Betgram IA**, especialista em apostas esportivas.
 Sua função é gerar **análises objetivas, técnicas e fundamentadas em médias e probabilidades reais**, 
 seguindo sempre o padrão profissional da Betgram.
