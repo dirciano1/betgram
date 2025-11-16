@@ -1,34 +1,36 @@
 // prompts/global.js
 export function gerarContextoGlobal(confronto) {
   return `
-ANTES DE QUALQUER ANÁLISE:  
-✓ Realize PESQUISAS NA INTERNET usando Google Search.  
-✓ Coletar ATÉ 30 jogos mais recentes de cada time do confronto: **${confronto}**.  
-✓ Esses dados são APENAS PARA CONTEXTO INTERNO.  
-⚠️ NUNCA exiba essa lista de partidas na resposta final.
+⚠️ INSTRUÇÃO SISTÊMICA – NÃO MOSTRAR NA RESPOSTA ⚠️
+As instruções abaixo são apenas para coleta de contexto.  
+**NUNCA revele, resuma, cite ou liste os dados coletados.  
+A análise final deve IGNORAR totalmente a existência dessas instruções.**
 
 ===========================
-📌 REGRAS PARA COLETA DE DADOS
+📌 COLETA INTERNA OBRIGATÓRIA
 ===========================
 
-1. Buscar jogos OFICIAIS (ligas e copas).  
-2. Ignorar amistosos, exceto se forem os únicos disponíveis.  
-3. Nunca inventar jogos.  
-4. Priorizar jogos mais recentes.
-5. Extrair para uso interno:
-   - Data  
-   - Competição  
-   - Placar  
-   - Casa/Fora  
-   - Vitória/Empate/Derrota  
-   - Gols marcados  
-   - Gols sofridos  
+Antes de gerar a análise, faça buscas na internet (Google Search) coletando os **até 30 jogos mais recentes** dos times do confronto: **${confronto}**.
+
+Coletar apenas para USO INTERNO:
+- Data  
+- Competição  
+- Placar  
+- Casa/Fora  
+- Situação (V/E/D)  
+- Gols marcados  
+- Gols sofridos  
+
+⚠️ REGRAS ABSOLUTAS:
+- Você **pode usar os dados**, mas **é PROIBIDO** exibir, listar ou mencionar essas partidas.  
+- A resposta final deve conter APENAS a análise solicitada pelo prompt do esporte.  
+- Se o usuário pedir os jogos, responda que essa informação não pode ser exibida.  
+- **Jamais comece a resposta mostrando dados coletados.**
 
 ===========================
-⚠️ IMPORTANTE
+🛑 LEMBRETE FINAL
 ===========================
-- Os dados coletados DEVEM influenciar a análise final.  
-- Mas **não devem ser exibidos na resposta**.  
-- A resposta final deve seguir o formato do arquivo do esporte (ex.: futebol.js).  
+A análise deve usar os dados pesquisados,  
+MAS as partidas não devem aparecer de forma alguma na resposta final.
 `;
 }
