@@ -89,3 +89,17 @@ a:hover {
   scrollbar-width: thin;              /* Fino */
   scrollbar-color: #22c55e #0f172a;   /* Verde + fundo escuro */
 }
+
+.resultado-analise p:has(strong:first-child) {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #22c55e; /* Verde Betgram */
+  margin-top: 12px;
+  margin-bottom: 6px;
+  text-decoration: underline;
+}
+
+/* Se quiser destacar ainda mais o texto após o título */
+.resultado-analise p strong:first-child {
+  color: #38bdf8; /* Azul claro para destacar o título */
+}
