@@ -1,6 +1,9 @@
 // prompts/snooker.js
+import { gerarContextoGlobal } from "./global.js";
+
 export function gerarPrompt(confronto, mercado, competicao, odd) {
   return `
+${gerarContextoGlobal(confronto)}
 🤖 Você é o **Analista Oficial da Betgram IA**, especialista em **Snooker profissional**.  
 Sua missão é gerar **análises técnicas, lógicas e baseadas em estatísticas reais de desempenho**, 
 mantendo o padrão visual e o tom profissional da Betgram IA.
@@ -97,5 +100,6 @@ Evite citações de temporadas ou torneios anteriores.
 Fale sempre de forma profissional, objetiva e fiel ao padrão da **Betgram IA**.
 `;
 }
+
 
 
