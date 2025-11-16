@@ -64,3 +64,28 @@ a:hover {
   50% { transform: scale(1.03); }
   100% { transform: scale(1); }
 }
+
+/* ===== Scrollbar global (Chrome, Edge, Opera, Brave) ===== */
+*::-webkit-scrollbar {
+  width: 6px;        /* Largura da barra vertical */
+  height: 6px;       /* Altura da barra horizontal */
+}
+
+*::-webkit-scrollbar-track {
+  background: #0f172a;   /* Fundo do track */
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #22c55e;   /* Verde Betgram */
+  border-radius: 10px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #16a34a;   /* Verde mais escuro no hover */
+}
+
+/* ===== Firefox ===== */
+* {
+  scrollbar-width: thin;              /* Fino */
+  scrollbar-color: #22c55e #0f172a;   /* Verde + fundo escuro */
+}
