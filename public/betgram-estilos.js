@@ -5,7 +5,7 @@
     const COR_HEADER = "#00B4D8";
     const COR_MERCADO = "#93c5fd";
     const COR_TERMO = "#38bdf8";
-    const FONT_SIZE = "1.1em";
+    const FONT_SIZE = "1.02em";
 
     const regexHeader = /(🏟️[^<]*)/g;
     const regexMercado = /\*\*(Mercado:[^\*]+)\*\*/g;
