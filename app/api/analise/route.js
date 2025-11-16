@@ -21,32 +21,32 @@ export async function POST(req) {
       );
     }
 
-    const genAI = new GoogleGenerativeAI(apiKey);
+    // Inicializa SDK CORRETO
+    const ai = new GoogleGenerativeAI(apiKey);
 
-    const model = genAI.getGenerativeModel({
+    // Modelo + ferramenta de busca ativada
+    const model = ai.getGenerativeModel({
       model: "gemini-2.5-flash",
-      tools: [{ googleSearch: {} }], // <-- googleSearch aqui!
+      tools: [{ googleSearch: {} }], // Search aqui!
     });
 
-    const result = await model.generateContent({
+    // Estrutura correta para o Gemini
+    const response = await model.generateContent({
       contents: [
         {
-          parts: [
-            {
-              text: prompt,
-            },
-          ],
+          role: "user",
+          parts: [{ text: prompt }],
         },
       ],
     });
 
-    const resposta = result.response.text();
+    const text = response.response.text() || "Sem resposta.";
 
-    return NextResponse.json({ content: resposta }, { status: 200 });
+    return NextResponse.json({ content: text });
   } catch (error) {
-    console.error("🔥 ERRO IA:", error);
+    console.error("🔥 ERRO GERAL:", error);
     return NextResponse.json(
-      { error: "Falha ao gerar análise: " + error.message },
+      { error: error.message || "Erro desconhecido" },
       { status: 500 }
     );
   }
