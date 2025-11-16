@@ -6,7 +6,7 @@ export async function POST(req) {
   try {
     const { prompt } = await req.json();
 
-    if (!prompt || typeof prompt !== "string" || prompt.trim().length < 3) {
+    if (!prompt || prompt.trim().length < 3) {
       return NextResponse.json(
         { error: "Prompt inválido." },
         { status: 400 }
@@ -25,25 +25,26 @@ export async function POST(req) {
 
     const model = genAI.getGenerativeModel({
       model: "gemini-2.5-flash",
-      tools: [{ googleSearch: {} }], // <-- AQUI É O CERTO
+      tools: [{ googleSearch: {} }], // <-- googleSearch aqui!
     });
 
-    // Agora o formato CERTO: apenas text
-    const generation = await model.generateContent({
+    const result = await model.generateContent({
       contents: [
         {
-          role: "user",
-          parts: [{ text: prompt }],
+          parts: [
+            {
+              text: prompt,
+            },
+          ],
         },
       ],
     });
 
-    const text = generation.response.text();
+    const resposta = result.response.text();
 
-    return NextResponse.json({ content: text });
+    return NextResponse.json({ content: resposta }, { status: 200 });
   } catch (error) {
-    console.error("🔥 ERRO NA IA:", error);
-
+    console.error("🔥 ERRO IA:", error);
     return NextResponse.json(
       { error: "Falha ao gerar análise: " + error.message },
       { status: 500 }
