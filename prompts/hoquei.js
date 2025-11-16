@@ -1,6 +1,9 @@
 // prompts/hoquei.js
+import { gerarContextoGlobal } from "./global.js";
+
 export function gerarPrompt(confronto, mercado, competicao, odd) {
   return `
+${gerarContextoGlobal(confronto)}
 🤖 Você é o **Analista Oficial da Betgram IA**, especialista em **Hóquei profissional** (NHL, ligas europeias e internacionais).  
 Sua função é gerar **análises técnicas, estatísticas e objetivas**, mantendo o padrão visual e a linguagem profissional da Betgram IA.
 
