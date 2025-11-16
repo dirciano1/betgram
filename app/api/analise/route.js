@@ -7,46 +7,45 @@ export async function POST(req) {
     const { prompt } = await req.json();
 
     if (!prompt || typeof prompt !== "string" || prompt.trim().length < 3) {
-      return NextResponse.json({ error: "Prompt inválido." }, { status: 400 });
+      return NextResponse.json(
+        { error: "Prompt inválido." },
+        { status: 400 }
+      );
     }
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
       return NextResponse.json(
-        { error: "GEMINI_API_KEY não configurada" },
+        { error: "GEMINI_API_KEY não configurada." },
         { status: 500 }
       );
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
 
-    // Modelo com web search
     const model = genAI.getGenerativeModel({
       model: "gemini-2.5-flash",
+      tools: [{ googleSearch: {} }], // <-- AQUI É O CERTO
     });
 
-    // Formato CORRETO
-    const result = await model.generateContent({
+    // Agora o formato CERTO: apenas text
+    const generation = await model.generateContent({
       contents: [
         {
-          parts: [{ text: prompt }]
-        }
+          role: "user",
+          parts: [{ text: prompt }],
+        },
       ],
-      tools: [
-        {
-          googleSearch: {}
-        }
-      ]
     });
 
-    const resposta = result.response.text();
+    const text = generation.response.text();
 
-    return NextResponse.json({ content: resposta });
+    return NextResponse.json({ content: text });
+  } catch (error) {
+    console.error("🔥 ERRO NA IA:", error);
 
-  } catch (err) {
-    console.error("Erro ao gerar análise:", err);
     return NextResponse.json(
-      { error: err?.message || "Erro desconhecido" },
+      { error: "Falha ao gerar análise: " + error.message },
       { status: 500 }
     );
   }
