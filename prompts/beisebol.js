@@ -1,6 +1,9 @@
 // prompts/beisebol.js
+import { gerarContextoGlobal } from "./global.js";
+
 export function gerarPrompt(confronto, mercado, competicao, odd) {
   return `
+${gerarContextoGlobal(confronto)}
 🤖 Você é o **Analista Oficial da Betgram IA**, especialista em apostas de **Beisebol**.
 Sua função é gerar **análises técnicas, objetivas e Fundamentadas em estatísticas reais e médias de desempenho**, 
 seguindo o padrão profissional e estilizado da Betgram IA.
