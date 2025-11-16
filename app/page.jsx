@@ -474,7 +474,7 @@ export default function HomePage() {
                   <option value="criquete">🏏 Críquete</option>
                   <option value="snooker">🎱 Snooker / Bilhar</option>
                   <option value="dardos">🎯 Dardos</option>
-                  <option value="política">🏛️ Política</option>
+                  <option value="politica">🏛️ Política</option>
                   <option value="entretenimento">🎬 Entretenimento</option>
               </select>
               <label>🏆 Competição:</label>
