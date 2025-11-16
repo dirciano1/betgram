@@ -13,38 +13,36 @@ export async function POST(req) {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
       return NextResponse.json(
-        { error: "GEMINI_API_KEY não configurada no .env.local" },
+        { error: "GEMINI_API_KEY não configurada" },
         { status: 500 }
       );
     }
 
-    // Inicializa Gemini
     const genAI = new GoogleGenerativeAI(apiKey);
 
+    // Modelo com web search
     const model = genAI.getGenerativeModel({
       model: "gemini-2.5-flash",
     });
 
-    // ATIVA PESQUISA REAL
-    const config = {
-      tools: [{ googleSearch: {} }],
-    };
-
-    // Chama Gemini com o prompt e a pesquisa real
-    const result = await model.generateContent(
-      [
+    // Formato CORRETO
+    const result = await model.generateContent({
+      contents: [
         {
-          role: "user",
-          parts: [{ text: prompt }],
-        },
+          parts: [{ text: prompt }]
+        }
       ],
-      config
-    );
+      tools: [
+        {
+          googleSearch: {}
+        }
+      ]
+    });
 
-    // Converte para texto puro
     const resposta = result.response.text();
 
     return NextResponse.json({ content: resposta });
+
   } catch (err) {
     console.error("Erro ao gerar análise:", err);
     return NextResponse.json(
