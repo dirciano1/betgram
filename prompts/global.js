@@ -1,66 +1,34 @@
 // prompts/global.js
-
 export function gerarContextoGlobal(confronto) {
   return `
-Antes de gerar qualquer análise, PESQUISE NA INTERNET os resultados mais recentes dos times envolvidos no confronto abaixo.
+ANTES DE QUALQUER ANÁLISE:  
+✓ Realize PESQUISAS NA INTERNET usando Google Search.  
+✓ Coletar ATÉ 30 jogos mais recentes de cada time do confronto: **${confronto}**.  
+✓ Esses dados são APENAS PARA CONTEXTO INTERNO.  
+⚠️ NUNCA exiba essa lista de partidas na resposta final.
 
 ===========================
-📌 REGRAS PARA COLETA DE DADOS (OBRIGATÓRIO)
+📌 REGRAS PARA COLETA DE DADOS
 ===========================
 
-1. Pesquise os JOGOS MAIS RECENTES de cada time.
-2. Use um limite de ATÉ 30 jogos.
-3. Se não existirem 30 jogos disponíveis:
-   - Utilize quantos existirem (ex.: 6, 12, 18, 22…)
-4. NUNCA invente partidas.
-5. Priorize sempre os jogos mais recentes.
-6. Inclua jogos oficiais:
-   - Ligas nacionais
-   - Copas nacionais
-   - Copas internacionais
-7. Ignore amistosos, exceto se forem os únicos dados disponíveis.
+1. Buscar jogos OFICIAIS (ligas e copas).  
+2. Ignorar amistosos, exceto se forem os únicos disponíveis.  
+3. Nunca inventar jogos.  
+4. Priorizar jogos mais recentes.
+5. Extrair para uso interno:
+   - Data  
+   - Competição  
+   - Placar  
+   - Casa/Fora  
+   - Vitória/Empate/Derrota  
+   - Gols marcados  
+   - Gols sofridos  
 
 ===========================
-📊 DADOS A SEREM EXTRAÍDOS
+⚠️ IMPORTANTE
 ===========================
-
-Para cada jogo encontrado, extraia:
-
-• Data  
-• Competição  
-• Placar final  
-• Time jogando em Casa/Fora  
-• Situação (Vitória / Empate / Derrota)  
-• Gols marcados  
-• Gols sofridos  
-
-Depois gere estatísticas combinadas:
-
-• Média de gols marcados (últimos jogos)  
-• Média de gols sofridos  
-• % BTTS (ambos marcam)  
-• % Over 0.5, 1.5, 2.5, 3.5  
-• % Under  
-• Forma recente (V/E/D nos últimos 5 e 10 jogos)  
-• Tendências claras de cada time  
-• Performance como mandante e visitante  
-
-===========================
-📘 CONTEXTO DO CONFRONTO
-===========================
-
-Confronto: ${confronto}
-
-===========================
-📌 IMPORTANTE
-===========================
-
-Antes de gerar qualquer conclusão, você DEVE montar:
-- a lista de jogos,
-- as médias,
-- as porcentagens,
-- e as tendências reais.
-
-Depois, utilize esse contexto estatístico REAL como base para a análise técnica do esporte correspondente no padrão Betgram IA.
+- Os dados coletados DEVEM influenciar a análise final.  
+- Mas **não devem ser exibidos na resposta**.  
+- A resposta final deve seguir o formato do arquivo do esporte (ex.: futebol.js).  
 `;
 }
