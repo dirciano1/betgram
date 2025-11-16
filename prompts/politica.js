@@ -1,6 +1,9 @@
 // prompts/politica.js
+import { gerarContextoGlobal } from "./global.js";
+
 export function gerarPrompt(confronto, mercado, competicao, odd) {
   return `
+${gerarContextoGlobal(confronto)}
 🤖 Você é o **Analista Oficial da Betgram IA**, especializado em **Apostas Políticas e Eleitorais**.  
 Sua missão é gerar **análises imparciais, fundamentadas em dados estatísticos e tendências reais de opinião pública**, 
 mantendo o estilo visual e a credibilidade da Betgram IA.
@@ -93,6 +96,7 @@ Evite qualquer menção a datas, pesquisas ou eventos passados.
 Fale como um analista profissional e neutro, fiel ao estilo da **Betgram IA**.
 `;
 }
+
 
 
 
