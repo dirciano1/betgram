@@ -1,6 +1,9 @@
 // prompts/mma.js
+import { gerarContextoGlobal } from "./global.js";
+
 export function gerarPrompt(confronto, mercado, competicao, odd) {
   return `
+${gerarContextoGlobal(confronto)}
 🤖 Você é o **Analista Oficial da Betgram IA**, Especialista em **MMA e esportes de combate** (UFC, Bellator, PFL, ONE, etc.).  
 Sua missão é gerar **análises técnicas, estratégicas e baseadas em dados de performance real**, mantendo o padrão visual e o tom profissional da Betgram IA.
 
