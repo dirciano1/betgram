@@ -1,6 +1,9 @@
 // prompts/esports.js
+import { gerarContextoGlobal } from "./global.js";
+
 export function gerarPrompt(confronto, mercado, competicao, odd) {
   return `
+${gerarContextoGlobal(confronto)}
 🤖 Você é o **Analista Oficial da Betgram IA**, Especialista em **E-Sports profissionais**.
 Sua função é gerar **análises técnicas, estratégicas e baseadas em dados de desempenho real**, 
 mantendo o padrão visual e o tom de autoridade da Betgram IA.
@@ -98,4 +101,5 @@ Jamais cite anos, patches ou históricos antigos.
 Use linguagem profissional, analítica e fiel ao estilo da **Betgram IA**.
 `;
 }
+
 
