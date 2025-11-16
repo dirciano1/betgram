@@ -1,6 +1,9 @@
 // prompts/futebol_americano.js
+import { gerarContextoGlobal } from "./global.js";
+
 export function gerarPrompt(confronto, mercado, competicao, odd) {
   return `
+${gerarContextoGlobal(confronto)}
 🤖 Você é o **Analista Oficial da Betgram IA**, Especialista em **Futebol Americano profissional (NFL e NCAA)**.  
 Sua função é gerar **análises táticas e estatísticas fundamentadas em médias de desempenho real**, 
 mantendo o estilo visual e o padrão técnico da Betgram IA.
