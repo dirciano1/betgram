@@ -7,7 +7,7 @@ import {
   getDocs,
   deleteDoc,
   doc,
-} from "../../../lib/firebase"; // 👈 caminho certo a partir de app/admin/analises/page.jsx
+} from "../../../lib/firebase";
 
 // Formata a data bonitinha
 function formatarData(timestamp) {
@@ -22,7 +22,7 @@ function formatarData(timestamp) {
 // Corta o texto da análise para caber na tabela
 function resumoAnalise(texto = "", max = 160) {
   if (!texto) return "-";
-  const clean = texto.replace(/\s+/g, " ").trim(); // tira quebras estranhas
+  const clean = texto.replace(/\s+/g, " ").trim();
   return clean.length > max ? clean.slice(0, max) + "..." : clean;
 }
 
@@ -30,6 +30,7 @@ export default function AnalisesAdmin() {
   const [lista, setLista] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [analiseSelecionada, setAnaliseSelecionada] = useState(null);
+  const [filtro, setFiltro] = useState(""); // 🔥 NOVO ESTADO
 
   useEffect(() => {
     carregar();
@@ -41,10 +42,11 @@ export default function AnalisesAdmin() {
       const snap = await getDocs(collection(db, "analises"));
       const arr = [];
       snap.forEach((d) => arr.push({ id: d.id, ...d.data() }));
-      // ordena por data (se tiver timestamp em string)
+      
       arr.sort((a, b) =>
         (b.timestamp || "").localeCompare(a.timestamp || "")
       );
+
       setLista(arr);
     } catch (e) {
       console.error("Erro ao carregar análises:", e);
@@ -60,12 +62,19 @@ export default function AnalisesAdmin() {
 
     try {
       await deleteDoc(doc(db, "analises", id));
-      setLista((prev) => prev.filter((a) => a.id !== id)); // remove da tela
+      setLista((prev) => prev.filter((a) => a.id !== id));
     } catch (e) {
       console.error("Erro ao excluir análise:", e);
       alert("Erro ao excluir análise: " + e.message);
     }
   }
+
+  // 🔥 LISTA FILTRADA (Nome ou Email)
+  const listaFiltrada = lista.filter((item) => {
+    const texto = filtro.toLowerCase();
+    const nome = (item.nome || item.userEmail || "").toLowerCase();
+    return nome.includes(texto);
+  });
 
   return (
     <div>
@@ -79,9 +88,26 @@ export default function AnalisesAdmin() {
         Gerenciar Análises
       </h1>
 
+      {/* 🔥 CAMPO DE BUSCA */}
+      <input
+        type="text"
+        placeholder="Filtrar por nome do usuário..."
+        value={filtro}
+        onChange={(e) => setFiltro(e.target.value)}
+        style={{
+          width: "100%",
+          padding: "10px 14px",
+          borderRadius: 8,
+          background: "#0f172a",
+          border: "1px solid #22c55e55",
+          color: "#fff",
+          marginBottom: 20,
+        }}
+      />
+
       {carregando ? (
         <p style={{ color: "#94a3b8" }}>Carregando análises...</p>
-      ) : lista.length === 0 ? (
+      ) : listaFiltrada.length === 0 ? (
         <p style={{ color: "#94a3b8" }}>Nenhuma análise encontrada.</p>
       ) : (
         <table
@@ -103,7 +129,7 @@ export default function AnalisesAdmin() {
           </thead>
 
           <tbody>
-            {lista.map((a) => (
+            {listaFiltrada.map((a) => (
               <tr
                 key={a.id}
                 style={{
@@ -113,12 +139,15 @@ export default function AnalisesAdmin() {
                 <td style={{ padding: "8px 6px", color: "#e5e7eb" }}>
                   {a.nome || a.userEmail || "-"}
                 </td>
+
                 <td style={{ padding: "8px 6px", color: "#f97316" }}>
                   {a.confronto || "-"}
                 </td>
+
                 <td style={{ padding: "8px 6px", color: "#94a3b8" }}>
                   {formatarData(a.timestamp)}
                 </td>
+
                 <td
                   style={{
                     padding: "8px 6px",
@@ -144,6 +173,7 @@ export default function AnalisesAdmin() {
                     </button>
                   )}
                 </td>
+
                 <td
                   style={{
                     padding: "8px 6px",
@@ -171,7 +201,6 @@ export default function AnalisesAdmin() {
         </table>
       )}
 
-      {/* Modal simples para ver análise completa */}
       {analiseSelecionada && (
         <div
           onClick={() => setAnaliseSelecionada(null)}
@@ -201,6 +230,7 @@ export default function AnalisesAdmin() {
             <h2 style={{ color: "#22c55e", marginBottom: 10 }}>
               {analiseSelecionada.confronto || "Análise"}
             </h2>
+
             <p
               style={{
                 color: "#94a3b8",
@@ -211,6 +241,7 @@ export default function AnalisesAdmin() {
               {formatarData(analiseSelecionada.timestamp)} •{" "}
               {analiseSelecionada.nome || analiseSelecionada.userEmail || ""}
             </p>
+
             <pre
               style={{
                 whiteSpace: "pre-wrap",
