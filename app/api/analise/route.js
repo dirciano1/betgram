@@ -2,17 +2,18 @@
 import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import OpenAI from "openai";
+import { gerarContextoGlobal } from "@/prompts/global";
 
-// =========================
-// 🔥 Função GEMINI (principal) – sem NENHUMA alteração
-// =========================
+// ======================================================
+// 🔥 1. GEMINI PRINCIPAL — COM PESQUISA REAL
+// ======================================================
 async function gerarComGemini(prompt) {
   const apiKey = process.env.GEMINI_API_KEY;
   const ai = new GoogleGenerativeAI(apiKey);
 
   const model = ai.getGenerativeModel({
     model: "gemini-2.5-flash",
-    tools: [{ googleSearch: {} }], // Pesquisa REAL ⚡
+    tools: [{ googleSearch: {} }],
   });
 
   const maxTentativas = 3;
@@ -20,6 +21,7 @@ async function gerarComGemini(prompt) {
   for (let i = 0; i < maxTentativas; i++) {
     try {
       console.log(`🔎 Gemini tentativa ${i + 1}/${maxTentativas}`);
+
       const response = await model.generateContent({
         contents: [{ role: "user", parts: [{ text: prompt }] }],
       });
@@ -31,7 +33,7 @@ async function gerarComGemini(prompt) {
     } catch (error) {
       if (error.status === 503 || error.message.includes("overloaded")) {
         console.log("⚠️ Gemini sobrecarregado — retry…");
-        await new Promise(res => setTimeout(res, 1200));
+        await new Promise((res) => setTimeout(res, 1200));
         continue;
       }
 
@@ -40,64 +42,72 @@ async function gerarComGemini(prompt) {
     }
   }
 
-  return { ok: false, error: new Error("Gemini falhou após retries") };
+  return { ok: false, error: new Error("Gemini falhou após 3 tentativas") };
 }
 
-// =========================
-// 🔥 PROMPT EXTRA PARA FALLBACK (texto grande estilo Gemini)
-// =========================
-function montarPromptFallback(promptOriginal) {
+// ======================================================
+// 🔥 2. PROMPT UNIVERSAL PARA FALLBACK
+// ======================================================
+function montarPromptFallback(promptOriginal, promptGlobal) {
   return `
-INSTRUÇÕES IMPORTANTES (MODO FALLBACK):
+⚠️ INSTRUÇÃO INTERNA — MODO FALLBACK SEM INTERNET  
+Estas regras NÃO devem aparecer ao usuário final.
 
-Você NÃO tem acesso à internet.  
-Portanto, gere uma análise EXTREMAMENTE COMPLETA e DETALHADA, 
-seguindo rigorosamente o padrão da Betgram IA.
+==============================
+📌 COMO FUNCIONA O FALLBACK
+==============================
+- Você NÃO tem acesso à internet.
+- NUNCA mencione que está sem internet.
+- NUNCA mencione “fallback”, “modo seguro” etc.
+- NÃO pesquise nada externo.
+- NÃO invente partidas específicas.
+- Use apenas conhecimento geral do esporte solicitado.
+- Gere uma análise EXTREMAMENTE completa.
+- Mínimo obrigatório de **600 palavras**.
+- Siga exatamente os mercados solicitados pelo prompt do esporte.
+- NÃO adicione mercados que não existem.
+- NÃO remova mercados solicitados.
 
-📌 O texto DEVE ter NO MÍNIMO **600 palavras**.
-📌 Analise SEMPRE TODOS os mercados listados abaixo:
+==============================
+📌 CONTEXTO GLOBAL (NÃO EXIBIR)
+==============================
+${promptGlobal}
 
-- Resultado Final (1X2)
-- Over/Under 2.5 gols
-- Ambas Marcam (BTTS)
-- Escanteios (Over/Under)
-- Cartões (Over/Under)
-- Valor Esperado (EV)
-- Odds justas
-- Conclusões detalhadas para CADA mercado
+==============================
+📌 PROMPT ORIGINAL (BASE OFICIAL)
+==============================
+${promptOriginal}
 
-Siga o estilo visual da Betgram IA:
-- Títulos com emojis
-- Destaques com cores (não coloque tags HTML)
-- Explicações passo a passo
-- Probabilidades estimadas
-- Recomendações claras
+==============================
+📌 DIRETRIZES DE ESTILO — BETGRAM IA
+==============================
+- Use títulos com emojis.
+- Faça análise profunda, técnica e explicada.
+- Inclua probabilidades estimadas.
+- Inclua odds justas, valor esperado (se o esporte pedir).
+- Conclusões separadas por mercado.
+- NÃO mostre dados coletados.
+- NÃO mostre listas de jogos.
+- Produza uma análise limpa e profissional.
 
-⚠ Ignore completamente a falta de dados reais.  
-Use estatísticas TÍPICAS dos times, padrões ofensivos/defensivos e 
-conhecimento geral do futebol para estimar médias.
-
-AGORA RESPONDA COM BASE NO PROMPT ORIGINAL:
-
-"${promptOriginal}"
+Agora gere a análise COMPLETA.
 `;
 }
 
-// =========================
-// 🔥 Fallback 1 — GPT-5-mini
-// =========================
-async function gerarComGPT5(promptOriginal) {
+// ======================================================
+// 🔥 3. FALLBACK GPT-5-mini
+// ======================================================
+async function gerarComGPT5(promptOriginal, promptGlobal) {
   try {
-    const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
     console.log("🟠 Fallback → GPT-5-mini…");
 
-    const prompt = montarPromptFallback(promptOriginal);
+    const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    const prompt = montarPromptFallback(promptOriginal, promptGlobal);
 
     const completion = await client.chat.completions.create({
       model: "gpt-5-mini",
       messages: [{ role: "user", content: prompt }],
-      max_tokens: 5000,
+      max_tokens: 6000,
       temperature: 0.7,
     });
 
@@ -108,21 +118,20 @@ async function gerarComGPT5(promptOriginal) {
   }
 }
 
-// =========================
-// 🔥 Fallback 2 — GPT-4o-mini
-// =========================
-async function gerarComGPT4(promptOriginal) {
+// ======================================================
+// 🔥 4. FALLBACK GPT-4o-mini
+// ======================================================
+async function gerarComGPT4(promptOriginal, promptGlobal) {
   try {
-    const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
     console.log("🟡 Fallback → GPT-4o-mini…");
 
-    const prompt = montarPromptFallback(promptOriginal);
+    const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    const prompt = montarPromptFallback(promptOriginal, promptGlobal);
 
     const completion = await client.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [{ role: "user", content: prompt }],
-      max_tokens: 5000,
+      max_tokens: 6000,
       temperature: 0.7,
     });
 
@@ -133,40 +142,63 @@ async function gerarComGPT4(promptOriginal) {
   }
 }
 
-// =========================
-// 🔥 ROTA PRINCIPAL
-// =========================
+// ======================================================
+// 🔥 5. ROTA PRINCIPAL — ORQUESTRAÇÃO COMPLETA
+// ======================================================
 export async function POST(req) {
   try {
-    const { prompt } = await req.json();
+    const { prompt, confronto } = await req.json();
 
     if (!prompt || prompt.trim().length < 3) {
-      return NextResponse.json({ error: "Prompt inválido." }, { status: 400 });
+      return NextResponse.json(
+        { error: "Prompt inválido." },
+        { status: 400 }
+      );
     }
 
-    // 1️⃣ GEMINI (principal)
+    // 🔥 Gera o contexto global (instrução oculta)
+    const promptGlobal = gerarContextoGlobal(confronto || "Confronto não informado");
+
+    // ======================================================
+    // 1️⃣ Tentativa principal — Gemini
+    // ======================================================
     const gemini = await gerarComGemini(prompt);
     if (gemini.ok) {
-      return NextResponse.json({ content: gemini.text, fallback: false });
+      return NextResponse.json({
+        content: gemini.text,
+        fallback: false,
+      });
     }
 
-    console.log("⚠️ Gemini falhou — fallback para GPT-5-mini.");
+    console.log("⚠️ Gemini falhou — iniciando fallback…");
 
-    // 2️⃣ FALLBACK GPT-5
-    const gpt5 = await gerarComGPT5(prompt);
+    // ======================================================
+    // 2️⃣ FallBack GPT-5-mini
+    // ======================================================
+    const gpt5 = await gerarComGPT5(prompt, promptGlobal);
     if (gpt5.ok) {
-      return NextResponse.json({ content: gpt5.text, fallback: true });
+      return NextResponse.json({
+        content: gpt5.text,
+        fallback: true,
+      });
     }
 
-    console.log("⚠️ GPT-5-mini falhou — fallback para GPT-4o-mini.");
+    console.log("⚠️ GPT-5-mini falhou — tentando GPT-4o-mini…");
 
-    // 3️⃣ FALLBACK GPT-4
-    const gpt4 = await gerarComGPT4(prompt);
+    // ======================================================
+    // 3️⃣ FallBack GPT-4o-mini
+    // ======================================================
+    const gpt4 = await gerarComGPT4(prompt, promptGlobal);
     if (gpt4.ok) {
-      return NextResponse.json({ content: gpt4.text, fallback: true });
+      return NextResponse.json({
+        content: gpt4.text,
+        fallback: true,
+      });
     }
 
+    // ======================================================
     // 4️⃣ Nada funcionou
+    // ======================================================
     return NextResponse.json(
       { error: "Nenhum modelo conseguiu gerar resposta." },
       { status: 500 }
@@ -179,4 +211,5 @@ export async function POST(req) {
     );
   }
 }
+
 
