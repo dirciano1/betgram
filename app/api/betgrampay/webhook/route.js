@@ -1,5 +1,5 @@
-import { db, doc, updateDoc, increment } from "../../../../lib/firebase";
 import { NextResponse } from "next/server";
+import { dbServer, doc, updateDoc, increment } from "../../../../lib/firebaseServer";
 
 export async function POST(req) {
   try {
@@ -7,13 +7,11 @@ export async function POST(req) {
 
     console.log("📩 WEBHOOK RECEBIDO:", JSON.stringify(body, null, 2));
 
-    // 1. Verifica se é realmente o evento de pagamento
     if (body?.event !== "billing.paid") {
       console.log("➡️ Evento ignorado:", body?.event);
       return NextResponse.json({ ok: true, ignore: true });
     }
 
-    // 2. Pega os dados do PIX
     const pix = body?.data?.pixQrCode;
 
     if (!pix) {
@@ -31,7 +29,6 @@ export async function POST(req) {
 
     console.log("📦 METADATA:", metadata);
 
-    // 3. Valida UID e valor
     if (!uid || isNaN(valorPlano)) {
       console.log("❌ ERRO: metadata incompleta");
       return NextResponse.json(
@@ -40,7 +37,6 @@ export async function POST(req) {
       );
     }
 
-    // 4. Tabela de conversão de planos
     const tabela = {
       10: 100,
       20: 230,
@@ -59,9 +55,8 @@ export async function POST(req) {
       );
     }
 
-    // 5. Se pagamento confirmado
     if (status === "PAID") {
-      await updateDoc(doc(db, "users", uid), {
+      await updateDoc(doc(dbServer, "users", uid), {
         creditos: increment(creditos),
         jaComprou: true,
       });
