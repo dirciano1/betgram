@@ -1,7 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { db, collection, getDocs, deleteDoc, doc } from "../../lib/firebase";
+import {
+  db,
+  collection,
+  getDocs,
+  deleteDoc,
+  doc
+} from "../../../lib/firebase";
 
 export default function AnalisesAdmin() {
   const [lista, setLista] = useState([]);
@@ -39,9 +45,9 @@ export default function AnalisesAdmin() {
         <tbody>
           {lista.map((a) => (
             <tr key={a.id}>
-              <td>{a.userEmail || "—"}</td>
-              <td>{a.confronto || "—"}</td>
-              <td>{a.createdAt || "—"}</td>
+              <td>{a.userEmail}</td>
+              <td>{a.confronto}</td>
+              <td>{a.createdAt}</td>
               <td>
                 <button onClick={() => excluir(a.id)} style={{ color: "red" }}>
                   Excluir análise
