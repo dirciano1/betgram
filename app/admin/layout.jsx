@@ -1,6 +1,6 @@
 "use client";
 
-import Sidebar from "./componentes/Sidebar";
+import Sidebar from "./componentes/Sidebar.jsx";
 
 export default function AdminLayout({ children }) {
   return (
@@ -12,3 +12,4 @@ export default function AdminLayout({ children }) {
     </div>
   );
 }
+
