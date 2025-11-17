@@ -1,29 +1,28 @@
 import { NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
 
-export function middleware(req) {
+export async function middleware(req) {
   const path = req.nextUrl.pathname;
 
-  // Só protege rotas do admin
-  const isAdminRoute = path.startsWith("/admin");
-
-  if (!isAdminRoute) {
+  if (!path.startsWith("/admin")) {
     return NextResponse.next();
   }
 
-  const uid = req.cookies.get("uid")?.value || null;
-  const role = req.cookies.get("role")?.value || null;
+  const token = await getToken({
+    req,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
 
-  // Se não estiver logado → volta pra home
-  if (!uid) {
+  if (!token) {
     return NextResponse.redirect(new URL("/", req.url));
   }
 
-  // Se não for admin → volta pra home
+  const role = token.role;
+
   if (role !== "admin" && role !== "superadmin") {
     return NextResponse.redirect(new URL("/", req.url));
   }
 
-  // Tudo certo → libera o admin
   return NextResponse.next();
 }
 
