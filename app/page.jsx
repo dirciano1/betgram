@@ -480,8 +480,8 @@ export default function HomePage() {
               <label>🏆 Competição:</label>
               <input style={inputStyle} value={competicao} onChange={(e) => setCompeticao(e.target.value)} placeholder="Ex: Brasileirão, NBA..."/>
               <label>🎮 Confronto:</label>
-              <input style={inputStyle} value={timeA} onChange={(e) => setTimeA(e.target.value)} placeholder="Time A"/>
-              <input style={inputStyle} value={timeB} onChange={(e) => setTimeB(e.target.value)} placeholder="Time B"/>
+              <input style={inputStyle} value={timeA} onChange={(e) => setTimeA(e.target.value)} placeholder="Time da Casa"/>
+              <input style={inputStyle} value={timeB} onChange={(e) => setTimeB(e.target.value)} placeholder="Time Visitante"/>
               <label>🎯 Mercado (opcional):</label>
               <input style={inputStyle} value={mercado} onChange={(e) => setMercado(e.target.value)} placeholder="Ex: Over 2.5"/>
               {mercado && (
