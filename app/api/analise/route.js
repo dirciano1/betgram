@@ -1,8 +1,10 @@
-// app/api/analise/route.js
+// Betgram/app/api/analise/route.js
 import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import OpenAI from "openai";
-import { gerarContextoGlobal } from "@/prompts/global";
+
+// IMPORT CORRETO DO GLOBAL.JS (SEM @)
+import { gerarContextoGlobal } from "../../../prompt/global";
 
 // ======================================================
 // 🔥 1. GEMINI PRINCIPAL — COM PESQUISA REAL
@@ -51,22 +53,21 @@ async function gerarComGemini(prompt) {
 function montarPromptFallback(promptOriginal, promptGlobal) {
   return `
 ⚠️ INSTRUÇÃO INTERNA — MODO FALLBACK SEM INTERNET  
-Estas regras NÃO devem aparecer ao usuário final.
+Estas regras NÃO devem aparecer na resposta final.
 
 ==============================
 📌 COMO FUNCIONA O FALLBACK
 ==============================
 - Você NÃO tem acesso à internet.
-- NUNCA mencione que está sem internet.
-- NUNCA mencione “fallback”, “modo seguro” etc.
+- NÃO mencione que está sem internet.
+- NÃO mencione fallback.
 - NÃO pesquise nada externo.
-- NÃO invente partidas específicas.
-- Use apenas conhecimento geral do esporte solicitado.
+- NÃO invente jogos específicos.
 - Gere uma análise EXTREMAMENTE completa.
 - Mínimo obrigatório de **600 palavras**.
-- Siga exatamente os mercados solicitados pelo prompt do esporte.
-- NÃO adicione mercados que não existem.
-- NÃO remova mercados solicitados.
+- Siga exatamente os mercados do prompt do esporte.
+- NÃO adicione mercados novos.
+- Não retire mercados solicitados.
 
 ==============================
 📌 CONTEXTO GLOBAL (NÃO EXIBIR)
@@ -74,21 +75,20 @@ Estas regras NÃO devem aparecer ao usuário final.
 ${promptGlobal}
 
 ==============================
-📌 PROMPT ORIGINAL (BASE OFICIAL)
+📌 PROMPT ORIGINAL DO ESPORTE
 ==============================
 ${promptOriginal}
 
 ==============================
-📌 DIRETRIZES DE ESTILO — BETGRAM IA
+📌 ESTILO BETGRAM IA
 ==============================
-- Use títulos com emojis.
-- Faça análise profunda, técnica e explicada.
-- Inclua probabilidades estimadas.
-- Inclua odds justas, valor esperado (se o esporte pedir).
-- Conclusões separadas por mercado.
-- NÃO mostre dados coletados.
-- NÃO mostre listas de jogos.
-- Produza uma análise limpa e profissional.
+- Títulos com emojis.
+- Análise profunda e técnica.
+- Probabilidades estimadas.
+- Odds justas quando aplicável.
+- Valor esperado quando aplicável.
+- Cada mercado analisado separadamente.
+- Conclusão clara.
 
 Agora gere a análise COMPLETA.
 `;
@@ -143,7 +143,7 @@ async function gerarComGPT4(promptOriginal, promptGlobal) {
 }
 
 // ======================================================
-// 🔥 5. ROTA PRINCIPAL — ORQUESTRAÇÃO COMPLETA
+// 🔥 5. ROTA PRINCIPAL
 // ======================================================
 export async function POST(req) {
   try {
@@ -156,12 +156,10 @@ export async function POST(req) {
       );
     }
 
-    // 🔥 Gera o contexto global (instrução oculta)
+    // Gera as regras ocultas do global.js
     const promptGlobal = gerarContextoGlobal(confronto || "Confronto não informado");
 
-    // ======================================================
-    // 1️⃣ Tentativa principal — Gemini
-    // ======================================================
+    // 1️⃣ Gemini principal
     const gemini = await gerarComGemini(prompt);
     if (gemini.ok) {
       return NextResponse.json({
@@ -172,9 +170,7 @@ export async function POST(req) {
 
     console.log("⚠️ Gemini falhou — iniciando fallback…");
 
-    // ======================================================
-    // 2️⃣ FallBack GPT-5-mini
-    // ======================================================
+    // 2️⃣ Fallback GPT-5-mini
     const gpt5 = await gerarComGPT5(prompt, promptGlobal);
     if (gpt5.ok) {
       return NextResponse.json({
@@ -185,9 +181,7 @@ export async function POST(req) {
 
     console.log("⚠️ GPT-5-mini falhou — tentando GPT-4o-mini…");
 
-    // ======================================================
-    // 3️⃣ FallBack GPT-4o-mini
-    // ======================================================
+    // 3️⃣ Fallback GPT-4o-mini
     const gpt4 = await gerarComGPT4(prompt, promptGlobal);
     if (gpt4.ok) {
       return NextResponse.json({
@@ -196,9 +190,6 @@ export async function POST(req) {
       });
     }
 
-    // ======================================================
-    // 4️⃣ Nada funcionou
-    // ======================================================
     return NextResponse.json(
       { error: "Nenhum modelo conseguiu gerar resposta." },
       { status: 500 }
@@ -211,5 +202,3 @@ export async function POST(req) {
     );
   }
 }
-
-
