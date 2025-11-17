@@ -1,104 +1,49 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { 
-  db, 
-  collection, 
-  getDocs, 
-  updateDoc, 
-  deleteDoc, 
-  doc, 
-  increment 
-} from "@/lib/firebase";
+import { db, collection, getDocs } from "../../lib/firebase";
 
-export default function UsuariosAdmin() {
-  const [usuarios, setUsuarios] = useState([]);
+import Card from "./componentes/Card";
+import Grafico from "./componentes/Grafico";
+
+export default function AdminDashboard() {
+  const [usuarios, setUsuarios] = useState(0);
+  const [analises, setAnalises] = useState(0);
+  const [creditoTotal, setCreditoTotal] = useState(0);
 
   useEffect(() => {
-    carregar();
+    carregarDados();
   }, []);
 
-  async function carregar() {
-    const snap = await getDocs(collection(db, "users"));
-    const arr = [];
-    snap.forEach((d) => arr.push({ id: d.id, ...d.data() }));
-    setUsuarios(arr);
-  }
+  async function carregarDados() {
+    const usersSnap = await getDocs(collection(db, "users"));
+    setUsuarios(usersSnap.size);
 
-  async function addCredito(uid, qtd) {
-    await updateDoc(doc(db, "users", uid), {
-      creditos: increment(qtd),
+    const analisesSnap = await getDocs(collection(db, "analises"));
+    setAnalises(analisesSnap.size);
+
+    let totalCred = 0;
+    usersSnap.forEach((u) => {
+      totalCred += u.data().creditos || 0;
     });
-    carregar();
-  }
-
-  async function removerCredito(uid, qtd) {
-    await updateDoc(doc(db, "users", uid), {
-      creditos: increment(-qtd),
-    });
-    carregar();
-  }
-
-  async function promover(uid) {
-    await updateDoc(doc(db, "users", uid), { role: "admin" });
-    carregar();
-  }
-
-  async function rebaixar(uid) {
-    await updateDoc(doc(db, "users", uid), { role: "user" });
-    carregar();
-  }
-
-  async function banir(uid) {
-    await updateDoc(doc(db, "users", uid), { banido: true });
-    carregar();
-  }
-
-  async function excluir(uid) {
-    await deleteDoc(doc(db, "users", uid));
-    carregar();
+    setCreditoTotal(totalCred);
   }
 
   return (
     <div>
-      <h1 style={{ color: "#22c55e" }}>Gerenciar Usuários</h1>
+      <h1 style={{ fontSize: 26, color: "#22c55e", marginBottom: 20 }}>
+        Painel Administrativo
+      </h1>
 
-      <table style={{ width: "100%", marginTop: 20 }}>
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Créditos</th>
-            <th>Função</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
+      <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
+        <Card title="Usuários" value={usuarios} />
+        <Card title="Análises" value={analises} />
+        <Card title="Créditos Totais" value={creditoTotal} />
+      </div>
 
-        <tbody>
-          {usuarios.map((u) => (
-            <tr key={u.id}>
-              <td>{u.nome || u.email}</td>
-              <td>{u.creditos}</td>
-              <td>{u.role || "user"}</td>
-
-              <td style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                <button onClick={() => addCredito(u.id, 10)}>+10</button>
-                <button onClick={() => removerCredito(u.id, 10)}>-10</button>
-
-                <button onClick={() => promover(u.id)}>Promover</button>
-                <button onClick={() => rebaixar(u.id)}>Rebaixar</button>
-                <button onClick={() => banir(u.id)}>Banir</button>
-
-                <button 
-                  onClick={() => excluir(u.id)} 
-                  style={{ color: "red", fontWeight: "bold" }}
-                >
-                  Excluir
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div style={{ marginTop: 40 }}>
+        <Grafico />
+      </div>
     </div>
   );
 }
