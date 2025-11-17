@@ -374,7 +374,9 @@ export default function HomePage() {
           <h1 style={{ position: "absolute", left: "-9999px", top: "0" }}>
   Betgram - Analisador de Apostas Esportivas com Inteligencia Artificial
 </h1>
-
+<p style={{ display: "none" }}>
+  O Betgram é um analisador de apostas esportiva que usa inteligente artificial (IA) (AI) avançada para transformar dados, estatísticas e odds em insights poderosos. Aposte com estratégia e descubra oportunidades reais de valor.
+</p>
 <h2 aria-hidden="true" style={{
   display:"flex",
   alignItems:"center",
