@@ -4,7 +4,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import OpenAI from "openai";
 
 // IMPORT CORRETO DO GLOBAL.JS (SEM @)
-import { gerarContextoGlobal } from "../../../prompt/global";
+import { gerarContextoGlobal } from "../../../prompts/global";
 
 // ======================================================
 // 🔥 1. GEMINI PRINCIPAL — COM PESQUISA REAL
@@ -202,3 +202,4 @@ export async function POST(req) {
     );
   }
 }
+
