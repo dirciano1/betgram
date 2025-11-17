@@ -1,4 +1,5 @@
-import { db, doc, updateDoc, increment } from "../../../../lib/firebase";
+import { db, doc, updateDoc, increment } from "../../../lib/firebase";
+import { NextResponse } from "next/server";
 
 export async function POST(req) {
   try {
@@ -6,33 +7,75 @@ export async function POST(req) {
 
     console.log("📩 WEBHOOK RECEBIDO:", JSON.stringify(body, null, 2));
 
-    if (body.event !== "billing.paid") {
-      return Response.json({ ok: true, msg: "Evento ignorado" });
+    // 1. Verifica se é realmente o evento de pagamento
+    if (body?.event !== "billing.paid") {
+      console.log("➡️ Evento ignorado:", body?.event);
+      return NextResponse.json({ ok: true, ignore: true });
     }
 
-    const pix = body.data.pixQrCode;
+    // 2. Pega os dados do PIX
+    const pix = body?.data?.pixQrCode;
 
-    const uid = pix.metadata.uid;
-    const valor = Number(pix.metadata.valor);
+    if (!pix) {
+      console.log("❌ ERRO: pixQrCode ausente");
+      return NextResponse.json(
+        { error: true, message: "pixQrCode ausente" },
+        { status: 400 }
+      );
+    }
+
+    const metadata = pix.metadata || {};
+    const uid = metadata.uid;
+    const valorPlano = Number(metadata.valor);
     const status = pix.status;
 
-    if (!uid || !valor) {
-      console.log("❌ Metadata faltando no webhook!");
-      return Response.json({ ok: false, msg: "Metadata ausente" });
+    console.log("📦 METADATA:", metadata);
+
+    // 3. Valida UID e valor
+    if (!uid || isNaN(valorPlano)) {
+      console.log("❌ ERRO: metadata incompleta");
+      return NextResponse.json(
+        { error: true, message: "UID ou valor inválidos" },
+        { status: 400 }
+      );
     }
 
+    // 4. Tabela de conversão de planos
+    const tabela = {
+      10: 100,
+      20: 230,
+      30: 360,
+      50: 650,
+      100: 1400,
+    };
+
+    const creditos = tabela[valorPlano] || 0;
+
+    if (creditos === 0) {
+      console.log("⚠️ Valor não existe na tabela:", valorPlano);
+      return NextResponse.json(
+        { error: true, message: "Valor inválido para créditos" },
+        { status: 400 }
+      );
+    }
+
+    // 5. Se pagamento confirmado
     if (status === "PAID") {
       await updateDoc(doc(db, "users", uid), {
-        creditos: increment(valor)
+        creditos: increment(creditos),
+        jaComprou: true,
       });
 
-      console.log(`🔥 Créditos adicionados ao usuário ${uid}: +${valor}`);
+      console.log(`🔥 Créditos adicionados: +${creditos} → UID: ${uid}`);
     }
 
-    return Response.json({ ok: true });
+    return NextResponse.json({ ok: true });
 
   } catch (e) {
     console.error("❌ ERRO NO WEBHOOK:", e);
-    return Response.json({ ok: false, error: e.message }, { status: 500 });
+    return NextResponse.json(
+      { error: true, message: e.message },
+      { status: 500 }
+    );
   }
 }
