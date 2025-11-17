@@ -2,23 +2,25 @@ import { NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
 export async function middleware(req) {
-  const path = req.nextUrl.pathname;
+  const { pathname } = req.nextUrl;
 
-  if (!path.startsWith("/admin")) {
+  // Só proteger rotas do admin
+  if (!pathname.startsWith("/admin")) {
     return NextResponse.next();
   }
 
-  const token = await getToken({
-    req,
-    secret: process.env.NEXTAUTH_SECRET,
-  });
+  // Lê token JWT
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
+  // Se não logado → redireciona para login
   if (!token) {
-    return NextResponse.redirect(new URL("/", req.url));
+    return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  const role = token.role;
+  // Verifica role REAL do usuário
+  const role = token.role || "user";
 
+  // Se não for admin → bloqueia
   if (role !== "admin" && role !== "superadmin") {
     return NextResponse.redirect(new URL("/", req.url));
   }
