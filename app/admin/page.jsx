@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { db, collection, getDocs } from "../../lib/firebase"; 
-import Card from "./componentes/Card";
-import Grafico from "./componentes/Grafico";
+import Card from "./componentes/Card.jsx";
+import Grafico from "./componentes/Grafico.jsx";
 
 export default function AdminDashboard() {
   const [usuarios, setUsuarios] = useState(0);
