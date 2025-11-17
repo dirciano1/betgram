@@ -372,7 +372,7 @@ export default function HomePage() {
           textAlign: "center", boxShadow: "0 0 25px rgba(34,197,94,0.15)",
         }}>
           <h1 style={{ position: "absolute", left: "-9999px", top: "0" }}>
-  BetGram – Analisador Esportivo com IA
+  Betgram - Analisador de Apostas Esportivas com Inteligencia Artificial
 </h1>
 
 <h2 aria-hidden="true" style={{
