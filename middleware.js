@@ -1,41 +1,37 @@
 import { NextResponse } from "next/server";
-import { authAdmin } from "./lib/firebaseAdmin"; // 🔥 IMPORTANTE
+import { jwtVerify } from "jose"; // biblioteca compatível com EDGE runtime
+
+const FIREBASE_PUBLIC_KEY = process.env.NEXT_PUBLIC_FIREBASE_PUBLIC_KEY;
 
 export async function middleware(req) {
   const path = req.nextUrl.pathname;
 
-  // 🔥 Apenas rotas dentro de /admin passam pelo filtro
   if (!path.startsWith("/admin")) {
     return NextResponse.next();
   }
 
-  // 🔥 Lê o cookie criado no loginComGoogle()
   const tokenCookie = req.cookies.get("betgram_token");
-
   if (!tokenCookie) {
-    console.log("❌ Nenhum token encontrado → redirecionando");
     return NextResponse.redirect(new URL("/", req.url));
   }
 
   try {
-    // 🔥 Decodifica token do Firebase
-    const decoded = await authAdmin.verifyIdToken(tokenCookie.value);
+    // 🔥 Verificação compatível com EDGE (sem firebase-admin)
+    const { payload } = await jwtVerify(
+      tokenCookie.value,
+      new TextEncoder().encode(FIREBASE_PUBLIC_KEY)
+    );
 
-    const role = decoded.role || null;
+    const role = payload.role;
 
-    console.log("🔍 ROLE DETECTADA:", role);
-
-    // 🔥 Somente superadmin pode acessar
     if (role !== "superadmin") {
-      console.log("❌ Acesso negado: usuário não é superadmin");
       return NextResponse.redirect(new URL("/", req.url));
     }
 
-    console.log("✅ Acesso autorizado ao admin");
     return NextResponse.next();
 
-  } catch (error) {
-    console.error("❌ ERRO NO TOKEN:", error);
+  } catch (e) {
+    console.error("Erro token no middleware:", e);
     return NextResponse.redirect(new URL("/", req.url));
   }
 }
