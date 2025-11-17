@@ -8,11 +8,12 @@ import {
   updateDoc,
   deleteDoc,
   doc,
-  increment
+  increment,
 } from "../../../lib/firebase";
 
 export default function UsuariosAdmin() {
   const [usuarios, setUsuarios] = useState([]);
+  const [valores, setValores] = useState({}); // <- guarda o valor por usuário
 
   useEffect(() => {
     carregar();
@@ -25,17 +26,31 @@ export default function UsuariosAdmin() {
     setUsuarios(arr);
   }
 
-  async function addCredito(uid, qtd) {
+  function mudarValor(uid, v) {
+    setValores((prev) => ({ ...prev, [uid]: v }));
+  }
+
+  async function addCredito(uid) {
+    const qtd = Number(valores[uid] || 0);
+    if (qtd <= 0) return alert("Digite um valor válido");
+
     await updateDoc(doc(db, "users", uid), {
       creditos: increment(qtd),
     });
+
+    mudarValor(uid, ""); // limpa campo
     carregar();
   }
 
-  async function removerCredito(uid, qtd) {
+  async function removerCredito(uid) {
+    const qtd = Number(valores[uid] || 0);
+    if (qtd <= 0) return alert("Digite um valor válido");
+
     await updateDoc(doc(db, "users", uid), {
       creditos: increment(-qtd),
     });
+
+    mudarValor(uid, ""); // limpa campo
     carregar();
   }
 
@@ -80,11 +95,29 @@ export default function UsuariosAdmin() {
               <td>{u.creditos}</td>
               <td>{u.role}</td>
               <td style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                <button onClick={() => addCredito(u.id, 10)}>+10</button>
-                <button onClick={() => removerCredito(u.id, 10)}>-10</button>
+                {/* INPUT PERSONALIZADO */}
+                <input
+                  type="number"
+                  value={valores[u.id] || ""}
+                  onChange={(e) => mudarValor(u.id, e.target.value)}
+                  placeholder="Qtd"
+                  style={{
+                    width: 70,
+                    padding: "4px 6px",
+                    borderRadius: 6,
+                    border: "1px solid #94a3b8",
+                    background: "#0f172a",
+                    color: "#fff",
+                  }}
+                />
+
+                <button onClick={() => addCredito(u.id)}>Adicionar</button>
+                <button onClick={() => removerCredito(u.id)}>Remover</button>
+
                 <button onClick={() => promover(u.id)}>Promover</button>
                 <button onClick={() => rebaixar(u.id)}>Rebaixar</button>
                 <button onClick={() => banir(u.id)}>Banir</button>
+
                 <button onClick={() => excluir(u.id)} style={{ color: "red" }}>
                   Excluir
                 </button>
