@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 export default function Grafico() {
   return (
     <div
@@ -22,16 +24,12 @@ export default function Grafico() {
         Em breve você verá visualizações reais do sistema aqui!
       </p>
 
-      <div
-        style={{
-          marginTop: 25,
-          opacity: 0.5,
-        }}
-      >
-        <img
+      <div style={{ marginTop: 25, opacity: 0.5 }}>
+        <Image
           src="https://cdn-icons-png.flaticon.com/512/1828/1828778.png"
           alt="Loading chart"
-          style={{ width: 60, height: 60 }}
+          width={60}
+          height={60}
         />
       </div>
     </div>
