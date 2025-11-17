@@ -224,14 +224,25 @@ export default function HomePage() {
     } else setDadosUser(snap.data());
   }
   async function handleLogin() {
-    try {
-      const u = await loginComGoogle();
-      setUser(u);
-      await carregarDadosUsuario(u);
-    } catch (err) {
-      alert("Erro ao fazer login: " + err.message);
-    }
+  try {
+    const u = await loginComGoogle();
+    setUser(u);
+
+    // Carrega dados no Firestore
+    await carregarDadosUsuario(u);
+
+    // Lê os dados atualizados do usuário
+    const userDoc = await getDoc(doc(db, "users", u.uid));
+    const role = userDoc.data().role || "user";
+
+    // SALVA UID E ROLE
+    document.cookie = `uid=${u.uid}; path=/;`;
+    document.cookie = `role=${role}; path=/;`;
+
+  } catch (err) {
+    alert("Erro ao fazer login: " + err.message);
   }
+}
 
   async function handleLogout() {
     await sair();
