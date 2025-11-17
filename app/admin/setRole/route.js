@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { adminDB, adminAuth } from "@/lib/firebaseAdmin";
+import { adminDB, adminAuth } from "../../../lib/firebaseAdmin";
 
 export async function GET(req) {
   try {
@@ -15,10 +15,8 @@ export async function GET(req) {
       );
     }
 
-    // Atualiza Firestore
     await adminDB.collection("users").doc(uid).update({ role });
 
-    // Atualiza custom claims oficiais
     await adminAuth.setCustomUserClaims(uid, { role });
 
     return NextResponse.json({
