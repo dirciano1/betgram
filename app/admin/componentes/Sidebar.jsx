@@ -41,29 +41,30 @@ export default function Sidebar() {
         const active = pathname === item.path;
 
         return (
-          <Link
-            key={item.path}
-            href={item.path}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              padding: "10px 14px",
-              marginBottom: 10,
-              borderRadius: 10,
-              color: active ? "#22c55e" : "#fff",
-              background: active
-                ? "rgba(34,197,94,0.15)"
-                : "transparent",
-              border: active
-                ? "1px solid rgba(34,197,94,0.4)"
-                : "1px solid transparent",
-              textDecoration: "none",
-              transition: "0.2s",
-              fontWeight: active ? 700 : 500,
-            }}
-          >
-            <span style={{ marginRight: 10 }}>{item.icon}</span>
-            {item.name}
+          <Link key={item.path} href={item.path}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                padding: "10px 14px",
+                marginBottom: 10,
+                borderRadius: 10,
+                color: active ? "#22c55e" : "#fff",
+                background: active
+                  ? "rgba(34,197,94,0.15)"
+                  : "transparent",
+                border: active
+                  ? "1px solid rgba(34,197,94,0.4)"
+                  : "1px solid transparent",
+                textDecoration: "none",
+                transition: "0.2s",
+                fontWeight: active ? 700 : 500,
+                cursor: "pointer",
+              }}
+            >
+              <span style={{ marginRight: 10 }}>{item.icon}</span>
+              {item.name}
+            </div>
           </Link>
         );
       })}
