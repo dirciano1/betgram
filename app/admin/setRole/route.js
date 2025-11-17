@@ -1,9 +1,12 @@
 import { NextResponse } from "next/server";
-import { dbAdmin, authAdmin } from "../../../lib/firebaseAdmin";
+import { adminDB, adminAuth } from "@/lib/firebaseAdmin";
 
-export async function POST(req) {
+export async function GET(req) {
   try {
-    const { uid, role } = await req.json();
+    const { searchParams } = new URL(req.url);
+
+    const uid = searchParams.get("uid");
+    const role = searchParams.get("role");
 
     if (!uid || !role) {
       return NextResponse.json(
@@ -13,17 +16,18 @@ export async function POST(req) {
     }
 
     // Atualiza Firestore
-    await adminDB.collection("users").doc(uid).update({
-      role,
-    });
+    await adminDB.collection("users").doc(uid).update({ role });
 
-    // Atualiza custom claim oficial
+    // Atualiza custom claims oficiais
     await adminAuth.setCustomUserClaims(uid, { role });
 
     return NextResponse.json({
       ok: true,
-      message: `Role de ${uid} atualizado para ${role}`,
+      uid,
+      role,
+      message: `Role de ${uid} atualizada para ${role}`,
     });
+
   } catch (error) {
     console.error("ERRO SET ROLE:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
