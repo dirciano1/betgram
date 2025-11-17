@@ -1,19 +1,26 @@
 import { NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
 
-export async function middleware(req) {
-  const path = req.nextUrl.pathname;
+export function middleware(req) {
+  const pathname = req.nextUrl.pathname;
 
-  if (!path.startsWith("/admin")) return NextResponse.next();
-
-  const token = await getToken({ req });
-
-  if (!token) return NextResponse.redirect(new URL("/", req.url));
-
-  // Permite só admin ou superadmin
-  if (token.role === "admin" || token.role === "superadmin") {
+  // liberar páginas públicas
+  if (!pathname.startsWith("/admin")) {
     return NextResponse.next();
   }
 
-  return NextResponse.redirect(new URL("/", req.url));
+  // pegar cookies
+  const uid = req.cookies.get("uid")?.value;
+  const role = req.cookies.get("role")?.value;
+
+  // se não tiver login → manda pro /login
+  if (!uid || !role) {
+    return NextResponse.redirect(new URL("/", req.url));
+  }
+
+  // apenas admin e superadmin podem entrar
+  if (role !== "admin" && role !== "superadmin") {
+    return NextResponse.redirect(new URL("/", req.url));
+  }
+
+  return NextResponse.next();
 }
