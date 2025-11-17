@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { db, collection, getDocs } from "@/lib/firebase";
+import { db, collection, getDocs } from "../../lib/firebase"; 
 import Card from "./componentes/Card";
 import Grafico from "./componentes/Grafico";
 
@@ -15,15 +15,12 @@ export default function AdminDashboard() {
   }, []);
 
   async function carregarDados() {
-    // Carrega usuários
     const usersSnap = await getDocs(collection(db, "users"));
     setUsuarios(usersSnap.size);
 
-    // Carrega análises
     const analisesSnap = await getDocs(collection(db, "analises"));
     setAnalises(analisesSnap.size);
 
-    // Soma os créditos
     let totalCred = 0;
     usersSnap.forEach((u) => {
       totalCred += u.data().creditos || 0;
