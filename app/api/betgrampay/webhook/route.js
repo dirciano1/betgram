@@ -1,4 +1,4 @@
-import { db, doc, updateDoc, increment } from "../../../lib/firebase";
+import { db, doc, updateDoc, increment } from "../../../../lib/firebase";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
