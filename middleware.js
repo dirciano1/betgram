@@ -1,39 +1,27 @@
 import { NextResponse } from "next/server";
-import { jwtVerify } from "jose"; // biblioteca compatível com EDGE runtime
 
-const FIREBASE_PUBLIC_KEY = process.env.NEXT_PUBLIC_FIREBASE_PUBLIC_KEY;
-
-export async function middleware(req) {
+export function middleware(req) {
   const path = req.nextUrl.pathname;
 
-  if (!path.startsWith("/admin")) {
+  // 🔓 LIBERAR *SOMENTE* O ENDPOINT setRole
+  if (path.startsWith("/admin/setRole")) {
+    console.log("🔓 setRole liberado no middleware");
     return NextResponse.next();
   }
 
-  const tokenCookie = req.cookies.get("betgram_token");
-  if (!tokenCookie) {
-    return NextResponse.redirect(new URL("/", req.url));
-  }
+  // 🔐 PROTEGER TODAS AS OUTRAS ROTAS ADMIN
+  if (path.startsWith("/admin")) {
+    const role = req.cookies.get("role")?.value;
 
-  try {
-    // 🔥 Verificação compatível com EDGE (sem firebase-admin)
-    const { payload } = await jwtVerify(
-      tokenCookie.value,
-      new TextEncoder().encode(FIREBASE_PUBLIC_KEY)
-    );
+    console.log("🔍 role detectado:", role);
 
-    const role = payload.role;
-
-    if (role !== "superadmin") {
+    if (!role || (role !== "admin" && role !== "superadmin")) {
+      console.log("⛔ Acesso negado — redirecionando...");
       return NextResponse.redirect(new URL("/", req.url));
     }
-
-    return NextResponse.next();
-
-  } catch (e) {
-    console.error("Erro token no middleware:", e);
-    return NextResponse.redirect(new URL("/", req.url));
   }
+
+  return NextResponse.next();
 }
 
 export const config = {
