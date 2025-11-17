@@ -13,7 +13,7 @@ import {
 
 export default function UsuariosAdmin() {
   const [usuarios, setUsuarios] = useState([]);
-  const [valores, setValores] = useState({}); // <- guarda o valor por usuário
+  const [valores, setValores] = useState({});
 
   useEffect(() => {
     carregar();
@@ -38,7 +38,7 @@ export default function UsuariosAdmin() {
       creditos: increment(qtd),
     });
 
-    mudarValor(uid, ""); // limpa campo
+    mudarValor(uid, "");
     carregar();
   }
 
@@ -50,7 +50,7 @@ export default function UsuariosAdmin() {
       creditos: increment(-qtd),
     });
 
-    mudarValor(uid, ""); // limpa campo
+    mudarValor(uid, "");
     carregar();
   }
 
@@ -61,11 +61,6 @@ export default function UsuariosAdmin() {
 
   async function rebaixar(uid) {
     await updateDoc(doc(db, "users", uid), { role: "user" });
-    carregar();
-  }
-
-  async function banir(uid) {
-    await updateDoc(doc(db, "users", uid), { banido: true });
     carregar();
   }
 
@@ -94,6 +89,7 @@ export default function UsuariosAdmin() {
               <td>{u.nome || u.email}</td>
               <td>{u.creditos}</td>
               <td>{u.role}</td>
+
               <td style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                 {/* INPUT PERSONALIZADO */}
                 <input
@@ -116,7 +112,6 @@ export default function UsuariosAdmin() {
 
                 <button onClick={() => promover(u.id)}>Promover</button>
                 <button onClick={() => rebaixar(u.id)}>Rebaixar</button>
-                <button onClick={() => banir(u.id)}>Banir</button>
 
                 <button onClick={() => excluir(u.id)} style={{ color: "red" }}>
                   Excluir
