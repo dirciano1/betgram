@@ -1,12 +1,12 @@
 "use client";
 
-import Sidebar from "./components/Sidebar";
+import Sidebar from "./componentes/Sidebar";
 
 export default function AdminLayout({ children }) {
   return (
-    <div className="admin-container" style={{ display: "flex" }}>
+    <div style={{ display: "flex" }}>
       <Sidebar />
-      <main style={{ flex: 1, padding: "20px" }}>
+      <main style={{ flex: 1, padding: 20 }}>
         {children}
       </main>
     </div>
