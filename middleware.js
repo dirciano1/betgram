@@ -3,20 +3,21 @@ import { NextResponse } from "next/server";
 export function middleware(req) {
   const path = req.nextUrl.pathname;
 
-  // 🔓 LIBERAR *SOMENTE* O ENDPOINT setRole
+  // 🔓 LIBERA o endpoint setRole (necessário para promover usuários)
   if (path.startsWith("/admin/setRole")) {
-    console.log("🔓 setRole liberado no middleware");
     return NextResponse.next();
   }
 
-  // 🔐 PROTEGER TODAS AS OUTRAS ROTAS ADMIN
+  // 🔐 PROTEGER TODAS AS ROTAS ADMIN
   if (path.startsWith("/admin")) {
+
     const role = req.cookies.get("role")?.value;
 
-    console.log("🔍 role detectado:", role);
+    console.log("🛡️ Verificando role:", role);
 
-    if (!role || (role !== "admin" && role !== "superadmin")) {
-      console.log("⛔ Acesso negado — redirecionando...");
+    // 🔒 SÓ PERMITE SUPERADMIN
+    if (role !== "superadmin") {
+      console.log("⛔ Acesso negado. Apenas SUPERADMIN pode acessar.");
       return NextResponse.redirect(new URL("/", req.url));
     }
   }
