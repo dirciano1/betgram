@@ -23,6 +23,7 @@ export default function UsuariosAdmin() {
     });
     carregar();
   }
+  
 
   async function removerCredito(uid, qtd) {
     await updateDoc(doc(db, "users", uid), {
@@ -90,3 +91,4 @@ export default function UsuariosAdmin() {
     </div>
   );
 }
+
