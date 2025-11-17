@@ -62,7 +62,6 @@ seguindo rigorosamente o padrão da Betgram IA.
 - Ambas Marcam (BTTS)
 - Escanteios (Over/Under)
 - Cartões (Over/Under)
-- Handicap Asiático (se fizer sentido)
 - Valor Esperado (EV)
 - Odds justas
 - Conclusões detalhadas para CADA mercado
@@ -180,3 +179,4 @@ export async function POST(req) {
     );
   }
 }
+
