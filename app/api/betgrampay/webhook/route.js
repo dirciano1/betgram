@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
-import { dbServer, increment } from "../../../../lib/firebaseServer";
+import { dbServer } from "../../../../lib/firebaseServer";
 
 export async function POST(req) {
   try {
     const body = await req.json();
+
+    console.log("📩 WEBHOOK RECEBIDO:", JSON.stringify(body, null, 2));
 
     if (body?.event !== "billing.paid") {
       return NextResponse.json({ ok: true, ignore: true });
@@ -11,49 +13,45 @@ export async function POST(req) {
 
     const pix = body?.data?.pixQrCode;
     if (!pix) {
-      return NextResponse.json({ error: true, message: "pixQrCode ausente" }, { status: 400 });
+      return NextResponse.json(
+        { error: true, message: "pixQrCode ausente" },
+        { status: 400 }
+      );
     }
 
     const metadata = pix.metadata || {};
     const uid = metadata.uid;
     const valorPlano = Number(metadata.valor);
 
-    // 🔥 Busca o usuário usando Admin SDK
-    const userRef = dbServer.collection("users").doc(uid);
-    const userSnap = await userRef.get();
-
-    if (!userSnap.exists) {
-      console.log("❌ Usuário não existe.");
-      return NextResponse.json({ error: true }, { status: 404 });
+    if (!uid) {
+      return NextResponse.json(
+        { error: true, message: "UID ausente" },
+        { status: 400 }
+      );
     }
 
-    const userData = userSnap.data();
-    const indicador = userData.indicador;
-    const bonusRecebido = userData.bonusRecebido;
+    console.log("🔧 Atualizando créditos do usuário:", uid);
 
-    // 🔥 Dá crédito ao comprador
-    await userRef.update({
-      creditos: increment(valorPlano),
-      jaComprou: true
-    });
-
-    // 🔥 Paga bônus para o indicador (caso exista)
-    if (indicador && !bonusRecebido) {
-      await dbServer.collection("users").doc(indicador).update({
-        creditos: increment(20)
+    // ===========================================
+    // 🔥 AQUI ESTÁ O JEITO CORRETO NO ADMIN SDK
+    // ===========================================
+    await dbServer
+      .collection("users")
+      .doc(uid)
+      .update({
+        creditos: admin.firestore.FieldValue.increment(valorPlano),
+        jaComprou: true,
+        atualizadoEm: new Date(),
       });
 
-      await userRef.update({
-        bonusRecebido: true
-      });
-
-      console.log("🎉 Bônus pago ao indicador:", indicador);
-    }
+    console.log("✅ Créditos adicionados com sucesso!");
 
     return NextResponse.json({ ok: true });
-
   } catch (err) {
-    console.log("❌ Erro no webhook:", err.message);
-    return NextResponse.json({ error: true, msg: err.message }, { status: 500 });
+    console.error("❌ Erro no webhook:", err);
+    return NextResponse.json(
+      { error: true, message: err.message },
+      { status: 500 }
+    );
   }
 }
