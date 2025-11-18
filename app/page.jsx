@@ -89,6 +89,35 @@ const buttonCancelStyle = {
   minWidth: "120px",
 };
 
+function AlertaGlobal() {
+  const [alerta, setAlerta] = useState(null);
+
+  useEffect(() => {
+    const ref = doc(db, "configuracoes", "alerta");
+    const unsub = onSnapshot(ref, snap => {
+      if (snap.exists()) setAlerta(snap.data());
+    });
+    return () => unsub();
+  }, []);
+
+  if (!alerta || !alerta.ativo) return null;
+
+  return (
+    <div style={{
+      width: "100%",
+      padding: "10px",
+      background: alerta.cor || "#dc2626",
+      color: "#fff",
+      textAlign: "center",
+      fontWeight: "600",
+      borderBottom: "2px solid rgba(255,255,255,0.2)",
+      zIndex: 9999
+    }}>
+      {alerta.mensagem || "⚠️ Aviso importante"}
+    </div>
+  );
+}
+
 function ConfirmacaoModal({ show, onConfirm, onCancel, timeA, timeB, creditos }) {
   if (!show) return null;
   return (
@@ -373,6 +402,8 @@ export default function HomePage() {
   // === Tela inicial de login ===
   if (!user) {
     return (
+      <AlertaGlobal />
+      
       <main style={{
         display: "flex", justifyContent: "center", alignItems: "center",
         height: "100vh", background: "linear-gradient(135deg,#0b1324 0%,#111827 100%)",
@@ -383,6 +414,7 @@ export default function HomePage() {
           borderRadius: "16px", padding: "40px 30px", width: "90%", maxWidth: "400px",
           textAlign: "center", boxShadow: "0 0 25px rgba(34,197,94,0.15)",
         }}>
+         
           <h1 style={{ position: "absolute", left: "-9999px", top: "0" }}>
   Betgram - Analisador de Apostas Esportivas com Inteligencia Artificial
 </h1>
