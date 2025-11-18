@@ -19,6 +19,7 @@ import {
   orderBy,
   limit,
   serverTimestamp,
+  onSnapshot,
 } from "../lib/firebase";
 import { gerarAnalise } from "../lib/aiClient";
 import "./globals.css";
