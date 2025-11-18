@@ -402,7 +402,8 @@ export default function HomePage() {
   // === Tela inicial de login ===
   if (!user) {
     return (
-      <AlertaGlobal />
+      <>
+    <AlertaGlobal />
       
       <main style={{
         display: "flex", justifyContent: "center", alignItems: "center",
