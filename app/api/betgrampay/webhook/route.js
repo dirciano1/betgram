@@ -5,7 +5,7 @@ import {
   updateDoc,
   increment,
   getDoc,
-} from "../../../../lib/firebaseServer";
+} from "../../../lib/firebaseServer";
 
 export async function POST(req) {
   try {
