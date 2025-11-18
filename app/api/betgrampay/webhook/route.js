@@ -1,5 +1,11 @@
 import { NextResponse } from "next/server";
-import { dbServer, doc, updateDoc, increment } from "../../../../lib/firebaseServer";
+import {
+  dbServer,
+  doc,
+  updateDoc,
+  increment,
+  getDoc,
+} from "../../../../lib/firebaseServer";
 
 export async function POST(req) {
   try {
@@ -7,6 +13,7 @@ export async function POST(req) {
 
     console.log("📩 WEBHOOK RECEBIDO:", JSON.stringify(body, null, 2));
 
+    // Aceita SOMENTE billing.paid
     if (body?.event !== "billing.paid") {
       console.log("➡️ Evento ignorado:", body?.event);
       return NextResponse.json({ ok: true, ignore: true });
@@ -37,6 +44,7 @@ export async function POST(req) {
       );
     }
 
+    // TABELA OFICIAL DE CRÉDITOS
     const tabela = {
       10: 100,
       20: 230,
@@ -55,6 +63,9 @@ export async function POST(req) {
       );
     }
 
+    // ==========================================
+    // 🔥 ADICIONAR CRÉDITOS DO PLANO (OK)
+    // ==========================================
     if (status === "PAID") {
       await updateDoc(doc(dbServer, "users", uid), {
         creditos: increment(creditos),
@@ -64,8 +75,44 @@ export async function POST(req) {
       console.log(`🔥 Créditos adicionados: +${creditos} → UID: ${uid}`);
     }
 
-    return NextResponse.json({ ok: true });
+    // ==========================================
+    // 🎁 BÔNUS DE INDICAÇÃO (UMA ÚNICA VEZ)
+    // ==========================================
+    try {
+      const userRef = doc(dbServer, "users", uid);
+      const userSnap = await getDoc(userRef);
 
+      if (userSnap.exists()) {
+        const userData = userSnap.data();
+
+        // Verifica se este usuário foi indicado por alguém
+        if (userData.indicador) {
+          const indicadorUid = userData.indicador;
+          const indicadorRef = doc(dbServer, "users", indicadorUid);
+          const indicadorSnap = await getDoc(indicadorRef);
+
+          if (indicadorSnap.exists()) {
+            const indData = indicadorSnap.data();
+
+            // 💰 Só paga se o indicador ainda NÃO recebeu
+            if (!indData.bonusRecebido) {
+              await updateDoc(indicadorRef, {
+                creditos: increment(20),
+                bonusRecebido: true,
+              });
+
+              console.log(
+                `🎁 BONUS: Indicador ${indicadorUid} recebeu +20 créditos.`
+              );
+            }
+          }
+        }
+      }
+    } catch (err) {
+      console.log("⚠️ ERRO AO PROCESSAR BÔNUS:", err.message);
+    }
+
+    return NextResponse.json({ ok: true });
   } catch (e) {
     console.error("❌ ERRO NO WEBHOOK:", e);
     return NextResponse.json(
