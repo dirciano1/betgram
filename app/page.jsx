@@ -19,7 +19,6 @@ import {
   orderBy,
   limit,
   serverTimestamp,
-  onSnapshot,
 } from "../lib/firebase";
 import { gerarAnalise } from "../lib/aiClient";
 import "./globals.css";
@@ -89,35 +88,6 @@ const buttonCancelStyle = {
   flex: 1,
   minWidth: "120px",
 };
-
-function AlertaGlobal() {
-  const [alerta, setAlerta] = useState(null);
-
-  useEffect(() => {
-    const ref = doc(db, "configuracoes", "alerta");
-    const unsub = onSnapshot(ref, snap => {
-      if (snap.exists()) setAlerta(snap.data());
-    });
-    return () => unsub();
-  }, []);
-
-  if (!alerta || !alerta.ativo) return null;
-
-  return (
-    <div style={{
-      width: "100%",
-      padding: "10px",
-      background: alerta.cor || "#dc2626",
-      color: "#fff",
-      textAlign: "center",
-      fontWeight: "600",
-      borderBottom: "2px solid rgba(255,255,255,0.2)",
-      zIndex: 9999
-    }}>
-      {alerta.mensagem || "⚠️ Aviso importante"}
-    </div>
-  );
-}
 
 function ConfirmacaoModal({ show, onConfirm, onCancel, timeA, timeB, creditos }) {
   if (!show) return null;
@@ -249,7 +219,19 @@ export default function HomePage() {
           criadoEm: serverTimestamp(),
           bonusPago: false,
         });
-        
+        // 🔥 Bônus de 20 créditos para o indicador (somente 1x)
+if (indicador) {
+  const refIndicador = doc(db, "users", indicador);
+  const snapIndicador = await getDoc(refIndicador);
+
+  if (snapIndicador.exists() && !snapIndicador.data().bonusRecebido) {
+    await updateDoc(refIndicador, {
+      creditos: (snapIndicador.data().creditos || 0) + 20,
+      bonusRecebido: true,
+    });
+  }
+}
+
       }
       setDadosUser({ nome: u.displayName, creditos: 10 });
     } else setDadosUser(snap.data());
@@ -403,9 +385,6 @@ export default function HomePage() {
   // === Tela inicial de login ===
   if (!user) {
     return (
-      <>
-    <AlertaGlobal />
-      
       <main style={{
         display: "flex", justifyContent: "center", alignItems: "center",
         height: "100vh", background: "linear-gradient(135deg,#0b1324 0%,#111827 100%)",
@@ -416,7 +395,6 @@ export default function HomePage() {
           borderRadius: "16px", padding: "40px 30px", width: "90%", maxWidth: "400px",
           textAlign: "center", boxShadow: "0 0 25px rgba(34,197,94,0.15)",
         }}>
-         
           <h1 style={{ position: "absolute", left: "-9999px", top: "0" }}>
   Betgram - Analisador de Apostas Esportivas com Inteligencia Artificial
 </h1>
@@ -449,7 +427,6 @@ export default function HomePage() {
           </button>
         </div>
       </main>
-         </>
     );
   }
 
