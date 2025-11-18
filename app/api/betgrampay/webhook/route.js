@@ -4,8 +4,11 @@ import {
   doc,
   updateDoc,
   increment,
-  getDoc,
-} from "../../../../lib/firebaseServer";
+  collection,
+  query,
+  where,
+  getDocs,
+} from "../../../../../lib/firebaseServer";
 
 export async function POST(req) {
   try {
@@ -13,7 +16,6 @@ export async function POST(req) {
 
     console.log("📩 WEBHOOK RECEBIDO:", JSON.stringify(body, null, 2));
 
-    // Aceita SOMENTE billing.paid
     if (body?.event !== "billing.paid") {
       console.log("➡️ Evento ignorado:", body?.event);
       return NextResponse.json({ ok: true, ignore: true });
@@ -22,7 +24,6 @@ export async function POST(req) {
     const pix = body?.data?.pixQrCode;
 
     if (!pix) {
-      console.log("❌ ERRO: pixQrCode ausente");
       return NextResponse.json(
         { error: true, message: "pixQrCode ausente" },
         { status: 400 }
@@ -37,14 +38,12 @@ export async function POST(req) {
     console.log("📦 METADATA:", metadata);
 
     if (!uid || isNaN(valorPlano)) {
-      console.log("❌ ERRO: metadata incompleta");
       return NextResponse.json(
         { error: true, message: "UID ou valor inválidos" },
         { status: 400 }
       );
     }
 
-    // TABELA OFICIAL DE CRÉDITOS
     const tabela = {
       10: 100,
       20: 230,
@@ -56,60 +55,59 @@ export async function POST(req) {
     const creditos = tabela[valorPlano] || 0;
 
     if (creditos === 0) {
-      console.log("⚠️ Valor não existe na tabela:", valorPlano);
       return NextResponse.json(
-        { error: true, message: "Valor inválido para créditos" },
+        { error: true, message: "Valor inválido" },
         { status: 400 }
       );
     }
 
-    // ==========================================
-    // 🔥 ADICIONAR CRÉDITOS DO PLANO (OK)
-    // ==========================================
+    // Créditos normais
     if (status === "PAID") {
       await updateDoc(doc(dbServer, "users", uid), {
         creditos: increment(creditos),
         jaComprou: true,
       });
-
       console.log(`🔥 Créditos adicionados: +${creditos} → UID: ${uid}`);
     }
 
-    // ==========================================
-    // 🎁 BÔNUS DE INDICAÇÃO (UMA ÚNICA VEZ)
-    // ==========================================
+    // ===============================
+    // 🎁 BÔNUS DE INDICAÇÃO
+    // ===============================
+
     try {
-      const userRef = doc(dbServer, "users", uid);
-      const userSnap = await getDoc(userRef);
+      const indicacoesRef = collection(dbServer, "indicacoes");
+      const q = query(
+        indicacoesRef,
+        where("indicado", "==", uid),
+        where("bonusPago", "==", false)
+      );
 
-      if (userSnap.exists()) {
-        const userData = userSnap.data();
+      const snap = await getDocs(q);
 
-        // Verifica se este usuário foi indicado por alguém
-        if (userData.indicador) {
-          const indicadorUid = userData.indicador;
-          const indicadorRef = doc(dbServer, "users", indicadorUid);
-          const indicadorSnap = await getDoc(indicadorRef);
+      if (!snap.empty) {
+        const indicacaoDoc = snap.docs[0];
+        const dadosIndic = indicacaoDoc.data();
 
-          if (indicadorSnap.exists()) {
-            const indData = indicadorSnap.data();
+        const indicadorUid = dadosIndic.indicador;
 
-            // 💰 Só paga se o indicador ainda NÃO recebeu
-            if (!indData.bonusRecebido) {
-              await updateDoc(indicadorRef, {
-                creditos: increment(20),
-                bonusRecebido: true,
-              });
+        // paga o bônus
+        await updateDoc(doc(dbServer, "users", indicadorUid), {
+          creditos: increment(20),
+        });
 
-              console.log(
-                `🎁 BONUS: Indicador ${indicadorUid} recebeu +20 créditos.`
-              );
-            }
-          }
-        }
+        // marca como pago
+        await updateDoc(doc(dbServer, "indicacoes", indicacaoDoc.id), {
+          bonusPago: true,
+        });
+
+        console.log(
+          `🎁 BONUS OK → Indicador ${indicadorUid} recebeu +20 créditos por ${uid}`
+        );
+      } else {
+        console.log("ℹ️ Nenhum bônus pendente.");
       }
-    } catch (err) {
-      console.log("⚠️ ERRO AO PROCESSAR BÔNUS:", err.message);
+    } catch (error) {
+      console.error("❌ ERRO NO BÔNUS:", error);
     }
 
     return NextResponse.json({ ok: true });
