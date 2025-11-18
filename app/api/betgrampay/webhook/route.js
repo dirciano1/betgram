@@ -75,49 +75,42 @@ export async function POST(req) {
       console.log(`🔥 Créditos adicionados: +${creditos} → UID: ${uid}`);
     }
 
-    // ==========================================
-    // 🎁 BÔNUS DE INDICAÇÃO (UMA ÚNICA VEZ)
-    // ==========================================
-    try {
-      const userRef = doc(dbServer, "users", uid);
-      const userSnap = await getDoc(userRef);
+   // ==========================================
+// 🎁 BÔNUS DE INDICAÇÃO — PAGA 1 VEZ
+// ==========================================
+try {
+  // Buscar indicação desse usuário
+  const indicacoesRef = collection(dbServer, "indicacoes");
+  const q = query(
+    indicacoesRef,
+    where("indicado", "==", uid),
+    where("bonusPago", "==", false)
+  );
 
-      if (userSnap.exists()) {
-        const userData = userSnap.data();
+  const snap = await getDocs(q);
 
-        // Verifica se este usuário foi indicado por alguém
-        if (userData.indicador) {
-          const indicadorUid = userData.indicador;
-          const indicadorRef = doc(dbServer, "users", indicadorUid);
-          const indicadorSnap = await getDoc(indicadorRef);
+  if (!snap.empty) {
+    const indicacaoDoc = snap.docs[0];
+    const dadosIndicacao = indicacaoDoc.data();
 
-          if (indicadorSnap.exists()) {
-            const indData = indicadorSnap.data();
+    const indicadorUid = dadosIndicacao.indicador;
 
-            // 💰 Só paga se o indicador ainda NÃO recebeu
-            if (!indData.bonusRecebido) {
-              await updateDoc(indicadorRef, {
-                creditos: increment(20),
-                bonusRecebido: true,
-              });
+    // Adiciona 20 créditos ao indicador
+    await updateDoc(doc(dbServer, "users", indicadorUid), {
+      creditos: increment(20),
+    });
 
-              console.log(
-                `🎁 BONUS: Indicador ${indicadorUid} recebeu +20 créditos.`
-              );
-            }
-          }
-        }
-      }
-    } catch (err) {
-      console.log("⚠️ ERRO AO PROCESSAR BÔNUS:", err.message);
-    }
+    // Marca como pago
+    await updateDoc(doc(dbServer, "indicacoes", indicacaoDoc.id), {
+      bonusPago: true,
+    });
 
-    return NextResponse.json({ ok: true });
-  } catch (e) {
-    console.error("❌ ERRO NO WEBHOOK:", e);
-    return NextResponse.json(
-      { error: true, message: e.message },
-      { status: 500 }
+    console.log(
+      `🎁 BONUS PAGO: Indicador ${indicadorUid} recebeu +20 créditos por ${uid}`
     );
+  } else {
+    console.log("ℹ️ Nenhum bônus pendente para este usuário.");
   }
+} catch (error) {
+  console.error("❌ ERRO NO BÔNUS DE INDICAÇÃO:", error);
 }
