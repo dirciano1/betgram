@@ -1,123 +1,59 @@
 import { NextResponse } from "next/server";
-import {
-  dbServer,
-  doc,
-  updateDoc,
-  increment,
-  getDoc,
-} from "../../../../lib/firebaseServer";
+import { dbServer, increment } from "../../../../lib/firebaseServer";
 
 export async function POST(req) {
   try {
     const body = await req.json();
 
-    console.log("📩 WEBHOOK RECEBIDO:", JSON.stringify(body, null, 2));
-
-    // Aceita SOMENTE billing.paid
     if (body?.event !== "billing.paid") {
-      console.log("➡️ Evento ignorado:", body?.event);
       return NextResponse.json({ ok: true, ignore: true });
     }
 
     const pix = body?.data?.pixQrCode;
-
     if (!pix) {
-      console.log("❌ ERRO: pixQrCode ausente");
-      return NextResponse.json(
-        { error: true, message: "pixQrCode ausente" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: true, message: "pixQrCode ausente" }, { status: 400 });
     }
 
     const metadata = pix.metadata || {};
     const uid = metadata.uid;
     const valorPlano = Number(metadata.valor);
-    const status = pix.status;
 
-    console.log("📦 METADATA:", metadata);
+    // 🔥 Busca o usuário usando Admin SDK
+    const userRef = dbServer.collection("users").doc(uid);
+    const userSnap = await userRef.get();
 
-    if (!uid || isNaN(valorPlano)) {
-      console.log("❌ ERRO: metadata incompleta");
-      return NextResponse.json(
-        { error: true, message: "UID ou valor inválidos" },
-        { status: 400 }
-      );
+    if (!userSnap.exists) {
+      console.log("❌ Usuário não existe.");
+      return NextResponse.json({ error: true }, { status: 404 });
     }
 
-    // TABELA OFICIAL DE CRÉDITOS
-    const tabela = {
-      10: 100,
-      20: 230,
-      30: 360,
-      50: 650,
-      100: 1400,
-    };
+    const userData = userSnap.data();
+    const indicador = userData.indicador;
+    const bonusRecebido = userData.bonusRecebido;
 
-    const creditos = tabela[valorPlano] || 0;
+    // 🔥 Dá crédito ao comprador
+    await userRef.update({
+      creditos: increment(valorPlano),
+      jaComprou: true
+    });
 
-    if (creditos === 0) {
-      console.log("⚠️ Valor não existe na tabela:", valorPlano);
-      return NextResponse.json(
-        { error: true, message: "Valor inválido para créditos" },
-        { status: 400 }
-      );
-    }
-
-    // ==========================================
-    // 🔥 ADICIONAR CRÉDITOS DO PLANO (OK)
-    // ==========================================
-    if (status === "PAID") {
-      await updateDoc(doc(dbServer, "users", uid), {
-        creditos: increment(creditos),
-        jaComprou: true,
+    // 🔥 Paga bônus para o indicador (caso exista)
+    if (indicador && !bonusRecebido) {
+      await dbServer.collection("users").doc(indicador).update({
+        creditos: increment(20)
       });
 
-      console.log(`🔥 Créditos adicionados: +${creditos} → UID: ${uid}`);
-    }
+      await userRef.update({
+        bonusRecebido: true
+      });
 
-    // ==========================================
-    // 🎁 BÔNUS DE INDICAÇÃO (UMA ÚNICA VEZ)
-    // ==========================================
-    try {
-      const userRef = doc(dbServer, "users", uid);
-      const userSnap = await getDoc(userRef);
-
-      if (userSnap.exists()) {
-        const userData = userSnap.data();
-
-        // Verifica se este usuário foi indicado por alguém
-        if (userData.indicador) {
-          const indicadorUid = userData.indicador;
-          const indicadorRef = doc(dbServer, "users", indicadorUid);
-          const indicadorSnap = await getDoc(indicadorRef);
-
-          if (indicadorSnap.exists()) {
-            const indData = indicadorSnap.data();
-
-            // 💰 Só paga se o indicador ainda NÃO recebeu
-            if (!indData.bonusRecebido) {
-              await updateDoc(indicadorRef, {
-                creditos: increment(20),
-                bonusRecebido: true,
-              });
-
-              console.log(
-                `🎁 BONUS: Indicador ${indicadorUid} recebeu +20 créditos.`
-              );
-            }
-          }
-        }
-      }
-    } catch (err) {
-      console.log("⚠️ ERRO AO PROCESSAR BÔNUS:", err.message);
+      console.log("🎉 Bônus pago ao indicador:", indicador);
     }
 
     return NextResponse.json({ ok: true });
-  } catch (e) {
-    console.error("❌ ERRO NO WEBHOOK:", e);
-    return NextResponse.json(
-      { error: true, message: e.message },
-      { status: 500 }
-    );
+
+  } catch (err) {
+    console.log("❌ Erro no webhook:", err.message);
+    return NextResponse.json({ error: true, msg: err.message }, { status: 500 });
   }
 }
