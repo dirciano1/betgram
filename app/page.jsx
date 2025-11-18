@@ -219,19 +219,7 @@ export default function HomePage() {
           criadoEm: serverTimestamp(),
           bonusPago: false,
         });
-        // 🔥 Bônus de 20 créditos para o indicador (somente 1x)
-if (indicador) {
-  const refIndicador = doc(db, "users", indicador);
-  const snapIndicador = await getDoc(refIndicador);
-
-  if (snapIndicador.exists() && !snapIndicador.data().bonusRecebido) {
-    await updateDoc(refIndicador, {
-      creditos: (snapIndicador.data().creditos || 0) + 20,
-      bonusRecebido: true,
-    });
-  }
-}
-
+        
       }
       setDadosUser({ nome: u.displayName, creditos: 10 });
     } else setDadosUser(snap.data());
