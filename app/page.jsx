@@ -19,6 +19,7 @@ import {
   orderBy,
   limit,
   serverTimestamp,
+  onSnapshot,
 } from "../lib/firebase";
 import { gerarAnalise } from "../lib/aiClient";
 import "./globals.css";
@@ -373,6 +374,7 @@ export default function HomePage() {
   // === Tela inicial de login ===
   if (!user) {
     return (
+   
       <main style={{
         display: "flex", justifyContent: "center", alignItems: "center",
         height: "100vh", background: "linear-gradient(135deg,#0b1324 0%,#111827 100%)",
@@ -383,6 +385,7 @@ export default function HomePage() {
           borderRadius: "16px", padding: "40px 30px", width: "90%", maxWidth: "400px",
           textAlign: "center", boxShadow: "0 0 25px rgba(34,197,94,0.15)",
         }}>
+         
           <h1 style={{ position: "absolute", left: "-9999px", top: "0" }}>
   Betgram - Analisador de Apostas Esportivas com Inteligencia Artificial
 </h1>
@@ -415,6 +418,7 @@ export default function HomePage() {
           </button>
         </div>
       </main>
+         </>
     );
   }
 
