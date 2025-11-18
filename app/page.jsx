@@ -198,52 +198,42 @@ export default function HomePage() {
   }, []);
 
   async function carregarDadosUsuario(u) {
-    const ref = doc(db, "users", u.uid);
-    const snap = await getDoc(ref);
-    if (!snap.exists()) {
-      const indicador = localStorage.getItem("indicador");
-      await setDoc(ref, {
+  const ref = doc(db, "users", u.uid);
+  const snap = await getDoc(ref);
+
+  // === CAPTURA O INDICADOR DA URL OU DO LOCALSTORAGE ===
+  let indicadorURL = capturarIndicadorURL(); // ← pega ?indicador=XXX
+  if (!indicadorURL) {
+    indicadorURL = localStorage.getItem("indicador"); // fallback
+  }
+
+  // --- SE O USUÁRIO É NOVO ---
+  if (!snap.exists()) {
+    await setDoc(ref, {
       uid: u.uid,
       nome: u.displayName || "Usuário",
       email: u.email || "",
       creditos: 10,
-      role: "user",     // 🔥 SEMPRE "user"
-      indicador: indicador || null,
+      role: "user",
+      indicador: indicadorURL || null,
       bonusRecebido: false,
       jaComprou: false,
       criadoEm: serverTimestamp(),
     });
-      if (indicador) {
-        await addDoc(collection(db, "indicacoes"), {
-          indicador: indicador,
-          indicado: u.uid,
-          criadoEm: serverTimestamp(),
-          bonusPago: false,
-        });
-        
-      }
-      setDadosUser({ nome: u.displayName, creditos: 10 });
-    } else setDadosUser(snap.data());
+
+    setDadosUser({ nome: u.displayName, creditos: 10 });
+    return;
   }
-  async function handleLogin() {
-  try {
-    const u = await loginComGoogle();
-    setUser(u);
 
-    // Carrega dados no Firestore
-    await carregarDadosUsuario(u);
+  // --- SE O USUÁRIO JÁ EXISTE ---
+  const dadosAtuais = snap.data();
 
-    // Lê os dados atualizados do usuário
-    const userDoc = await getDoc(doc(db, "users", u.uid));
-    const role = userDoc.data().role || "user";
-
-    // SALVA UID E ROLE
-    document.cookie = `uid=${u.uid}; path=/;`;
-    document.cookie = `role=${role}; path=/;`;
-
-  } catch (err) {
-    alert("Erro ao fazer login: " + err.message);
+  // 👇 SE ELE AINDA NÃO TEM INDICADOR, MAS VEIO NA URL
+  if (!dadosAtuais.indicador && indicadorURL) {
+    await updateDoc(ref, { indicador: indicadorURL });
   }
+
+  setDadosUser(dadosAtuais);
 }
 
   async function handleLogout() {
