@@ -5,7 +5,11 @@ import {
   updateDoc,
   increment,
   getDoc,
-} from "../../../../lib/firebaseServer";
+  collection,
+  query,
+  where,
+  getDocs,
+} from "../../../../../lib/firebaseServer";
 
 export async function POST(req) {
   try {
@@ -44,7 +48,9 @@ export async function POST(req) {
       );
     }
 
-    // TABELA OFICIAL DE CRÉDITOS
+    // ==========================================
+    // 🧮 TABELA OFICIAL DE CRÉDITOS
+    // ==========================================
     const tabela = {
       10: 100,
       20: 230,
@@ -64,7 +70,7 @@ export async function POST(req) {
     }
 
     // ==========================================
-    // 🔥 ADICIONAR CRÉDITOS DO PLANO (OK)
+    // 🔥 ADICIONAR CRÉDITOS DO PLANO
     // ==========================================
     if (status === "PAID") {
       await updateDoc(doc(dbServer, "users", uid), {
@@ -75,42 +81,57 @@ export async function POST(req) {
       console.log(`🔥 Créditos adicionados: +${creditos} → UID: ${uid}`);
     }
 
-   // ==========================================
-// 🎁 BÔNUS DE INDICAÇÃO — PAGA 1 VEZ
-// ==========================================
-try {
-  // Buscar indicação desse usuário
-  const indicacoesRef = collection(dbServer, "indicacoes");
-  const q = query(
-    indicacoesRef,
-    where("indicado", "==", uid),
-    where("bonusPago", "==", false)
-  );
+    // ==========================================
+    // 🎁 BÔNUS DE INDICAÇÃO (UMA ÚNICA VEZ)
+    // ==========================================
+    try {
+      const indicacoesRef = collection(dbServer, "indicacoes");
+      const q = query(
+        indicacoesRef,
+        where("indicado", "==", uid),
+        where("bonusPago", "==", false)
+      );
 
-  const snap = await getDocs(q);
+      const snap = await getDocs(q);
 
-  if (!snap.empty) {
-    const indicacaoDoc = snap.docs[0];
-    const dadosIndicacao = indicacaoDoc.data();
+      if (!snap.empty) {
+        const indicacaoDoc = snap.docs[0];
+        const dadosIndic = indicacaoDoc.data();
 
-    const indicadorUid = dadosIndicacao.indicador;
+        const indicadorUid = dadosIndic.indicador;
 
-    // Adiciona 20 créditos ao indicador
-    await updateDoc(doc(dbServer, "users", indicadorUid), {
-      creditos: increment(20),
-    });
+        console.log("🎁 Indicador encontrado:", indicadorUid);
 
-    // Marca como pago
-    await updateDoc(doc(dbServer, "indicacoes", indicacaoDoc.id), {
-      bonusPago: true,
-    });
+        // Adiciona 20 créditos ao INDICADOR
+        await updateDoc(doc(dbServer, "users", indicadorUid), {
+          creditos: increment(20),
+        });
 
-    console.log(
-      `🎁 BONUS PAGO: Indicador ${indicadorUid} recebeu +20 créditos por ${uid}`
+        // Marca a indicação como paga
+        await updateDoc(doc(dbServer, "indicacoes", indicacaoDoc.id), {
+          bonusPago: true,
+        });
+
+        console.log(
+          `🎉 BÔNUS DE +20 créditos pago ao indicador ${indicadorUid} pela compra de ${uid}`
+        );
+      } else {
+        console.log("ℹ️ Nenhum bônus pendente para este usuário.");
+      }
+    } catch (err) {
+      console.error("❌ ERRO AO PROCESSAR BÔNUS DE INDICAÇÃO:", err);
+    }
+
+    // ==========================================
+    // 🔚 FINALIZAÇÃO
+    // ==========================================
+    return NextResponse.json({ ok: true });
+
+  } catch (e) {
+    console.error("❌ ERRO NO WEBHOOK:", e);
+    return NextResponse.json(
+      { error: true, message: e.message },
+      { status: 500 }
     );
-  } else {
-    console.log("ℹ️ Nenhum bônus pendente para este usuário.");
   }
-} catch (error) {
-  console.error("❌ ERRO NO BÔNUS DE INDICAÇÃO:", error);
 }
