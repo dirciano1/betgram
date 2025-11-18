@@ -8,7 +8,7 @@ import {
   query,
   where,
   getDocs,
-} from "../lib/firebase";
+} from "../../../../lib/firebaseServer";
 
 export async function POST(req) {
   try {
