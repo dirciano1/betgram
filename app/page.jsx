@@ -207,18 +207,31 @@ export default function HomePage() {
       email: u.email || "",
       creditos: 10,
       role: "user",     // 🔥 SEMPRE "user"
-      indicadoPor: indicador || null,
+      indicador: indicador || null,
       bonusRecebido: false,
       jaComprou: false,
       criadoEm: serverTimestamp(),
     });
       if (indicador) {
         await addDoc(collection(db, "indicacoes"), {
-          indicadoPor: indicador,
+          indicador: indicador,
           indicado: u.uid,
           data: serverTimestamp(),
           bonusPago: false,
         });
+        // 🔥 Bônus de 20 créditos para o indicador (somente 1x)
+if (indicador) {
+  const refIndicador = doc(db, "users", indicador);
+  const snapIndicador = await getDoc(refIndicador);
+
+  if (snapIndicador.exists() && !snapIndicador.data().bonusRecebido) {
+    await updateDoc(refIndicador, {
+      creditos: (snapIndicador.data().creditos || 0) + 20,
+      bonusRecebido: true,
+    });
+  }
+}
+
       }
       setDadosUser({ nome: u.displayName, creditos: 10 });
     } else setDadosUser(snap.data());
