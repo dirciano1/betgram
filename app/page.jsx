@@ -216,7 +216,7 @@ export default function HomePage() {
         await addDoc(collection(db, "indicacoes"), {
           indicador: indicador,
           indicado: u.uid,
-          data: serverTimestamp(),
+          criadoEm: serverTimestamp(),
           bonusPago: false,
         });
         // 🔥 Bônus de 20 créditos para o indicador (somente 1x)
