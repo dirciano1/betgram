@@ -202,16 +202,16 @@ export default function HomePage() {
     if (!snap.exists()) {
       const indicador = localStorage.getItem("indicador");
       await setDoc(ref, {
-      uid: u.uid,
-      nome: u.displayName || "Usuário",
-      email: u.email || "",
-      creditos: 10,
-      role: "user",     // 🔥 SEMPRE "user"
-      indicadoPor: indicador || null,
-      bonusRecebido: false,
-      jaComprou: false,
-      criadoEm: serverTimestamp(),
-    });
+        uid: u.uid,
+        nome: u.displayName || "Usuário",
+        email: u.email || "",
+        creditos: 10,
+        admin: u.email?.includes("dirciano") || false,
+        indicadoPor: indicador || null,
+        bonusRecebido: false,
+        jaComprou: false,
+        criadoEm: serverTimestamp(),
+      });
       if (indicador) {
         await addDoc(collection(db, "indicacoes"), {
           indicadoPor: indicador,
