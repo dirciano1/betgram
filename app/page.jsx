@@ -207,31 +207,18 @@ export default function HomePage() {
       email: u.email || "",
       creditos: 10,
       role: "user",     // 🔥 SEMPRE "user"
-      indicador: indicador || null,
+      indicadoPor: indicador || null,
       bonusRecebido: false,
       jaComprou: false,
       criadoEm: serverTimestamp(),
     });
       if (indicador) {
         await addDoc(collection(db, "indicacoes"), {
-          indicador: indicador,
+          indicadoPor: indicador,
           indicado: u.uid,
-          criadoEm: serverTimestamp(),
+          data: serverTimestamp(),
           bonusPago: false,
         });
-        // 🔥 Bônus de 20 créditos para o indicador (somente 1x)
-if (indicador) {
-  const refIndicador = doc(db, "users", indicador);
-  const snapIndicador = await getDoc(refIndicador);
-
-  if (snapIndicador.exists() && !snapIndicador.data().bonusRecebido) {
-    await updateDoc(refIndicador, {
-      creditos: (snapIndicador.data().creditos || 0) + 20,
-      bonusRecebido: true,
-    });
-  }
-}
-
       }
       setDadosUser({ nome: u.displayName, creditos: 10 });
     } else setDadosUser(snap.data());
@@ -623,5 +610,3 @@ if (indicador) {
     </main>
   );
 }
-
-
