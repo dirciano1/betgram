@@ -202,7 +202,7 @@ export default function HomePage() {
     const ref = doc(db, "users", u.uid);
     const snap = await getDoc(ref);
     if (!snap.exists()) {
-      const indicador = localStorage.getItem("indicador");
+      const indicador = localStorage.getItem("indicadoPor");
       await setDoc(ref, {
         uid: u.uid,
         nome: u.displayName || "Usuário",
