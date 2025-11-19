@@ -12,19 +12,22 @@ export default function IndicacoesAdmin() {
   }, []);
 
   async function carregar() {
-    // 1. Carrega indicações
+    // 1. Carregar indicações
     const snapIndic = await getDocs(collection(db, "indicacoes"));
-    const lista = [];
+    let lista = [];
     snapIndic.forEach((d) => lista.push({ id: d.id, ...d.data() }));
     setIndicacoes(lista);
 
-    // 2. Carrega usuários
+    // 2. Carregar usuários
     const snapUsers = await getDocs(collection(db, "users"));
     const mapa = {};
 
-    snapUsers.forEach((doc) => {
-      const dados = doc.data();
-      mapa[dados.uid] = dados; // ← AQUI ESTÁ A CORREÇÃO
+    snapUsers.forEach((docUser) => {
+      const dados = docUser.data();
+
+      // Salva tanto usando o doc.id quanto o uid real
+      if (dados.uid) mapa[dados.uid] = dados;
+      mapa[docUser.id] = dados;
     });
 
     setUsuarios(mapa);
@@ -38,7 +41,7 @@ export default function IndicacoesAdmin() {
 
   function mostrarUsuario(uid) {
     const u = usuarios[uid];
-    if (!u) return uid; // fallback
+    if (!u) return uid;
     return u.nome || u.email || uid;
   }
 
