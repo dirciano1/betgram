@@ -24,7 +24,7 @@ import { gerarAnalise } from "../lib/aiClient";
 import "./globals.css";
 
 import BetgramPayModal from "./components/BetgramPayModal";
-import { capturarIndicadorURL } from "../lib/utils";
+import { capturarIndicadoPorURL } from "../lib/utils";
 
 const inputStyle = {
   width: "100%",
@@ -216,7 +216,7 @@ export default function HomePage() {
       });
       if (indicador) {
         await addDoc(collection(db, "indicacoes"), {
-          indicador: indicador,
+          indicadoPor: indicador,
           indicado: u.uid,
           data: serverTimestamp(),
           bonusPago: false,
