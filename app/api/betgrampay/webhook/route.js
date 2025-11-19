@@ -7,7 +7,7 @@ export async function POST(req) {
 
     console.log("📩 WEBHOOK RECEBIDO:", JSON.stringify(body, null, 2));
 
-    // Aceita SOMENTE billing.paid
+    // Aceita apenas eventos de pagamento
     if (body?.event !== "billing.paid") {
       console.log("➡️ Evento ignorado:", body?.event);
       return NextResponse.json({ ok: true, ignore: true });
@@ -37,7 +37,7 @@ export async function POST(req) {
       );
     }
 
-    // TABELA DE CRÉDITOS
+    // Tabela de créditos
     const tabela = {
       10: 100,
       20: 230,
@@ -56,7 +56,7 @@ export async function POST(req) {
     }
 
     // ==========================================
-    // 🔥 ADICIONA CRÉDITOS USANDO ADMIN SDK
+    // 🔥 ADICIONA CRÉDITOS AO USUÁRIO
     // ==========================================
     if (status === "PAID") {
       await dbServer.collection("users").doc(uid).update({
@@ -68,7 +68,7 @@ export async function POST(req) {
     }
 
     // ==========================================
-    // 🎁 BÔNUS DE INDICAÇÃO (UMA ÚNICA VEZ)
+    // 🎁 BÔNUS DE INDICAÇÃO (APENAS 1 VEZ)
     // ==========================================
     const userRef = dbServer.collection("users").doc(uid);
     const userSnap = await userRef.get();
@@ -76,23 +76,27 @@ export async function POST(req) {
     if (userSnap.exists) {
       const userData = userSnap.data();
 
-      if (userData.indicador) {
-        const indicadorUid = userData.indicador;
-        const indicadorRef = dbServer.collection("users").doc(indicadorUid);
+      // 👉 AGORA O CAMPO CORRETO
+      const indicadoPor = userData.indicadoPor;
+
+      if (indicadoPor) {
+        const indicadorRef = dbServer.collection("users").doc(indicadoPor);
         const indicadorSnap = await indicadorRef.get();
 
         if (indicadorSnap.exists) {
-          const indData = indicadorSnap.data();
+          const dadosIndicador = indicadorSnap.data();
 
-          if (!indData.bonusRecebido) {
+          if (!dadosIndicador.bonusRecebido) {
             await indicadorRef.update({
               creditos: admin.firestore.FieldValue.increment(20),
               bonusRecebido: true,
             });
 
             console.log(
-              `🎁 BÔNUS: Indicador ${indicadorUid} recebeu +20 créditos.`
+              `🎁 BÔNUS: Indicador ${indicadoPor} recebeu +20 créditos.`
             );
+          } else {
+            console.log("⚠️ Bônus já havia sido pago anteriormente.");
           }
         }
       }
