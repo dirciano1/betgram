@@ -1,23 +1,27 @@
 import { NextResponse } from "next/server";
-import { adminDB, adminAuth } from "../../../lib/firebaseAdmin";
+import { dbServer, authServer, admin } from "../../../lib/firebaseServer";
 
 export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
-
     const uid = searchParams.get("uid");
     const role = searchParams.get("role");
 
     if (!uid || !role) {
       return NextResponse.json(
-        { error: "uid e role são obrigatórios" },
+        { error: true, message: "uid e role são obrigatórios" },
         { status: 400 }
       );
     }
 
-    await adminDB.collection("users").doc(uid).update({ role });
+    // Atualiza custom claims no Auth
+    await authServer.setCustomUserClaims(uid, { role });
 
-    await adminAuth.setCustomUserClaims(uid, { role });
+    // Atualiza no Firestore
+    await dbServer.collection("users").doc(uid).update({
+      role,
+      updatedAt: new Date(),
+    });
 
     return NextResponse.json({
       ok: true,
@@ -25,9 +29,8 @@ export async function GET(req) {
       role,
       message: `Role de ${uid} atualizada para ${role}`,
     });
-
-  } catch (error) {
-    console.error("ERRO SET ROLE:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (err) {
+    console.error("❌ setRole error:", err);
+    return NextResponse.json({ error: true, message: err.message }, { status: 500 });
   }
 }
