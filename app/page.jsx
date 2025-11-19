@@ -214,7 +214,7 @@ export default function HomePage() {
       });
       if (indicador) {
         await addDoc(collection(db, "indicacoes"), {
-          indicadoPor: indicador,
+          indicador: indicador,
           indicado: u.uid,
           data: serverTimestamp(),
           bonusPago: false,
