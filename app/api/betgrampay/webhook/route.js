@@ -1,11 +1,5 @@
 import { NextResponse } from "next/server";
-import {
-  dbServer,
-  doc,
-  updateDoc,
-  increment,
-  getDoc,
-} from "../../../../lib/firebaseServer";
+import { dbServer, admin } from "../../../../lib/firebaseServer";
 
 export async function POST(req) {
   try {
@@ -37,14 +31,13 @@ export async function POST(req) {
     console.log("📦 METADATA:", metadata);
 
     if (!uid || isNaN(valorPlano)) {
-      console.log("❌ ERRO: metadata incompleta");
       return NextResponse.json(
         { error: true, message: "UID ou valor inválidos" },
         { status: 400 }
       );
     }
 
-    // TABELA OFICIAL DE CRÉDITOS
+    // TABELA DE CRÉDITOS
     const tabela = {
       10: 100,
       20: 230,
@@ -56,7 +49,6 @@ export async function POST(req) {
     const creditos = tabela[valorPlano] || 0;
 
     if (creditos === 0) {
-      console.log("⚠️ Valor não existe na tabela:", valorPlano);
       return NextResponse.json(
         { error: true, message: "Valor inválido para créditos" },
         { status: 400 }
@@ -64,11 +56,11 @@ export async function POST(req) {
     }
 
     // ==========================================
-    // 🔥 ADICIONAR CRÉDITOS DO PLANO (OK)
+    // 🔥 ADICIONA CRÉDITOS USANDO ADMIN SDK
     // ==========================================
     if (status === "PAID") {
-      await updateDoc(doc(dbServer, "users", uid), {
-        creditos: increment(creditos),
+      await dbServer.collection("users").doc(uid).update({
+        creditos: admin.firestore.FieldValue.increment(creditos),
         jaComprou: true,
       });
 
@@ -78,41 +70,36 @@ export async function POST(req) {
     // ==========================================
     // 🎁 BÔNUS DE INDICAÇÃO (UMA ÚNICA VEZ)
     // ==========================================
-    try {
-      const userRef = doc(dbServer, "users", uid);
-      const userSnap = await getDoc(userRef);
+    const userRef = dbServer.collection("users").doc(uid);
+    const userSnap = await userRef.get();
 
-      if (userSnap.exists()) {
-        const userData = userSnap.data();
+    if (userSnap.exists) {
+      const userData = userSnap.data();
 
-        // Verifica se este usuário foi indicado por alguém
-        if (userData.indicador) {
-          const indicadorUid = userData.indicador;
-          const indicadorRef = doc(dbServer, "users", indicadorUid);
-          const indicadorSnap = await getDoc(indicadorRef);
+      if (userData.indicador) {
+        const indicadorUid = userData.indicador;
+        const indicadorRef = dbServer.collection("users").doc(indicadorUid);
+        const indicadorSnap = await indicadorRef.get();
 
-          if (indicadorSnap.exists()) {
-            const indData = indicadorSnap.data();
+        if (indicadorSnap.exists) {
+          const indData = indicadorSnap.data();
 
-            // 💰 Só paga se o indicador ainda NÃO recebeu
-            if (!indData.bonusRecebido) {
-              await updateDoc(indicadorRef, {
-                creditos: increment(20),
-                bonusRecebido: true,
-              });
+          if (!indData.bonusRecebido) {
+            await indicadorRef.update({
+              creditos: admin.firestore.FieldValue.increment(20),
+              bonusRecebido: true,
+            });
 
-              console.log(
-                `🎁 BONUS: Indicador ${indicadorUid} recebeu +20 créditos.`
-              );
-            }
+            console.log(
+              `🎁 BÔNUS: Indicador ${indicadorUid} recebeu +20 créditos.`
+            );
           }
         }
       }
-    } catch (err) {
-      console.log("⚠️ ERRO AO PROCESSAR BÔNUS:", err.message);
     }
 
     return NextResponse.json({ ok: true });
+
   } catch (e) {
     console.error("❌ ERRO NO WEBHOOK:", e);
     return NextResponse.json(
