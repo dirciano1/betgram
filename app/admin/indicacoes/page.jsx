@@ -62,7 +62,7 @@ export default function IndicacoesAdmin() {
         <tbody>
           {indicacoes.map((i) => (
             <tr key={i.id}>
-              <td>{mostrarUsuario(i.indicadoPor)}</td>
+              <td>{mostrarUsuario(i.indicador)}</td>
               <td>{mostrarUsuario(i.indicado)}</td>
               <td>{formatarData(i.data)}</td>
               <td style={{ color: i.bonusPago ? "#22c55e" : "#ef4444" }}>
