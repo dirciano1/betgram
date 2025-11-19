@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { db, collection, getDocs } from "../../../lib/firebase";
 
 export default function IndicacoesAdmin() {
-  const [lista, setLista] = useState([]);
+  const [indicacoes, setIndicacoes] = useState([]);
 
   useEffect(() => {
     carregar();
@@ -14,7 +14,18 @@ export default function IndicacoesAdmin() {
     const snap = await getDocs(collection(db, "indicacoes"));
     let arr = [];
     snap.forEach((d) => arr.push({ id: d.id, ...d.data() }));
-    setLista(arr);
+    setIndicacoes(arr);
+  }
+
+  function formatarData(timestamp) {
+    if (!timestamp) return "—";
+
+    try {
+      const date = new Date(timestamp.seconds * 1000);
+      return date.toLocaleString("pt-BR");
+    } catch (err) {
+      return "—";
+    }
   }
 
   return (
@@ -31,11 +42,11 @@ export default function IndicacoesAdmin() {
         </thead>
 
         <tbody>
-          {lista.map((i) => (
+          {indicacoes.map((i) => (
             <tr key={i.id}>
               <td>{i.indicador}</td>
               <td>{i.indicado}</td>
-              <td>{i.data || "—"}</td>
+              <td>{formatarData(i.data)}</td> {/* ✅ AGORA FUNCIONA */}
             </tr>
           ))}
         </tbody>
