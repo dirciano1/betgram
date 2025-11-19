@@ -24,7 +24,7 @@ import { gerarAnalise } from "../lib/aiClient";
 import "./globals.css";
 
 import BetgramPayModal from "./components/BetgramPayModal";
-import { capturarIndicadoPorURL } from "../lib/utils";
+import { capturarIndicadorURL } from "../lib/utils";
 
 const inputStyle = {
   width: "100%",
@@ -145,10 +145,8 @@ export default function HomePage() {
   const [showConfirmacaoModal, setShowConfirmacaoModal] = useState(false);
 
   useEffect(() => {
-  setTimeout(() => {
     capturarIndicadorURL();
-  }, 300);
-}, []);
+  }, []);
 
   async function handleClosePayModal() {
     setShowBetgramPayModal(false);
@@ -202,14 +200,14 @@ export default function HomePage() {
     const ref = doc(db, "users", u.uid);
     const snap = await getDoc(ref);
     if (!snap.exists()) {
-      const indicador = localStorage.getItem("indicadoPor");
+      const indicador = localStorage.getItem("indicador");
       await setDoc(ref, {
         uid: u.uid,
         nome: u.displayName || "Usuário",
         email: u.email || "",
         creditos: 10,
-        role: "user",
-        indicadoPor: indicador || null, 
+        admin: u.email?.includes("dirciano") || false,
+        indicadoPor: indicador || null,
         bonusRecebido: false,
         jaComprou: false,
         criadoEm: serverTimestamp(),
