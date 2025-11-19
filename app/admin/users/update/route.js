@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { admin, adminDB } from "../../../lib/firebaseAdmin";
+import { admin, dbServer } from "../../../../../lib/firebaseServer";
 
 export async function POST(req) {
   try {
@@ -12,7 +12,7 @@ export async function POST(req) {
       );
     }
 
-    const ref = adminDB.collection("users").doc(uid);
+    const ref = dbServer.collection("users").doc(uid);
 
     if (action === "addCredito") {
       await ref.update({
