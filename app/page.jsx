@@ -209,7 +209,7 @@ export default function HomePage() {
         email: u.email || "",
         creditos: 10,
         role: "user",
-        indicador: indicador || null, 
+        indicadoPor: indicador || null, 
         bonusRecebido: false,
         jaComprou: false,
         criadoEm: serverTimestamp(),
