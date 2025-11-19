@@ -5,25 +5,26 @@ import { db, collection, getDocs } from "../../../lib/firebase";
 
 export default function IndicacoesAdmin() {
   const [indicacoes, setIndicacoes] = useState([]);
-  const [usuarios, setUsuarios] = useState({}); // ← mapa uid → dados
+  const [usuarios, setUsuarios] = useState({});
 
   useEffect(() => {
     carregar();
   }, []);
 
   async function carregar() {
-    // 1️⃣ Carregar indicações
+    // 1. Carrega indicações
     const snapIndic = await getDocs(collection(db, "indicacoes"));
-    let lista = [];
+    const lista = [];
     snapIndic.forEach((d) => lista.push({ id: d.id, ...d.data() }));
     setIndicacoes(lista);
 
-    // 2️⃣ Carregar usuários
+    // 2. Carrega usuários
     const snapUsers = await getDocs(collection(db, "users"));
-    let mapa = {};
+    const mapa = {};
 
-    snapUsers.forEach((u) => {
-      mapa[u.id] = u.data();
+    snapUsers.forEach((doc) => {
+      const dados = doc.data();
+      mapa[dados.uid] = dados; // ← AQUI ESTÁ A CORREÇÃO
     });
 
     setUsuarios(mapa);
@@ -31,18 +32,13 @@ export default function IndicacoesAdmin() {
 
   function formatarData(timestamp) {
     if (!timestamp) return "—";
-    try {
-      return new Date(timestamp.seconds * 1000).toLocaleString("pt-BR");
-    } catch {
-      return "—";
-    }
+    const date = new Date(timestamp.seconds * 1000);
+    return date.toLocaleString("pt-BR");
   }
 
   function mostrarUsuario(uid) {
     const u = usuarios[uid];
-    if (!u) return uid; // fallback caso usuário não exista
-
-    // escolha o que mostrar:
+    if (!u) return uid; // fallback
     return u.nome || u.email || uid;
   }
 
@@ -53,10 +49,10 @@ export default function IndicacoesAdmin() {
       <table style={{ width: "100%", marginTop: 20 }}>
         <thead>
           <tr>
-            <th style={{ textAlign: "left" }}>Indicou</th>
-            <th style={{ textAlign: "left" }}>Indicado</th>
-            <th style={{ textAlign: "left" }}>Data</th>
-            <th style={{ textAlign: "left" }}>Bônus Pago</th>
+            <th>Indicou</th>
+            <th>Indicado</th>
+            <th>Data</th>
+            <th>Bônus Pago</th>
           </tr>
         </thead>
 
@@ -66,7 +62,7 @@ export default function IndicacoesAdmin() {
               <td>{mostrarUsuario(i.indicadoPor)}</td>
               <td>{mostrarUsuario(i.indicado)}</td>
               <td>{formatarData(i.data)}</td>
-              <td style={{ color: i.bonusPago ? "#22c55e" : "#f87171" }}>
+              <td style={{ color: i.bonusPago ? "#22c55e" : "#ef4444" }}>
                 {i.bonusPago ? "Sim" : "Não"}
               </td>
             </tr>
