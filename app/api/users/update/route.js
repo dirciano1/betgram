@@ -12,17 +12,18 @@ export async function POST(req) {
       );
     }
 
+    const FieldValue = admin.firestore.FieldValue; // ✅ ADICIONADO
     const ref = dbServer.collection("users").doc(uid);
 
     if (action === "addCredito") {
       await ref.update({
-        creditos: admin.firestore.FieldValue.increment(value),
+        creditos: FieldValue.increment(value), // ✅ CORRIGIDO
       });
     }
 
     if (action === "removerCredito") {
       await ref.update({
-        creditos: admin.firestore.FieldValue.increment(-value),
+        creditos: FieldValue.increment(-value), // ✅ CORRIGIDO
       });
     }
 
@@ -40,6 +41,7 @@ export async function POST(req) {
 
     return NextResponse.json({ ok: true });
   } catch (e) {
+    console.error("🔥 ERRO API ADMIN:", e);
     return NextResponse.json({ error: e.message }, { status: 500 });
   }
 }
