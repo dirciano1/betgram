@@ -16,16 +16,17 @@ export default function IndicacoesAdmin() {
     const snapIndic = await getDocs(collection(db, "indicacoes"));
     let lista = [];
     snapIndic.forEach((d) => lista.push({ id: d.id, ...d.data() }));
+
     setIndicacoes(lista);
 
-    // 2. Carregar usuários
+    // 2. Carregar usuários (para traduzir UID → Nome)
     const snapUsers = await getDocs(collection(db, "users"));
     const mapa = {};
 
     snapUsers.forEach((docUser) => {
       const dados = docUser.data();
 
-      // Salva tanto usando o doc.id quanto o uid real
+      // garante que tanto o doc.id quanto dados.uid são indexados
       if (dados.uid) mapa[dados.uid] = dados;
       mapa[docUser.id] = dados;
     });
@@ -62,7 +63,8 @@ export default function IndicacoesAdmin() {
         <tbody>
           {indicacoes.map((i) => (
             <tr key={i.id}>
-              <td>{mostrarUsuario(i.indicador)}</td>
+              {/* Agora usa indicadoPor ao invés de indicador */}
+              <td>{mostrarUsuario(i.indicadoPor)}</td>
               <td>{mostrarUsuario(i.indicado)}</td>
               <td>{formatarData(i.data)}</td>
               <td style={{ color: i.bonusPago ? "#22c55e" : "#ef4444" }}>
