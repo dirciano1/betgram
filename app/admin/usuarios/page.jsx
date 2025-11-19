@@ -1,15 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  db,
-  collection,
-  getDocs,
-  updateDoc,
-  deleteDoc,
-  doc,
-  increment,
-} from "../../../lib/firebase";
+import { db, collection, getDocs } from "../../../lib/firebase";
 
 export default function UsuariosAdmin() {
   const [usuarios, setUsuarios] = useState([]);
@@ -30,43 +22,50 @@ export default function UsuariosAdmin() {
     setValores((prev) => ({ ...prev, [uid]: v }));
   }
 
+  async function chamarAPI(data) {
+    const resp = await fetch("/api/users/update", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    const json = await resp.json();
+
+    if (!json.ok) {
+      alert("Erro: " + json.error);
+      return;
+    }
+
+    await carregar();
+  }
+
   async function addCredito(uid) {
     const qtd = Number(valores[uid] || 0);
     if (qtd <= 0) return alert("Digite um valor válido");
 
-    await updateDoc(doc(db, "users", uid), {
-      creditos: increment(qtd),
-    });
-
+    await chamarAPI({ uid, action: "addCredito", value: qtd });
     mudarValor(uid, "");
-    carregar();
   }
 
   async function removerCredito(uid) {
     const qtd = Number(valores[uid] || 0);
     if (qtd <= 0) return alert("Digite um valor válido");
 
-    await updateDoc(doc(db, "users", uid), {
-      creditos: increment(-qtd),
-    });
-
+    await chamarAPI({ uid, action: "removerCredito", value: qtd });
     mudarValor(uid, "");
-    carregar();
   }
 
   async function promover(uid) {
-    await updateDoc(doc(db, "users", uid), { role: "admin" });
-    carregar();
+    await chamarAPI({ uid, action: "promover" });
   }
 
   async function rebaixar(uid) {
-    await updateDoc(doc(db, "users", uid), { role: "user" });
-    carregar();
+    await chamarAPI({ uid, action: "rebaixar" });
   }
 
   async function excluir(uid) {
-    await deleteDoc(doc(db, "users", uid));
-    carregar();
+    if (!confirm("Tem certeza que deseja excluir este usuário?")) return;
+    await chamarAPI({ uid, action: "excluir" });
   }
 
   return (
@@ -91,7 +90,6 @@ export default function UsuariosAdmin() {
               <td>{u.role}</td>
 
               <td style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                {/* INPUT PERSONALIZADO */}
                 <input
                   type="number"
                   value={valores[u.id] || ""}
@@ -109,10 +107,8 @@ export default function UsuariosAdmin() {
 
                 <button onClick={() => addCredito(u.id)}>Adicionar</button>
                 <button onClick={() => removerCredito(u.id)}>Remover</button>
-
                 <button onClick={() => promover(u.id)}>Promover</button>
                 <button onClick={() => rebaixar(u.id)}>Rebaixar</button>
-
                 <button onClick={() => excluir(u.id)} style={{ color: "red" }}>
                   Excluir
                 </button>
