@@ -145,8 +145,10 @@ export default function HomePage() {
   const [showConfirmacaoModal, setShowConfirmacaoModal] = useState(false);
 
   useEffect(() => {
+  setTimeout(() => {
     capturarIndicadorURL();
-  }, []);
+  }, 300);
+}, []);
 
   async function handleClosePayModal() {
     setShowBetgramPayModal(false);
