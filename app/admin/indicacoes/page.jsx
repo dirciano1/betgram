@@ -23,34 +23,39 @@ export default function IndicacoesAdmin() {
     try {
       const date = new Date(timestamp.seconds * 1000);
       return date.toLocaleString("pt-BR");
-    } catch (err) {
+    } catch {
       return "—";
     }
   }
 
   return (
-    <div>
+    <div style={{ padding: 20 }}>
       <h1 style={{ color: "#22c55e" }}>Indicações</h1>
 
       <table style={{ width: "100%", marginTop: 20 }}>
         <thead>
           <tr>
-            <th>Indicador</th>
-            <th>Indicado</th>
-            <th>Data</th>
+            <th style={{ textAlign: "left" }}>Indicou (UID)</th>
+            <th style={{ textAlign: "left" }}>Indicado (UID)</th>
+            <th style={{ textAlign: "left" }}>Data</th>
+            <th style={{ textAlign: "left" }}>Bônus Pago</th>
           </tr>
         </thead>
 
         <tbody>
           {indicacoes.map((i) => (
             <tr key={i.id}>
-              <td>{i.indicador}</td>
+              <td>{i.indicadoPor}</td>
               <td>{i.indicado}</td>
-              <td>{formatarData(i.data)}</td> {/* ✅ AGORA FUNCIONA */}
+              <td>{formatarData(i.data)}</td>
+              <td style={{ color: i.bonusPago ? "#22c55e" : "#f87171" }}>
+                {i.bonusPago ? "Sim" : "Não"}
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
+
     </div>
   );
 }
