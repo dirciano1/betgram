@@ -212,7 +212,7 @@ export default function HomePage() {
         jaComprou: false,
         criadoEm: serverTimestamp(),
       });
-      if (indicador) {
+      if (indicadoPor) {
         await addDoc(collection(db, "indicacoes"), {
           indicadoPor: indicadoPor,
           indicado: u.uid,
