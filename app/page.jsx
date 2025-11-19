@@ -200,21 +200,21 @@ export default function HomePage() {
     const ref = doc(db, "users", u.uid);
     const snap = await getDoc(ref);
     if (!snap.exists()) {
-      const indicador = localStorage.getItem("indicador");
+      const indicador = localStorage.getItem("indicadoPor");
       await setDoc(ref, {
         uid: u.uid,
         nome: u.displayName || "Usuário",
         email: u.email || "",
         creditos: 10,
-        admin: u.email?.includes("dirciano") || false,
-        indicadoPor: indicador || null,
+        role: "user",
+        indicadoPor: indicadoPor || null,
         bonusRecebido: false,
         jaComprou: false,
         criadoEm: serverTimestamp(),
       });
       if (indicador) {
         await addDoc(collection(db, "indicacoes"), {
-          indicadoPor: indicador,
+          indicadoPor: indicadoPor,
           indicado: u.uid,
           data: serverTimestamp(),
           bonusPago: false,
