@@ -10,6 +10,7 @@ export default function Sidebar() {
     { name: "Dashboard", path: "/admin", icon: "📊" },
     { name: "Usuários", path: "/admin/usuarios", icon: "👥" },
     { name: "Análises", path: "/admin/analises", icon: "📄" },
+    { name: "Indicações", path: "/admin/indicacoes", icon: "📌" }, // ✅ ADICIONADO
   ];
 
   return (
