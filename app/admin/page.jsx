@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { db, collection, getDocs } from "../../../lib/firebase";
+import { db, collection, getDocs } from "../../lib/firebase"; // ✅ CORRIGIDO
 
 export default function UsuariosAdmin() {
   const [usuarios, setUsuarios] = useState([]);
