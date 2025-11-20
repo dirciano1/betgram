@@ -393,10 +393,11 @@ function limparTextoNatural(texto) {
     .trim();
 }
 
-function iniciarLeitura(texto) {
+function iniciarLeitura(textoOriginal) {
   speechSynthesis.cancel();
 
-  let t = removerEmojis(texto);
+  // textoOriginal = resultado (SEM HTML)
+  let t = removerEmojis(textoOriginal);
   t = limparTextoNatural(t);
 
   const fala = new SpeechSynthesisUtterance(t);
@@ -423,14 +424,14 @@ function continuarLeitura() {
 
 function handleTTS(resultado) {
   if (ttsStatus === "idle") {
-    iniciarLeitura(resultado);
+    iniciarLeitura(resultado);   // 👉 sempre lê o texto ORIGINAL (sem HTML)
   } else if (ttsStatus === "playing") {
     pausarLeitura();
   } else if (ttsStatus === "paused") {
     continuarLeitura();
   }
 }
-
+  
   // === Tela inicial de login ===
   if (!user) {
     return (
