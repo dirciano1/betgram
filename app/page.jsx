@@ -314,14 +314,47 @@ export default function HomePage() {
   }
 
   function formatAnaliseTexto(texto = "") {
-    return texto
-      .replace(/(Mercado|Mercados)/gi, '<span style="color:#38bdf8;font-weight:600;">$1</span>')
-      .replace(/(Odd[s]?:?\s*\d+(\.\d+)?)/gi, '<span style="color:#facc15;font-weight:600;">$1</span>')
-      .replace(/(Recomendação|Aposta|Sugestão|Valor)/gi, '<span style="color:#22c55e;font-weight:600;">$1</span>')
-      .replace(/(Justificativa|Análise|Contexto|Resumo)/gi, '<span style="color:#fb923c;font-weight:600;">$1</span>')
-      .replace(/###\s*(.*)/g, '<br><strong style="color:#0ea5e9;">📘 $1</strong>')
-      .replace(/\n/g, "<br>");
-  }
+  return texto
+
+    // === Cabeçalhos ===
+    .replace(/🏟️([^<\n]+)/g, '<span style="color:#22c55e;font-weight:700;">🏟️$1</span>')
+
+    // === Médias ===
+    .replace(/⚽\s*\*\*?Médias:\*\*?/g, '<span style="color:#38bdf8;font-weight:700;">⚽ Médias:</span>')
+
+    // === Probabilidades ===
+    .replace(/📊\s*\*\*?Probabilidades?:?\*\*?/gi,
+      '<span style="color:#facc15;font-weight:700;">📊 Probabilidades:</span>'
+    )
+    .replace(/📊\s*\*\*?Probabilidade[^:]*:/gi,
+      match => `<span style="color:#facc15;font-weight:700;">${match.replace(/\*/g,"")}</span>`
+    )
+
+    // === Odds Justas ===
+    .replace(/💰\s*\*\*?Odd[s ]?justas?:?\*\*?/gi,
+      '<span style="color:#fb923c;font-weight:700;">💰 Odds Justas:</span>'
+    )
+    .replace(/💰\s*\*\*?Odd[s ]?justa:?/gi,
+      '<span style="color:#fb923c;font-weight:700;">💰 Odd Justa:</span>'
+    )
+
+    // === Conclusão ===
+    .replace(/🔎\s*\*\*?Conclusão:\*\*?/gi,
+      '<span style="color:#22c55e;font-weight:700;">🔎 Conclusão:</span>'
+    )
+
+    // === Títulos de seção (---) ===
+    .replace(/---/g, '<hr style="border-color:#1f2937;opacity:0.4;margin:12px 0;">')
+
+    // === Destaques laranja ===
+    .replace(/🟧\s*\*\*([^*]+)\*\*/g,
+      '<span style="color:#fb923c;font-weight:700;">🟧 $1</span>'
+    )
+
+    // Quebra de linha
+    .replace(/\n/g, "<br>");
+}
+
 
   // === Modal “Indique um amigo” ===
   const [showIndiqueModal, setShowIndiqueModal] = useState(false);
