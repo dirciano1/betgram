@@ -616,7 +616,7 @@ function handleTTS(resultado) {
               }}>↩ Voltar</button>
 
              <button
-    onClick={() => lerTexto(resultado)}
+   onClick={() => handleTTS(resultado)}
     style={{
       marginTop:"10px",
       background:"rgba(34,197,94,0.2)",
