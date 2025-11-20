@@ -314,14 +314,27 @@ export default function HomePage() {
   }
 
   function formatAnaliseTexto(texto = "") {
-    return texto
-      .replace(/(Mercado|Mercados)/gi, '<span style="color:#38bdf8;font-weight:600;">$1</span>')
-      .replace(/(Odd[s]?:?\s*\d+(\.\d+)?)/gi, '<span style="color:#facc15;font-weight:600;">$1</span>')
-      .replace(/(Recomendação|Aposta|Sugestão|Valor)/gi, '<span style="color:#22c55e;font-weight:600;">$1</span>')
-      .replace(/(Justificativa|Análise|Contexto|Resumo)/gi, '<span style="color:#fb923c;font-weight:600;">$1</span>')
-      .replace(/###\s*(.*)/g, '<br><strong style="color:#0ea5e9;">📘 $1</strong>')
-      .replace(/\n/g, "<br>");
-  }
+  return texto
+    // Títulos com emojis
+    .replace(/^(🏟️.*)$/gim, '<span style="color:#38bdf8;font-weight:800;font-size:1.15em;">$1</span>')
+    .replace(/^(🟥|🟧|🟦|🟩|🟨|📘|📊|📌|🔎)\s*(.*)$/gim, '<span style="color:#0ea5e9;font-weight:700;">$1</span> $2')
+
+    // Odds (qualquer número tipo 1.85, 2.50, 3.10)
+    .replace(/(\b\d+(\.\d{1,2})?\b)/g, '<span style="color:#facc15;font-weight:600;">$1</span>')
+
+    // Valor, EV+, aposta, oportunidade
+    .replace(/(Valor|EV\+|Aposta|Oportunidade|Chance)/gi, '<span style="color:#22c55e;font-weight:700;">$1</span>')
+
+    // Mercado
+    .replace(/(Over|Under|Ambas|Handicap|Resultado Final|1X2|DNB|BTTS)/gi, '<span style="color:#38bdf8;font-weight:700;">$1</span>')
+
+    // Itens
+    .replace(/\*\*\*/g, '<div style="opacity:0.4;margin:6px 0;">***</div>')
+
+    // Quebras de linha
+    .replace(/\n/g, "<br>");
+}
+
 
   // === Modal “Indique um amigo” ===
   const [showIndiqueModal, setShowIndiqueModal] = useState(false);
