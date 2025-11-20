@@ -369,6 +369,44 @@ export default function HomePage() {
     );
   }
 
+  // ======== Funções de TTS para leitura natural ========
+function removerEmojis(t) {
+  return t.replace(
+    /[\u{1F300}-\u{1FAFF}\u{1F100}-\u{1F1FF}\u{2600}-\u{27BF}]/gu,
+    ""
+  );
+}
+
+function limparTextoNatural(texto) {
+  return texto
+    .replace(/\*/g, "")
+    .replace(/[-–—]{2,}/g, "")
+    .replace(/[-–—]\s/g, "")
+    .replace(/\s{2,}/g, " ")
+    .replace(/:\s*\n/g, ": ")
+    .replace(/\n{2,}/g, ". ")
+    .replace(/\n/g, " ")
+    .replace(/\s+\./g, ".")
+    .replace(/\s+,/g, ",")
+    .trim();
+}
+
+function lerTexto(resultado) {
+  if (!resultado) return;
+
+  let texto = resultado;
+  texto = removerEmojis(texto);
+  texto = limparTextoNatural(texto);
+
+  const fala = new SpeechSynthesisUtterance(texto);
+  fala.lang = "pt-BR";
+  fala.rate = 1.5;
+  fala.pitch = 1;
+  fala.volume = 1;
+
+  speechSynthesis.speak(fala);
+}
+
   // === Tela inicial de login ===
   if (!user) {
     return (
@@ -552,6 +590,23 @@ export default function HomePage() {
                 marginTop:"20px",background:"rgba(14,165,233,0.2)",border:"1px solid #0ea5e955",
                 color:"#38bdf8",borderRadius:"8px",padding:"12px",fontWeight:600,cursor:"pointer",width:"100%"
               }}>↩ Voltar</button>
+
+              <button
+    onClick={() => lerTexto(resultado)}
+    style={{
+      marginTop:"10px",
+      background:"rgba(34,197,94,0.2)",
+      border:"1px solid #22c55e55",
+      color:"#22c55e",
+      borderRadius:"8px",
+      padding:"12px",
+      fontWeight:600,
+      cursor:"pointer",
+      width:"100%"
+    }}
+  >
+    🔊 Ler Análise (1.5x)
+  </button>
             </>
           )
         )}
