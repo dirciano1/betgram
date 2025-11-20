@@ -7,7 +7,7 @@ import {
   loginComGoogle,
   sair,
   db,
-  doc,
+  doc,f
   getDoc,
   setDoc,
   updateDoc,
@@ -616,21 +616,24 @@ function handleTTS(resultado) {
               }}>↩ Voltar</button>
 
              <button
-   onClick={() => handleTTS(resultado)}
-    style={{
-      marginTop:"10px",
-      background:"rgba(34,197,94,0.2)",
-      border:"1px solid #22c55e55",
-      color:"#22c55e",
-      borderRadius:"8px",
-      padding:"12px",
-      fontWeight:600,
-      cursor:"pointer",
-      width:"100%"
-    }}
-  >
-    🔊 Ler Análise
-  </button>
+  onClick={() => handleTTS(resultado)}
+  style={{
+    marginTop:"10px",
+    background:"rgba(34,197,94,0.2)",
+    border:"1px solid #22c55e55",
+    color:"#22c55e",
+    borderRadius:"8px",
+    padding:"12px",
+    fontWeight:600,
+    cursor:"pointer",
+    width:"100%",
+    transition:"0.2s"
+  }}
+>
+  {ttsStatus === "idle" && "🔊 Ler Análise (1.5x)"}
+  {ttsStatus === "playing" && "⏸ Pausar Leitura"}
+  {ttsStatus === "paused" && "▶ Continuar Leitura"}
+</button>
             </>
           )
         )}
