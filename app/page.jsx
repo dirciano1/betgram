@@ -431,6 +431,7 @@ function handleTTS(resultado) {
     continuarLeitura();
   }
 }
+const analiseFormatada = formatAnaliseTexto(resultado);
   
   // === Tela inicial de login ===
   if (!user) {
