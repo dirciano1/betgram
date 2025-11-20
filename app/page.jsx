@@ -7,7 +7,7 @@ import {
   loginComGoogle,
   sair,
   db,
-  doc,f
+  doc,
   getDoc,
   setDoc,
   updateDoc,
