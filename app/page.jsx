@@ -610,7 +610,7 @@ function handleTTS(resultado) {
               <div style={{
                 background:"rgba(11,19,36,0.7)",border:"1px solid rgba(34,197,94,0.2)",
                 borderRadius:"10px",padding:"15px",maxHeight:"300px",overflowY:"auto"
-              }} dangerouslySetInnerHTML={{__html:formatAnaliseTexto(resultado)}}/>
+              }} dangerouslySetInnerHTML={{ __html: analiseFormatada }}/>
               <button onClick={() => setPanelFlip(false)} style={{
                 marginTop:"20px",background:"rgba(14,165,233,0.2)",border:"1px solid #0ea5e955",
                 color:"#38bdf8",borderRadius:"8px",padding:"12px",fontWeight:600,cursor:"pointer",width:"100%"
