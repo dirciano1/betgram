@@ -369,7 +369,9 @@ export default function HomePage() {
     );
   }
 
-  // ======== Funções de TTS para leitura natural ========
+ const [ttsStatus, setTtsStatus] = useState("idle");
+// idle | playing | paused
+
 function removerEmojis(t) {
   return t.replace(
     /[\u{1F300}-\u{1FAFF}\u{1F100}-\u{1F1FF}\u{2600}-\u{27BF}]/gu,
@@ -391,20 +393,42 @@ function limparTextoNatural(texto) {
     .trim();
 }
 
-function lerTexto(resultado) {
-  if (!resultado) return;
+function iniciarLeitura(texto) {
+  speechSynthesis.cancel();
 
-  let texto = resultado;
-  texto = removerEmojis(texto);
-  texto = limparTextoNatural(texto);
+  let t = removerEmojis(texto);
+  t = limparTextoNatural(t);
 
-  const fala = new SpeechSynthesisUtterance(texto);
+  const fala = new SpeechSynthesisUtterance(t);
   fala.lang = "pt-BR";
   fala.rate = 1.5;
   fala.pitch = 1;
   fala.volume = 1;
 
+  fala.onend = () => setTtsStatus("idle");
+
+  setTtsStatus("playing");
   speechSynthesis.speak(fala);
+}
+
+function pausarLeitura() {
+  speechSynthesis.pause();
+  setTtsStatus("paused");
+}
+
+function continuarLeitura() {
+  speechSynthesis.resume();
+  setTtsStatus("playing");
+}
+
+function handleTTS(resultado) {
+  if (ttsStatus === "idle") {
+    iniciarLeitura(resultado);
+  } else if (ttsStatus === "playing") {
+    pausarLeitura();
+  } else if (ttsStatus === "paused") {
+    continuarLeitura();
+  }
 }
 
   // === Tela inicial de login ===
@@ -591,7 +615,7 @@ function lerTexto(resultado) {
                 color:"#38bdf8",borderRadius:"8px",padding:"12px",fontWeight:600,cursor:"pointer",width:"100%"
               }}>↩ Voltar</button>
 
-              <button
+             <button
     onClick={() => lerTexto(resultado)}
     style={{
       marginTop:"10px",
@@ -605,7 +629,7 @@ function lerTexto(resultado) {
       width:"100%"
     }}
   >
-    🔊 Ler Análise (1.5x)
+    🔊 Ler Análise
   </button>
             </>
           )
