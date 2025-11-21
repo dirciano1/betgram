@@ -401,8 +401,11 @@ export default function HomePage() {
       </div>
     );
   }
+// -----------------------------------------------------
+// 👇 CONTROLE COMPLETO DE TTS (Texto para Voz)
+// -----------------------------------------------------
 
- const [ttsStatus, setTtsStatus] = useState("idle");
+const [ttsStatus, setTtsStatus] = useState("idle");
 // idle | playing | paused
 
 function removerEmojis(t) {
@@ -429,7 +432,6 @@ function limparTextoNatural(texto) {
 function iniciarLeitura(textoOriginal) {
   speechSynthesis.cancel();
 
-  // textoOriginal = resultado (SEM HTML)
   let t = removerEmojis(textoOriginal);
   t = limparTextoNatural(t);
 
@@ -451,19 +453,38 @@ function pausarLeitura() {
 }
 
 function continuarLeitura() {
-  speechSynthesis.resume();
-  setTtsStatus("playing");
+  try {
+    speechSynthesis.resume();
+
+    // 🟢 Android fix #1 – resume duplo
+    setTimeout(() => {
+      if (speechSynthesis.paused) {
+        speechSynthesis.resume();
+      }
+    }, 200);
+
+    // 🟢 Android fix #2 – força interação
+    if (/Android/i.test(navigator.userAgent)) {
+      document.body.click();
+    }
+
+    setTtsStatus("playing");
+  } catch (e) {
+    console.error("Erro ao retomar TTS:", e);
+  }
 }
 
 function handleTTS(resultado) {
   if (ttsStatus === "idle") {
-    iniciarLeitura(resultado);   // 👉 sempre lê o texto ORIGINAL (sem HTML)
+    iniciarLeitura(resultado);
   } else if (ttsStatus === "playing") {
     pausarLeitura();
   } else if (ttsStatus === "paused") {
     continuarLeitura();
   }
 }
+
+
 const analiseFormatada = formatAnaliseTexto(resultado);
   
   // === Tela inicial de login ===
