@@ -406,7 +406,7 @@ export default function HomePage() {
 // -----------------------------------------------------
 
 const [ttsStatus, setTtsStatus] = useState("idle");
-// idle | playing | paused
+// idle | playing
 
 function removerEmojis(t) {
   return t.replace(
@@ -430,7 +430,7 @@ function limparTextoNatural(texto) {
 }
 
 function iniciarLeitura(textoOriginal) {
-  speechSynthesis.cancel();
+  speechSynthesis.cancel(); // sempre começa limpo
 
   let t = removerEmojis(textoOriginal);
   t = limparTextoNatural(t);
@@ -441,46 +441,24 @@ function iniciarLeitura(textoOriginal) {
   fala.pitch = 1;
   fala.volume = 1;
 
-  fala.onend = () => setTtsStatus("idle");
+  fala.onend = () => {
+    setTtsStatus("idle");
+  };
 
   setTtsStatus("playing");
   speechSynthesis.speak(fala);
 }
 
-function pausarLeitura() {
-  speechSynthesis.pause();
-  setTtsStatus("paused");
-}
-
-function continuarLeitura() {
-  try {
-    speechSynthesis.resume();
-
-    // 🟢 Android fix #1 – resume duplo
-    setTimeout(() => {
-      if (speechSynthesis.paused) {
-        speechSynthesis.resume();
-      }
-    }, 200);
-
-    // 🟢 Android fix #2 – força interação
-    if (/Android/i.test(navigator.userAgent)) {
-      document.body.click();
-    }
-
-    setTtsStatus("playing");
-  } catch (e) {
-    console.error("Erro ao retomar TTS:", e);
-  }
+function pararLeitura() {
+  speechSynthesis.cancel();
+  setTtsStatus("idle");
 }
 
 function handleTTS(resultado) {
   if (ttsStatus === "idle") {
     iniciarLeitura(resultado);
   } else if (ttsStatus === "playing") {
-    pausarLeitura();
-  } else if (ttsStatus === "paused") {
-    continuarLeitura();
+    pararLeitura();
   }
 }
 
