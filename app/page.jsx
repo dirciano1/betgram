@@ -664,10 +664,10 @@ const analiseFormatada = formatAnaliseTexto(resultado);
     transition:"0.2s"
   }}
 >
-  {ttsStatus === "idle" && "🔊 Ler Análise (1.5x)"}
-  {ttsStatus === "playing" && "⏸ Pausar Leitura"}
-  {ttsStatus === "paused" && "▶ Continuar Leitura"}
+  {ttsStatus === "idle" && "▶️ Ler Análise (1.5x)"}
+  {ttsStatus === "playing" && "⏹ Parar Leitura"}
 </button>
+
             </>
           )
         )}
