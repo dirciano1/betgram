@@ -30,11 +30,11 @@ Antes de gerar a análise, faça buscas na internet (Google Search) sobre **${co
 - Jogadores voltando de lesão
 
 ⚠️ MODO C – Mistura Inteligente:
-- Cite nomes SOMENTE se forem estrelas, titulares muito relevantes ou atletas midiáticos.
-- Desfalques secundários devem ser descritos sem nome (“ausência no ataque”, “baixa no garrafão”, “queda de profundidade no meio”).
-- Não listar longas relações de lesionados.
-- Não escrever de forma jornalística.
-- Sempre focar no IMPACTO TÁTICO.
+- Cite nomes SOMENTE se forem estrelas ou titulares muito relevantes.
+- Jogadores secundários → descrever sem nome (“baixa no ataque”, “perda na defesa”).
+- NÃO escrever textos longos sobre desfalques.
+- SER SEMPRE conciso, objetivo e focado no impacto tático.
+- Nada de linguagem jornalística.
 
 ===========================
 📌 AJUSTE DE PROBABILIDADE E ODD JUSTA
@@ -42,10 +42,10 @@ Antes de gerar a análise, faça buscas na internet (Google Search) sobre **${co
 
 Ajustar internamente a força de cada time/atleta conforme os desfalques:
 
-- 1 titular relevante fora → reduzir força em 3% a 5%
-- 2 titulares relevantes → reduzir 6% a 10%
-- 3+ titulares relevantes → reduzir 10% a 18%
-- Ausência crítica (armador principal, craque, goleiro, artilheiro, estrela da equipe) → penalidade extra de 5% a 12%
+- 1 titular relevante fora → -3% a -5%
+- 2 titulares relevantes → -6% a -10%
+- 3+ titulares relevantes → -10% a -18%
+- Ausência crítica (craque, goleiro, armador principal, artilheiro, estrela) → penalidade extra de 5% a 12%
 
 Esses ajustes afetam:
 - Probabilidade real
@@ -59,33 +59,50 @@ Esses ajustes afetam:
 📌 EXIBIR ESTA SEÇÃO NA ANÁLISE FINAL:
 ===========================
 
-Adicione SEMPRE no início da resposta uma seção clara intitulada:
-
 🟧 **DESFALQUES IMPORTANTES**
 
 Regras:
-- Mostrar desfalques relevantes com impacto tático.
-- Citar nome SOMENTE se for atleta muito importante.
-- Para jogadores de baixo impacto, descreva sem nome.
-- Não criar listas extensas.
-- Não citar fontes, sites, nem resultados de busca.
-- Ser conciso e objetivo.
+- Mostrar SOMENTE o essencial.
+- Máximo: 2–3 linhas por time.
+- Citar nomes apenas se forem realmente importantes.
+- Descrever impacto direto no jogo (criação, defesa, ritmo, volume).
+- Zero enrolação.
+- Nunca listar vários jogadores.
 
-Formato esperado (exemplos):
-- “O Palmeiras chega com ausência importante na criação, reduzindo ritmo ofensivo.”
-- “O Vitória tem desfalque relevante na defesa, afetando consistência.”
-- “Desfalque crítico: Raphael Veiga pode não atuar.” (somente se realmente for estrela)
-- “Há perda de profundidade no garrafão para o Houston Rockets.”
+EXEMPLOS DO ESTILO PERMITIDO (CURTO):
+- “O Arsenal tem baixa relevante na defesa, reduzindo solidez.”
+- “O Tottenham perde peça importante no ataque, afetando pressão e profundidade.”
+- “Desfalque crítico: Saka pode não atuar.” (somente se for estrela)
+- “Há perda de intensidade no meio, reduzindo transições.”
+
+===========================
+📌 CONCLUSÃO – REGRAS DE ESTILO
+===========================
+
+A conclusão deve ser:
+- **Curta (3 a 5 linhas).**
+- **Direta.**
+- **Sem historinha.**
+- **Sem repetir informações já dadas.**
+- **Focar apenas na leitura final do mercado.**
+
+Exemplos do ESTILO correto:
+- “A linha está justa, com leve inclinação para o Over, mas só tem valor acima da odd X.”
+- “O cenário favorece o mandante, porém a odd só vale se estiver acima da justa.”
+- “Mercado equilibrado; tendência moderada indicando leve vantagem para o Under.”
 
 ===========================
 📌 REGRAS ABSOLUTAS
 ===========================
 
 - Você PODE usar os dados pesquisados internamente, mas é PROIBIDO exibi-los.
-- Nunca listar jogos, lesões completas, notícias ou fontes.
+- Nunca listar jogos, lesões completas ou resultados de busca.
 - Nunca mencionar que buscou informações.
 - A análise deve parecer natural e independente.
-- A resposta final deve conter APENAS a análise solicitada + seção de desfalques + resultados do esporte.
+- A resposta final deve conter APENAS:
+  ✔️ desfalques (curtos)
+  ✔️ análise do mercado escolhido
+  ✔️ conclusão (curta)
 
 ===========================
 🛑 LEMBRETE FINAL
