@@ -1,6 +1,5 @@
 // app/layout.jsx
 import "./globals.css";
-import Script from "next/script";
 
 export const metadata = {
   title: "Betgram - Analisador de Apostas Esportivas com Inteligência Artificial",
@@ -27,18 +26,22 @@ export const metadata = {
       "O Betgram transforma dados, estatísticas e odds em insights poderosos com IA avançada.",
     images: ["/og-image.jpg"],
   },
+
+  // 🔥 ÍCONES COMPLETOS (Google exige)
   icons: {
     icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
   },
+
+  // 🔥 Para Google reconhecer como app/brand
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="pt-BR">
-      <body>
-        {children}
-
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
