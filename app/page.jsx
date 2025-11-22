@@ -131,6 +131,7 @@ export default function HomePage() {
   const [dadosUser, setDadosUser] = useState(null);
   const [esporte, setEsporte] = useState("futebol");
   const [competicao, setCompeticao] = useState("");
+  const [anoCompeticao, setAnoCompeticao] = useState("2025");
   const [timeA, setTimeA] = useState("");
   const [timeB, setTimeB] = useState("");
   const [mercado, setMercado] = useState("");
@@ -619,7 +620,51 @@ const analiseFormatada = formatAnaliseTexto(resultado);
                   <option value="entretenimento">🎬 Entretenimento</option>
               </select>
               <label>🏆 Competição:</label>
-              <input style={inputStyle} value={competicao} onChange={(e) => setCompeticao(e.target.value)} placeholder="Ex: Brasileirão, NBA..."/>
+              <div
+  style={{
+    display: "flex",
+    gap: "10px",
+    width: "100%",
+    marginBottom: "14px",
+  }}
+>
+  {/* COMPETIÇÃO (DIGITÁVEL) */}
+  <input
+    type="text"
+    value={competicao}
+    onChange={(e) => setCompeticao(e.target.value)}
+    placeholder="Competição (ex: Brasileirão)"
+    style={{
+      flex: 1,
+      padding: "10px 14px",
+      borderRadius: "10px",
+      border: "1px solid rgba(255,255,255,0.15)",
+      background: "rgba(17,24,39,0.8)",
+      color: "#fff",
+      outline: "none",
+    }}
+  />
+
+  {/* ANO DA COMPETIÇÃO */}
+  <input
+  type="number"
+  value={anoCompeticao}
+  onChange={(e) => setAnoCompeticao(e.target.value)}
+  required
+  style={{
+    width: "90px",
+    padding: "10px 14px",
+    borderRadius: "10px",
+    border: "1px solid rgba(255,255,255,0.15)",
+    background: "rgba(17,24,39,0.8)",
+    color: "#fff",
+    outline: "none",
+    textAlign: "center",
+  }}
+  placeholder="2025"
+/>
+</div>
+
               <label>🎮 Confronto:</label>
               <input style={inputStyle} value={timeA} onChange={(e) => setTimeA(e.target.value)} placeholder="Time da Casa"/>
               <input style={inputStyle} value={timeB} onChange={(e) => setTimeB(e.target.value)} placeholder="Time Visitante"/>
