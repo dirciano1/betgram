@@ -5,6 +5,7 @@ html, body {
   background: #0b1324;
   color: #fff;
   font-family: monospace;
+  margin-top:-2vh;
 }
 
 button {
@@ -103,3 +104,4 @@ a:hover {
 .resultado-analise p strong:first-child {
   color: #38bdf8; /* Azul claro para destacar o título */
 }
+
