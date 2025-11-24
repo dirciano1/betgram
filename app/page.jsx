@@ -664,11 +664,18 @@ const analiseFormatada = formatAnaliseTexto(resultado);
         {/* Formulário / Resultado / Histórico */}
         {!mostraHistorico && !showBetgramPayModal && (
           !panelFlip ? (
-            <><label className="campo-label">🏅 Esporte:</label>
+            <><label className="campo-label" style={{ marginBottom: "6px" }}>🏅 Esporte:</label>
 <SelectEsporte value={esporte} onChange={setEsporte} />
 
 {/* 🔥 BLOCO CARTOLA FC */}
-<div id="bloco-cartola" style={{ display: "none", marginBottom: "20px" }}>
+<div
+  id="bloco-cartola"
+  style={{
+    display: "none",
+    marginBottom: "20px",
+    marginTop: "10px"   // 🔥 impede a UI de grudar no topo
+  }}
+>
 
   <label>📘 Tipo de Análise (Cartola):</label>
   <select
