@@ -152,35 +152,23 @@ function SelectEsporte({ value, onChange }) {
     { value: "dardos", label: "🎯 Dardos" },
     { value: "politica", label: "🏛️ Política" },
     { value: "entretenimento", label: "🎬 Entretenimento" },
-
-    // ⭐ Cartola FC adicionado aqui
-    { value: "cartola", label: "🟢 Cartola FC" },
   ];
-
-  // Sempre atualizar seletor global para o script cartola-menu.js
-  useEffect(() => {
-    window.__ESPORT_SELECTED = value;
-  }, [value]);
 
   return (
     <div className="select-custom">
-      <div
-        className="select-display"
-        onClick={() => setOpen(!open)}
-      >
-        {esportes.find((e) => e.value === value)?.label}
+      <div className="select-display" onClick={() => setOpen(!open)}>
+        {esportes.find(e => e.value === value)?.label}
         <span className="select-arrow">▼</span>
       </div>
 
       {open && (
         <ul className="select-options">
-          {esportes.map((item) => (
+          {esportes.map(item => (
             <li
               key={item.value}
               className={item.value === value ? "selected" : ""}
               onClick={() => {
-                onChange(item.value);        // atualiza React
-                window.__ESPORT_SELECTED = item.value; // atualiza script externo
+                onChange(item.value);
                 setOpen(false);
               }}
             >
@@ -192,8 +180,6 @@ function SelectEsporte({ value, onChange }) {
     </div>
   );
 }
-
-                
 
 export default function HomePage() {
   const [user, setUser] = useState(null);
@@ -664,164 +650,67 @@ const analiseFormatada = formatAnaliseTexto(resultado);
         {/* Formulário / Resultado / Histórico */}
         {!mostraHistorico && !showBetgramPayModal && (
           !panelFlip ? (
-            <><label className="campo-label" style={{ marginBottom: "6px" }}>🏅 Esporte:</label>
+            <><label className="campo-label">🏅 Esporte:</label>
 <SelectEsporte value={esporte} onChange={setEsporte} />
 
-{/* 🔥 BLOCO CARTOLA FC */}
-<div
-  id="bloco-cartola"
+              <label>🏆 Competição:</label>
+              <div
   style={{
-    display: "none",
-    marginBottom: "20px",
-    marginTop: "10px"   // 🔥 impede a UI de grudar no topo
+    display: "flex",
+    gap: "10px",
+    width: "100%",
+    marginBottom: "14px",
   }}
 >
-
-  <label>📘 Tipo de Análise (Cartola):</label>
-  <select
-    id="cartola-tipo"
+  {/* COMPETIÇÃO (DIGITÁVEL) */}
+  <input
+    type="text"
+    value={competicao}
+    onChange={(e) => setCompeticao(e.target.value)}
+    placeholder="Competição (ex: Brasileirão)"
     style={{
-      width: "100%",
+      flex: 1,
       padding: "10px 14px",
       borderRadius: "10px",
       border: "1px solid rgba(255,255,255,0.15)",
       background: "rgba(17,24,39,0.8)",
       color: "#fff",
       outline: "none",
-      marginBottom: "14px",
     }}
-  >
-    <option value="time-completo">Montar time completo</option>
-    <option value="melhor-posicao">Melhor jogador por posição</option>
-    <option value="custo-beneficio">Melhor custo-benefício</option>
-    <option value="baratos">Jogadores baratos que pontuam bem</option>
-    <option value="valorizacao">Jogadores para valorizar</option>
-    <option value="orcamento">Sugestões com X cartoletas</option>
-    <option value="capitao">Melhor capitão da rodada</option>
-  </select>
-
-  <label>💰 Cartoletas disponíveis:</label>
-  <input
-    id="cartola-orcamento"
-    type="number"
-    placeholder="Ex: 100"
-    style={inputStyle}
   />
 
-  <label>⚽ Posição (opcional):</label>
-  <select
-    id="cartola-posicao"
-    style={{
-      width: "100%",
-      padding: "10px 14px",
-      borderRadius: "10px",
-      border: "1px solid rgba(255,255,255,0.15)",
-      background: "rgba(17,24,39,0.8)",
-      color: "#fff",
-      outline: "none",
-      marginBottom: "14px",
-    }}
-  >
-    <option value="">(todas)</option>
-    <option value="GOL">Goleiro</option>
-    <option value="ZAG">Zagueiro</option>
-    <option value="LAT">Lateral</option>
-    <option value="MEI">Meia</option>
-    <option value="ATA">Atacante</option>
-    <option value="TEC">Técnico</option>
-  </select>
-</div>
-
-{/* 🔥 BLOCO COMPETIÇÃO (LABEL ACIMA + INPUTS ALINHADOS) */}
-<div id="bloco-competicao" style={{ marginBottom: "14px" }}>
-  <label style={{ display: "block", marginBottom: "6px" }}>
-    🏆 Competição:
-  </label>
-
-  <div style={{ display: "flex", gap: "10px", width: "100%" }}>
-    <input
-      type="text"
-      value={competicao}
-      onChange={(e) => setCompeticao(e.target.value)}
-      placeholder="Competição (ex: Brasileirão)"
-      style={{
-        flex: 1,
-        padding: "10px 14px",
-        borderRadius: "10px",
-        border: "1px solid rgba(255,255,255,0.15)",
-        background: "rgba(17,24,39,0.8)",
-        color: "#fff",
-        outline: "none",
-      }}
-    />
-
-    <input
-      id="bloco-ano"
-      type="number"
-      value={anoCompeticao}
-      onChange={(e) => setAnoCompeticao(e.target.value)}
-      required
-      style={{
-        width: "90px",
-        padding: "10px 14px",
-        borderRadius: "10px",
-        border: "1px solid rgba(255,255,255,0.15)",
-        background: "rgba(17,24,39,0.8)",
-        color: "#fff",
-        outline: "none",
-        textAlign: "center",
-      }}
-      placeholder="2025"
-    />
-  </div>
-</div>
-
-
-{/* 🔥 BLOCO CONFRONTO */}
-<div id="bloco-confronto">
-  <label>🎮 Confronto:</label>
+  {/* ANO DA COMPETIÇÃO */}
   <input
-    style={inputStyle}
-    value={timeA}
-    onChange={(e) => setTimeA(e.target.value)}
-    placeholder="Time da Casa"
-  />
-  <input
-    style={inputStyle}
-    value={timeB}
-    onChange={(e) => setTimeB(e.target.value)}
-    placeholder="Time Visitante"
-  />
+  type="number"
+  value={anoCompeticao}
+  onChange={(e) => setAnoCompeticao(e.target.value)}
+  required
+  style={{
+    width: "90px",
+    padding: "10px 14px",
+    borderRadius: "10px",
+    border: "1px solid rgba(255,255,255,0.15)",
+    background: "rgba(17,24,39,0.8)",
+    color: "#fff",
+    outline: "none",
+    textAlign: "center",
+  }}
+  placeholder="2025"
+/>
 </div>
 
-{/* 🔥 BLOCO MERCADO */}
-<div id="bloco-mercado">
-  <label>🎯 Mercado (opcional):</label>
-  <input
-    style={inputStyle}
-    value={mercado}
-    onChange={(e) => setMercado(e.target.value)}
-    placeholder="Ex: Over 2.5"
-  />
-
-  {mercado && (
-    <>
-      <label>💰 Odd (opcional):</label>
-      <input
-        style={inputStyle}
-        type="number"
-        value={odd}
-        onChange={(e) => setOdd(e.target.value)}
-        placeholder="Ex: 1.85"
-      />
-    </>
-  )}
-</div>
-
-
-{/* 🔥 BOTÃO ANALISAR */}
-<button
-  id="botao-analisar"
+              <label>🎮 Confronto:</label>
+              <input style={inputStyle} value={timeA} onChange={(e) => setTimeA(e.target.value)} placeholder="Time da Casa"/>
+              <input style={inputStyle} value={timeB} onChange={(e) => setTimeB(e.target.value)} placeholder="Time Visitante"/>
+              <label>🎯 Mercado (opcional):</label>
+              <input style={inputStyle} value={mercado} onChange={(e) => setMercado(e.target.value)} placeholder="Ex: Over 2.5"/>
+              {mercado && (
+                <>
+                  <label>💰 Odd (opcional):</label>
+                  <input style={inputStyle} type="number" value={odd} onChange={(e) => setOdd(e.target.value)} placeholder="Ex: 1.85"/>
+                </>
+              )}
+              <button
   onClick={handleAnalise}
   disabled={carregando}
   className={carregando ? "botao-loading" : ""}
@@ -847,8 +736,6 @@ const analiseFormatada = formatAnaliseTexto(resultado);
   {carregando && <div className="spinner"></div>}
   {carregando ? carregandoFrase : "Analisar"}
 </button>
-
-
 
             </>
           ) : (
