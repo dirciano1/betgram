@@ -39,7 +39,7 @@ html, body {
 
 .select-options {
   position: absolute;
-  top: calc(100% - 2px);   /* Espaço elegante entre campo e menu */
+  top: calc(100% - 3px);   /* Espaço elegante entre campo e menu */
   left: 0;
   right: 0;
   width: 100%;
@@ -207,6 +207,7 @@ html, body {
     margin-top: 0;
   }
 }
+
 
 
 
