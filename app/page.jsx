@@ -595,30 +595,30 @@ const analiseFormatada = formatAnaliseTexto(resultado);
         {/* Formulário / Resultado / Histórico */}
         {!mostraHistorico && !showBetgramPayModal && (
           !panelFlip ? (
-            <>
-              <label>🏅 Esporte:</label>
-              <select style={inputStyle} value={esporte} onChange={(e) => setEsporte(e.target.value)}>
-                <option value="futebol">⚽ Futebol</option>
-                <option value="basquete">🏀 Basquete</option>
-                  <option value="tenis">🎾 Tênis</option>
-                  <option value="volei">🏐 Vôlei</option>
-                  <option value="mma">🥊 MMA / UFC</option>
-                  <option value="boxe">🥊 Boxe</option>
-                  <option value="eSports">🎮 eSports (CS2, LoL, Valorant...)</option>
-                  <option value="handebol">🤾 Handebol</option>
-                  <option value="futsal">⚽ Futsal</option>
-                  <option value="beisebol">⚾ Beisebol (MLB)</option>
-                  <option value="rugby">🏉 Rugby</option>
-                  <option value="hoquei">🏒 Hóquei no Gelo</option>
-                  <option value="corrida">🏎️ Corridas / Fórmula 1</option>
-                  <option value="ciclismo">🚴 Ciclismo</option>
-                  <option value="golfe">🏌️ Golfe</option>
-                  <option value="criquete">🏏 Críquete</option>
-                  <option value="snooker">🎱 Snooker / Bilhar</option>
-                  <option value="dardos">🎯 Dardos</option>
-                  <option value="politica">🏛️ Política</option>
-                  <option value="entretenimento">🎬 Entretenimento</option>
-              </select>
+            <><label className="campo-label">🏅 Esporte:</label>
+<select className="campo-select" value={esporte} onChange={(e) => setEsporte(e.target.value)}>
+  <option value="futebol">⚽ Futebol</option>
+  <option value="basquete">🏀 Basquete</option>
+  <option value="tenis">🎾 Tênis</option>
+  <option value="volei">🏐 Vôlei</option>
+  <option value="mma">🥊 MMA / UFC</option>
+  <option value="boxe">🥊 Boxe</option>
+  <option value="eSports">🎮 eSports</option>
+  <option value="handebol">🤾 Handebol</option>
+  <option value="futsal">⚽ Futsal</option>
+  <option value="beisebol">⚾ Beisebol</option>
+  <option value="rugby">🏉 Rugby</option>
+  <option value="hoquei">🏒 Hóquei no Gelo</option>
+  <option value="corrida">🏎️ Fórmula 1</option>
+  <option value="ciclismo">🚴 Ciclismo</option>
+  <option value="golfe">🏌️ Golfe</option>
+  <option value="criquete">🏏 Críquete</option>
+  <option value="snooker">🎱 Snooker</option>
+  <option value="dardos">🎯 Dardos</option>
+  <option value="politica">🏛️ Política</option>
+  <option value="entretenimento">🎬 Entretenimento</option>
+</select>
+
               <label>🏆 Competição:</label>
               <div
   style={{
