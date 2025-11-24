@@ -46,7 +46,8 @@ export default function RootLayout({ children }) {
         {children}
 
         {/* ⭐ SCRIPT DO CARTOLA FC — CARREGA NO CLIENTE */}
-        <Script src="/scripts/cartola-menu.js" strategy="afterInteractive" />
+        <Script src="/scripts/cartola-menu.js" strategy="lazyOnload" />
+
       </body>
     </html>
   );
