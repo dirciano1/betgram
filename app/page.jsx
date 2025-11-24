@@ -666,6 +666,7 @@ const analiseFormatada = formatAnaliseTexto(resultado);
           !panelFlip ? (
             <><label className="campo-label">🏅 Esporte:</label>
 <SelectEsporte value={esporte} onChange={setEsporte} />
+
 {/* 🔥 BLOCO CARTOLA FC */}
 <div id="bloco-cartola" style={{ display: "none", marginBottom: "20px" }}>
 
@@ -722,56 +723,46 @@ const analiseFormatada = formatAnaliseTexto(resultado);
     <option value="ATA">Atacante</option>
     <option value="TEC">Técnico</option>
   </select>
-
 </div>
 
-{/* 🔥 BLOCO COMPETIÇÃO */}
-<label>🏆 Competição:</label>
-<div
-  id="bloco-competicao"
-  style={{
-    display: "flex",
-    gap: "10px",
-    width: "100%",
-    marginBottom: "14px",
-  }}
->
-  {/* COMPETIÇÃO (DIGITÁVEL) */}
-  <input
-    type="text"
-    value={competicao}
-    onChange={(e) => setCompeticao(e.target.value)}
-    placeholder="Competição (ex: Brasileirão)"
-    style={{
-      flex: 1,
-      padding: "10px 14px",
-      borderRadius: "10px",
-      border: "1px solid rgba(255,255,255,0.15)",
-      background: "rgba(17,24,39,0.8)",
-      color: "#fff",
-      outline: "none",
-    }}
-  />
+{/* 🔥 BLOCO COMPETIÇÃO (LABEL DENTRO DO BLOCO AGORA) */}
+<div id="bloco-competicao" style={{ marginBottom: "14px" }}>
+  <label>🏆 Competição:</label>
+  <div style={{ display: "flex", gap: "10px", width: "100%" }}>
+    <input
+      type="text"
+      value={competicao}
+      onChange={(e) => setCompeticao(e.target.value)}
+      placeholder="Competição (ex: Brasileirão)"
+      style={{
+        flex: 1,
+        padding: "10px 14px",
+        borderRadius: "10px",
+        border: "1px solid rgba(255,255,255,0.15)",
+        background: "rgba(17,24,39,0.8)",
+        color: "#fff",
+        outline: "none",
+      }}
+    />
 
-  {/* ANO DA COMPETIÇÃO */}
-  <input
-    id="bloco-ano"
-    type="number"
-    value={anoCompeticao}
-    onChange={(e) => setAnoCompeticao(e.target.value)}
-    required
-    style={{
-      width: "90px",
-      padding: "10px 14px",
-      borderRadius: "10px",
-      border: "1px solid rgba(255,255,255,0.15)",
-      background: "rgba(17,24,39,0.8)",
-      color: "#fff",
-      outline: "none",
-      textAlign: "center",
-    }}
-    placeholder="2025"
-  />
+    <input
+      type="number"
+      value={anoCompeticao}
+      onChange={(e) => setAnoCompeticao(e.target.value)}
+      required
+      style={{
+        width: "90px",
+        padding: "10px 14px",
+        borderRadius: "10px",
+        border: "1px solid rgba(255,255,255,0.15)",
+        background: "rgba(17,24,39,0.8)",
+        color: "#fff",
+        outline: "none",
+        textAlign: "center",
+      }}
+      placeholder="2025"
+    />
+  </div>
 </div>
 
 {/* 🔥 BLOCO CONFRONTO */}
@@ -814,6 +805,7 @@ const analiseFormatada = formatAnaliseTexto(resultado);
     </>
   )}
 </div>
+
 
 {/* 🔥 BOTÃO ANALISAR */}
 <button
