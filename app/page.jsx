@@ -732,7 +732,7 @@ const analiseFormatada = formatAnaliseTexto(resultado);
   </select>
 </div>
 
-{/* 🔥 BLOCO COMPETIÇÃO (LABEL DENTRO DO BLOCO AGORA) */}
+{/* 🔥 BLOCO COMPETIÇÃO (LABEL ACIMA + INPUTS ALINHADOS) */}
 <div id="bloco-competicao" style={{ marginBottom: "14px" }}>
   <label style={{ display: "block", marginBottom: "6px" }}>
     🏆 Competição:
@@ -776,26 +776,6 @@ const analiseFormatada = formatAnaliseTexto(resultado);
   </div>
 </div>
 
-
-    <input
-      type="number"
-      value={anoCompeticao}
-      onChange={(e) => setAnoCompeticao(e.target.value)}
-      required
-      style={{
-        width: "90px",
-        padding: "10px 14px",
-        borderRadius: "10px",
-        border: "1px solid rgba(255,255,255,0.15)",
-        background: "rgba(17,24,39,0.8)",
-        color: "#fff",
-        outline: "none",
-        textAlign: "center",
-      }}
-      placeholder="2025"
-    />
-  </div>
-</div>
 
 {/* 🔥 BLOCO CONFRONTO */}
 <div id="bloco-confronto">
