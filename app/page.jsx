@@ -335,7 +335,37 @@ export default function HomePage() {
 
       const confronto = `${timeA} x ${timeB}`;
       const modulo = await import(`../prompts/${esporte}.js`);
-      const prompt = modulo.gerarPrompt(confronto, mercado, competicao, odd);
+
+let prompt;
+
+// 🎩 MODO CARTOLA
+if (esporte === "cartola") {
+
+  const tipo = document.getElementById("cartola-tipo")?.value || "defesa";
+  const orcamento = document.getElementById("cartola-orcamento")?.value || "";
+  const posicao = document.getElementById("cartola-posicao")?.value || "";
+  const rodada = ""; // opcional
+
+  switch (tipo) {
+    case "defesa":
+      prompt = modulo.gerarPromptDefesa(orcamento, posicao, rodada);
+      break;
+    case "meio":
+      prompt = modulo.gerarPromptMeio(orcamento, posicao, rodada);
+      break;
+    case "ataque":
+      prompt = modulo.gerarPromptAtaque(orcamento, posicao, rodada);
+      break;
+
+    default:
+      prompt = "Erro: tipo inválido no prompt Cartola.";
+  }
+
+// ⚽ MODO ESPORTE NORMAL (Betgram padrão)
+} else {
+  prompt = modulo.gerarPrompt(confronto, mercado, competicao, odd);
+}
+
       const resposta = await gerarAnalise(prompt);
 
       await addDoc(collection(db, "analises"), {
