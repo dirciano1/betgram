@@ -720,15 +720,11 @@ const analiseFormatada = formatAnaliseTexto(resultado);
 {/* ÁREA CARTOLA – FORA do area-normal */}
 <div id="area-cartola" style={{ display:"none" }}>
 
-  <label>📘 Tipo de Análise (Cartola):</label>
+  <label>🧩 Tipo de Análise (Cartola):</label>
   <select id="cartola-tipo" style={inputStyle}>
-    <option value="time-completo">Montar time completo</option>
-    <option value="melhor-posicao">Melhor jogador por posição</option>
-    <option value="custo-beneficio">Melhor custo-benefício</option>
-    <option value="baratos">Baratos que pontuam bem</option>
-    <option value="valorizacao">Jogadores para valorizar</option>
-    <option value="orcamento">Sugestões por cartoletas</option>
-    <option value="capitao">Melhor capitão</option>
+  <option value="defesa">Defesa (GOL + ZAG)</option>
+  <option value="meio">Meio Campo + Laterais (MEI + LAT)</option>
+  <option value="ataque">Ataque (ATA + TEC)</option>
   </select>
 
   <label>💰 Cartoletas:</label>
