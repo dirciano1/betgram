@@ -2,7 +2,7 @@
 //  🟢 CARTOLA MENU — BetGram
 //  Controle dinâmico de inputs via seletor
 // ==========================================
-
+console.log("🔥 SCRIPT CARTOLA CARREGOU!");
 // Aguarda DOM carregar
 document.addEventListener("DOMContentLoaded", () => {
   const intervalo = setInterval(() => {
