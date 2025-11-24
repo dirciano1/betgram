@@ -18,7 +18,8 @@ html, body {
   background: rgba(17,24,39,0.8);
   color: #fff;
   padding: 12px 14px;
-  border-radius: 10px;
+  border-radius: 0px 0px 10px 10px;
+
   border: 1px solid rgba(255,255,255,0.15);
   cursor: pointer;
   user-select: none;
@@ -207,6 +208,7 @@ html, body {
     margin-top: 0;
   }
 }
+
 
 
 
