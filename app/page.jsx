@@ -730,16 +730,24 @@ const analiseFormatada = formatAnaliseTexto(resultado);
   <label>💰 Cartoletas:</label>
   <input id="cartola-orcamento" type="number" style={inputStyle} />
 
-  <label>⚽ Posição:</label>
-  <select id="cartola-posicao" style={inputStyle}>
-    <option value="">(todas)</option>
-    <option value="GOL">Goleiro</option>
-    <option value="ZAG">Zagueiro</option>
-    <option value="LAT">Lateral</option>
-    <option value="MEI">Meia</option>
-    <option value="ATA">Atacante</option>
-    <option value="TEC">Técnico</option>
-  </select>
+  <label>⚽ Tipo de Jogador / Foco da Análise:</label>
+<select id="cartola-posicao" style={inputStyle}>
+  <option value="">(todos)</option>
+
+  {/* POSIÇÕES TRADICIONAIS */}
+  <option value="GOL">Goleiro</option>
+  <option value="ZAG">Zagueiro</option>
+  <option value="LAT">Lateral</option>
+  <option value="MEI">Meia</option>
+  <option value="ATA">Atacante</option>
+  <option value="TEC">Técnico</option>
+
+  {/* ESPECIAIS */}
+  <option value="capitao">Melhor Capitão</option>
+  <option value="topo">Topo Pontuadores da Rodada</option>
+  <option value="baratos">Bons e Baratos que Pontuam Bem</option>
+  <option value="valorizar">Jogadores para Valorizar</option>
+</select>
 
 </div>
               <button
