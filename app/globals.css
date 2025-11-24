@@ -44,7 +44,7 @@ html, body {
   right: 0;
   width: 100%;
   box-sizing: border-box;
-  padding-bottom:50px;
+  padding-bottom:45px;
 
   background: #141a2a;     /* Fundo mais legível */
   border: 1px solid #22c55e55; /* Bordas neon suaves BetGram */
@@ -207,7 +207,11 @@ html, body {
   html, body {
     margin-top: 0;
   }
+  .select-options {
+  
+  padding-bottom:50px;
 }
+
 
 
 
