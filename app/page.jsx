@@ -651,7 +651,6 @@ const analiseFormatada = formatAnaliseTexto(resultado);
         {!mostraHistorico && !showBetgramPayModal && (
           !panelFlip ? (
             <><label className="campo-label">🏅 Esporte:</label>
-<label>🏅 Esporte:</label>
 <SelectEsporte value={esporte} onChange={setEsporte} />
 
               <label>🏆 Competição:</label>
