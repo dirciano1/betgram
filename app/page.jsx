@@ -152,6 +152,7 @@ function SelectEsporte({ value, onChange }) {
     { value: "dardos", label: "🎯 Dardos" },
     { value: "politica", label: "🏛️ Política" },
     { value: "entretenimento", label: "🎬 Entretenimento" },
+    { value: "cartola", label: "🎩 Cartola FC" },
   ];
 
   return (
@@ -208,7 +209,22 @@ export default function HomePage() {
     setShowBetgramPayModal(false);
     if (user) await carregarDadosUsuario(user);
   }
-   
+  
+   useEffect(() => {
+  const normal = document.getElementById("area-normal");
+  const cartola = document.getElementById("area-cartola");
+
+  if (!normal || !cartola) return;
+
+  if (esporte === "cartola") {
+    normal.style.display = "none";
+    cartola.style.display = "block";
+  } else {
+    normal.style.display = "block";
+    cartola.style.display = "none";
+  }
+}, [esporte]);
+
   useEffect(() => {
   if (!carregando) return;
 
@@ -653,63 +669,74 @@ const analiseFormatada = formatAnaliseTexto(resultado);
             <><label className="campo-label">🏅 Esporte:</label>
 <SelectEsporte value={esporte} onChange={setEsporte} />
 
-              <label>🏆 Competição:</label>
-              <div
-  style={{
-    display: "flex",
-    gap: "10px",
-    width: "100%",
-    marginBottom: "14px",
-  }}
->
-  {/* COMPETIÇÃO (DIGITÁVEL) */}
-  <input
-    type="text"
-    value={competicao}
-    onChange={(e) => setCompeticao(e.target.value)}
-    placeholder="Competição (ex: Brasileirão)"
-    style={{
-      flex: 1,
-      padding: "10px 14px",
-      borderRadius: "10px",
-      border: "1px solid rgba(255,255,255,0.15)",
-      background: "rgba(17,24,39,0.8)",
-      color: "#fff",
-      outline: "none",
-    }}
-  />
+            {/* ÁREA NORMAL */}
+<div id="area-normal">
 
-  {/* ANO DA COMPETIÇÃO */}
-  <input
-  type="number"
-  value={anoCompeticao}
-  onChange={(e) => setAnoCompeticao(e.target.value)}
-  required
-  style={{
-    width: "90px",
-    padding: "10px 14px",
-    borderRadius: "10px",
-    border: "1px solid rgba(255,255,255,0.15)",
-    background: "rgba(17,24,39,0.8)",
-    color: "#fff",
-    outline: "none",
-    textAlign: "center",
-  }}
-  placeholder="2025"
-/>
+  <label>🏆 Competição:</label>
+
+  <div style={{ display:"flex", gap:"10px", marginBottom:"14px" }}>
+    <input
+      type="text"
+      value={competicao}
+      onChange={(e) => setCompeticao(e.target.value)}
+      placeholder="Competição (ex: Brasileirão)"
+      style={inputStyle}
+    />
+
+    <input
+      type="number"
+      value={anoCompeticao}
+      onChange={(e) => setAnoCompeticao(e.target.value)}
+      placeholder="2025"
+      style={{ ...inputStyle, width:"90px", textAlign:"center" }}
+    />
+  </div>
+
+  <label>🎮 Confronto:</label>
+  <input style={inputStyle} value={timeA} onChange={(e)=>setTimeA(e.target.value)} placeholder="Time da Casa"/>
+  <input style={inputStyle} value={timeB} onChange={(e)=>setTimeB(e.target.value)} placeholder="Time Visitante"/>
+
+  <label>🎯 Mercado (opcional):</label>
+  <input style={inputStyle} value={mercado} onChange={(e)=>setMercado(e.target.value)} placeholder="Ex: Over 2.5"/>
+
+  {mercado && (
+    <>
+      <label>💰 Odd:</label>
+      <input style={inputStyle} type="number" value={odd} onChange={(e)=>setOdd(e.target.value)} placeholder="1.85"/>
+    </>
+  )}
+
 </div>
 
-              <label>🎮 Confronto:</label>
-              <input style={inputStyle} value={timeA} onChange={(e) => setTimeA(e.target.value)} placeholder="Time da Casa"/>
-              <input style={inputStyle} value={timeB} onChange={(e) => setTimeB(e.target.value)} placeholder="Time Visitante"/>
-              <label>🎯 Mercado (opcional):</label>
-              <input style={inputStyle} value={mercado} onChange={(e) => setMercado(e.target.value)} placeholder="Ex: Over 2.5"/>
-              {mercado && (
-                <>
-                  <label>💰 Odd (opcional):</label>
-                  <input style={inputStyle} type="number" value={odd} onChange={(e) => setOdd(e.target.value)} placeholder="Ex: 1.85"/>
-                </>
-              )}
+{/* ÁREA CARTOLA – FORA do area-normal */}
+<div id="area-cartola" style={{ display:"none" }}>
+
+  <label>📘 Tipo de Análise (Cartola):</label>
+  <select id="cartola-tipo" style={inputStyle}>
+    <option value="time-completo">Montar time completo</option>
+    <option value="melhor-posicao">Melhor jogador por posição</option>
+    <option value="custo-beneficio">Melhor custo-benefício</option>
+    <option value="baratos">Baratos que pontuam bem</option>
+    <option value="valorizacao">Jogadores para valorizar</option>
+    <option value="orcamento">Sugestões por cartoletas</option>
+    <option value="capitao">Melhor capitão</option>
+  </select>
+
+  <label>💰 Cartoletas:</label>
+  <input id="cartola-orcamento" type="number" style={inputStyle} />
+
+  <label>⚽ Posição:</label>
+  <select id="cartola-posicao" style={inputStyle}>
+    <option value="">(todas)</option>
+    <option value="GOL">Goleiro</option>
+    <option value="ZAG">Zagueiro</option>
+    <option value="LAT">Lateral</option>
+    <option value="MEI">Meia</option>
+    <option value="ATA">Atacante</option>
+    <option value="TEC">Técnico</option>
+  </select>
+
+</div>
               <button
   onClick={handleAnalise}
   disabled={carregando}
