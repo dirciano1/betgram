@@ -1,98 +1,119 @@
-// prompts/cartola.js
+// ===============================
+//  PROMPT CARTOLA FC — BETGRAM
+//  Defesa | Meio | Ataque
+// ===============================
 
-import { getMercadoCartola } from "../lib/cartola.js";
-
-export async function gerarPrompt(tipo, orcamento, posicao) {
-  
-  // Carrega os dados reais do Cartola
-  const jogadores = await getMercadoCartola();
-
+/**
+ * Função base para montar o prompt
+ */
+function montarPromptBase(tipo, orcamento, posicao, rodada) {
   return `
-⚽ **ANÁLISE CARTOLA FC – Modo Betgram**
+⚠️ INSTRUÇÃO SISTÊMICA — NÃO MOSTRAR NA RESPOSTA ⚠️
+Você é a IA da Betgram, especialista em Cartola FC.
+- Sempre considere dados da temporada atual do Cartola.
+- Use informações reais de pontuação, média, variação e custo.
+- Quando não houver informação exata de preço, gere valores plausíveis.
+- Priorize desempenho RECENTE, regularidade, mandante/visitante, adversário e potencial de pontuação.
+- Nunca invente estatísticas absurdas — mantenha plausível.
+- Não use notícias antigas.
+- Não repita informações.
+- Entregue o conteúdo em formato claro, organizado e MUITO objetivo.
 
-Use os dados reais fornecidos abaixo para montar a análise.
-Sempre considere:
+=== CONTEXTO DA ANÁLISE ===
+• Tipo: ${tipo}
+• Orçamento disponível: ${orcamento ? orcamento + " cartoletas" : "não informado"}
+• Posição selecionada: ${posicao || "qualquer"}
+• Rodada: ${rodada || "atual"}
 
-- Preço (cartoletas)
-- Média de pontuação
-- Valorização
-- Regularidade
-- Posição
-- Chances de jogar
-- Custo-benefício real
+Agora gere a análise abaixo.
+`.trim();
+}
 
-=========================================
-📘 **TIPO DE ANÁLISE SOLICITADA:** ${tipo}
-💰 **Orçamento:** ${orcamento || "Sem limite"}
-🧩 **Posição desejada:** ${posicao || "(todas)"}
-=========================================
+// ===============================
+// DEFESA — GOL + ZAG
+// ===============================
+export function gerarPromptDefesa(orcamento, posicao, rodada) {
+  return `
+${montarPromptBase("DEFESA", orcamento, posicao, rodada)}
 
-### 📝 **BASE DE DADOS OFICIAL CARTOLA**
-Aqui estão TODOS os jogadores do mercado **em JSON real**. 
-Use isso como banco de dados:
+🎯 OBJETIVO:
+Escolher os melhores jogadores de defesa para a rodada:
+- Goleiros (GOL)
+- Zagueiros (ZAG)
+- Caso o usuário tenha escolhido uma posição específica, priorize ela.
 
-\`\`\`json
-${JSON.stringify(jogadores, null, 2)}
-\`\`\`
+⭐ Considere:
+• SG (saldo de gols)
+• Defesa difícil
+• Regularidade
+• Adversário
+• Média dos últimos jogos
+• Custo-benefício
+• Chances de valorização
 
-=========================================
-### 🎯 INSTRUÇÕES PARA A IA
+💡 Entrega final:
+- Top 3 melhores GOL
+- Top 3 melhores ZAG
+- Indicar 1 diferente e barato
+- Montar defesa ideal com justificativa
 
-1. Leia toda a lista JSON acima.
-2. Filtre apenas a posição solicitada (se houver).
-3. Aplique o orçamento (se houver).
-4. Para cada tipo de análise, siga a regra:
+Organize com Emojis Betgram e tópicos.
+  `.trim();
+}
 
----
+// ===============================
+// MEIO + LATERAIS
+// ===============================
+export function gerarPromptMeio(orcamento, posicao, rodada) {
+  return `
+${montarPromptBase("MEIO + LATERAIS", orcamento, posicao, rodada)}
 
-### 🧠 Regras por modo:
+🎯 OBJETIVO:
+Selecionar:
+- Laterais (LAT)
+- Meias (MEI)
 
-#### **1) Montar time completo**
-- Escale 11 jogadores + 1 técnico  
-- Respeite orçamento  
-- Priorize custo-benefício  
-- Evite jogadores duvidosos/lesionados
+⭐ Considere:
+• Ofensividade
+• Assistências
+• Finalizações
+• Desarmes
+• Regularidade
+• Pontuação recente
+• Potencial de valorização
 
-#### **2) Melhor jogador por posição**
-- Escolha 1 por posição  
-- Baseie em média + regularidade + próximo confronto  
+💡 Entrega final:
+- Top 3 melhores LAT
+- Top 3 melhores MEI
+- Jogador custo-benefício
+- Seleção ideal do setor + justificativa
+  `.trim();
+}
 
-#### **3) Melhor custo-benefício**
-- Jogadores baratos que pontuam MUITO  
+// ===============================
+// ATAQUE — ATA + CAP
+// ===============================
+export function gerarPromptAtaque(orcamento, posicao, rodada) {
+  return `
+${montarPromptBase("ATAQUE", orcamento, posicao, rodada)}
 
-#### **4) Baratos que pontuam bem**
-- Lista de jogadores até 10 cartoletas  
-- Média acima da média da posição  
+🎯 OBJETIVO:
+Selecionar:
+- Atacantes (ATA)
+- Melhor opção de CAPITÃO da rodada
 
-#### **5) Valorização**
-- Jogadores com grande chance de valorizar  
-- Basear na regra de valorização do Cartola  
+⭐ Considere:
+• Finalizações
+• Gols
+• Confronto
+• Média recente
+• Chances de SG do adversário
+• Participação em gols
+• Custo x potencial
 
-#### **6) Sugestões por orçamento**
-- Crie times possíveis com o orçamento fornecido  
-
-#### **7) Melhor capitão**
-- Escolha baseado em média + regularidade + confronto fácil  
-
----
-
-### 🏁 **FORMATO DA RESPOSTA (OBRIGATÓRIO)**
-
-A IA deve retornar:
-
-- 🔥 Destaques principais  
-- 📝 Mini justificativas curtas  
-- 💰 Preço de cada jogador  
-- ⭐ Média e valorização  
-- 🧠 Por que ele é boa opção  
-
-E no final:
-
-### ✔ Melhor time / melhores opções da rodada  
-### ✔ Melhor capitão  
-
----
-
-Agora gere a análise COMPLETA com base nisso.
-`;
+💡 Entrega final:
+- Top 3 atacantes da rodada
+- Indicar 1 barato que pode surpreender
+- Melhor capitão com justificativa forte
+  `.trim();
 }
