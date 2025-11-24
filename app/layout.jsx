@@ -1,5 +1,6 @@
 // app/layout.jsx
 import "./globals.css";
+import Script from "next/script";
 
 export const metadata = {
   title: "Betgram - Analisador de Apostas Esportivas com Inteligência Artificial",
@@ -41,7 +42,12 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="pt-BR">
-      <body>{children}</body>
+      <body>
+        {children}
+
+        {/* ⭐ SCRIPT DO CARTOLA FC — CARREGA NO CLIENTE */}
+        <Script src="/scripts/cartola-menu.js" strategy="afterInteractive" />
+      </body>
     </html>
   );
 }
