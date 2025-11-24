@@ -152,23 +152,35 @@ function SelectEsporte({ value, onChange }) {
     { value: "dardos", label: "🎯 Dardos" },
     { value: "politica", label: "🏛️ Política" },
     { value: "entretenimento", label: "🎬 Entretenimento" },
+
+    // ⭐ Cartola FC adicionado aqui
+    { value: "cartola", label: "🟢 Cartola FC" },
   ];
+
+  // Sempre atualizar seletor global para o script cartola-menu.js
+  useEffect(() => {
+    window.__ESPORT_SELECTED = value;
+  }, [value]);
 
   return (
     <div className="select-custom">
-      <div className="select-display" onClick={() => setOpen(!open)}>
-        {esportes.find(e => e.value === value)?.label}
+      <div
+        className="select-display"
+        onClick={() => setOpen(!open)}
+      >
+        {esportes.find((e) => e.value === value)?.label}
         <span className="select-arrow">▼</span>
       </div>
 
       {open && (
         <ul className="select-options">
-          {esportes.map(item => (
+          {esportes.map((item) => (
             <li
               key={item.value}
               className={item.value === value ? "selected" : ""}
               onClick={() => {
-                onChange(item.value);
+                onChange(item.value);        // atualiza React
+                window.__ESPORT_SELECTED = item.value; // atualiza script externo
                 setOpen(false);
               }}
             >
@@ -180,6 +192,8 @@ function SelectEsporte({ value, onChange }) {
     </div>
   );
 }
+
+                
 
 export default function HomePage() {
   const [user, setUser] = useState(null);
@@ -651,9 +665,6 @@ const analiseFormatada = formatAnaliseTexto(resultado);
         {!mostraHistorico && !showBetgramPayModal && (
           !panelFlip ? (
             <><label className="campo-label">🏅 Esporte:</label>
-<SelectEsporte value={esporte} onChange={setEsporte} />
-
-              <label className="campo-label">🏅 Esporte:</label>
 <SelectEsporte value={esporte} onChange={setEsporte} />
 
 {/* 🔥 BLOCO COMPETIÇÃO */}
