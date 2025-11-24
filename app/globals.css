@@ -203,7 +203,7 @@ html, body {
   margin-top:-2vh;
 }
 
-@media (max-width: 728px) {
+@media (max-width: 729px) {
   html, body {
     margin-top: 0;
   }
@@ -212,6 +212,7 @@ html, body {
   padding-bottom:50px;
 }
 }
+
 
 
 
