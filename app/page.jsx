@@ -666,6 +666,64 @@ const analiseFormatada = formatAnaliseTexto(resultado);
           !panelFlip ? (
             <><label className="campo-label">🏅 Esporte:</label>
 <SelectEsporte value={esporte} onChange={setEsporte} />
+{/* 🔥 BLOCO CARTOLA FC */}
+<div id="bloco-cartola" style={{ display: "none", marginBottom: "20px" }}>
+
+  <label>📘 Tipo de Análise (Cartola):</label>
+  <select
+    id="cartola-tipo"
+    style={{
+      width: "100%",
+      padding: "10px 14px",
+      borderRadius: "10px",
+      border: "1px solid rgba(255,255,255,0.15)",
+      background: "rgba(17,24,39,0.8)",
+      color: "#fff",
+      outline: "none",
+      marginBottom: "14px",
+    }}
+  >
+    <option value="time-completo">Montar time completo</option>
+    <option value="melhor-posicao">Melhor jogador por posição</option>
+    <option value="custo-beneficio">Melhor custo-benefício</option>
+    <option value="baratos">Jogadores baratos que pontuam bem</option>
+    <option value="valorizacao">Jogadores para valorizar</option>
+    <option value="orcamento">Sugestões com X cartoletas</option>
+    <option value="capitao">Melhor capitão da rodada</option>
+  </select>
+
+  <label>💰 Cartoletas disponíveis:</label>
+  <input
+    id="cartola-orcamento"
+    type="number"
+    placeholder="Ex: 100"
+    style={inputStyle}
+  />
+
+  <label>⚽ Posição (opcional):</label>
+  <select
+    id="cartola-posicao"
+    style={{
+      width: "100%",
+      padding: "10px 14px",
+      borderRadius: "10px",
+      border: "1px solid rgba(255,255,255,0.15)",
+      background: "rgba(17,24,39,0.8)",
+      color: "#fff",
+      outline: "none",
+      marginBottom: "14px",
+    }}
+  >
+    <option value="">(todas)</option>
+    <option value="GOL">Goleiro</option>
+    <option value="ZAG">Zagueiro</option>
+    <option value="LAT">Lateral</option>
+    <option value="MEI">Meia</option>
+    <option value="ATA">Atacante</option>
+    <option value="TEC">Técnico</option>
+  </select>
+
+</div>
 
 {/* 🔥 BLOCO COMPETIÇÃO */}
 <label>🏆 Competição:</label>
