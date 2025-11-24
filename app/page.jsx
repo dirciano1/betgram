@@ -152,35 +152,23 @@ function SelectEsporte({ value, onChange }) {
     { value: "dardos", label: "🎯 Dardos" },
     { value: "politica", label: "🏛️ Política" },
     { value: "entretenimento", label: "🎬 Entretenimento" },
-
-    // ⭐ Cartola FC adicionado aqui
-    { value: "cartola", label: "🟢 Cartola FC" },
   ];
-
-  // Sempre atualizar seletor global para o script cartola-menu.js
-  useEffect(() => {
-    window.__ESPORT_SELECTED = value;
-  }, [value]);
 
   return (
     <div className="select-custom">
-      <div
-        className="select-display"
-        onClick={() => setOpen(!open)}
-      >
-        {esportes.find((e) => e.value === value)?.label}
+      <div className="select-display" onClick={() => setOpen(!open)}>
+        {esportes.find(e => e.value === value)?.label}
         <span className="select-arrow">▼</span>
       </div>
 
       {open && (
         <ul className="select-options">
-          {esportes.map((item) => (
+          {esportes.map(item => (
             <li
               key={item.value}
               className={item.value === value ? "selected" : ""}
               onClick={() => {
-                onChange(item.value);        // atualiza React
-                window.__ESPORT_SELECTED = item.value; // atualiza script externo
+                onChange(item.value);
                 setOpen(false);
               }}
             >
@@ -192,8 +180,6 @@ function SelectEsporte({ value, onChange }) {
     </div>
   );
 }
-
-                
 
 export default function HomePage() {
   const [user, setUser] = useState(null);
@@ -667,10 +653,8 @@ const analiseFormatada = formatAnaliseTexto(resultado);
             <><label className="campo-label">🏅 Esporte:</label>
 <SelectEsporte value={esporte} onChange={setEsporte} />
 
-{/* 🔥 BLOCO COMPETIÇÃO */}
-<label>🏆 Competição:</label>
-<div
-  id="bloco-competicao"
+              <label>🏆 Competição:</label>
+              <div
   style={{
     display: "flex",
     gap: "10px",
@@ -697,69 +681,36 @@ const analiseFormatada = formatAnaliseTexto(resultado);
 
   {/* ANO DA COMPETIÇÃO */}
   <input
-    id="bloco-ano"
-    type="number"
-    value={anoCompeticao}
-    onChange={(e) => setAnoCompeticao(e.target.value)}
-    required
-    style={{
-      width: "90px",
-      padding: "10px 14px",
-      borderRadius: "10px",
-      border: "1px solid rgba(255,255,255,0.15)",
-      background: "rgba(17,24,39,0.8)",
-      color: "#fff",
-      outline: "none",
-      textAlign: "center",
-    }}
-    placeholder="2025"
-  />
+  type="number"
+  value={anoCompeticao}
+  onChange={(e) => setAnoCompeticao(e.target.value)}
+  required
+  style={{
+    width: "90px",
+    padding: "10px 14px",
+    borderRadius: "10px",
+    border: "1px solid rgba(255,255,255,0.15)",
+    background: "rgba(17,24,39,0.8)",
+    color: "#fff",
+    outline: "none",
+    textAlign: "center",
+  }}
+  placeholder="2025"
+/>
 </div>
 
-{/* 🔥 BLOCO CONFRONTO */}
-<div id="bloco-confronto">
-  <label>🎮 Confronto:</label>
-  <input
-    style={inputStyle}
-    value={timeA}
-    onChange={(e) => setTimeA(e.target.value)}
-    placeholder="Time da Casa"
-  />
-  <input
-    style={inputStyle}
-    value={timeB}
-    onChange={(e) => setTimeB(e.target.value)}
-    placeholder="Time Visitante"
-  />
-</div>
-
-{/* 🔥 BLOCO MERCADO */}
-<div id="bloco-mercado">
-  <label>🎯 Mercado (opcional):</label>
-  <input
-    style={inputStyle}
-    value={mercado}
-    onChange={(e) => setMercado(e.target.value)}
-    placeholder="Ex: Over 2.5"
-  />
-
-  {mercado && (
-    <>
-      <label>💰 Odd (opcional):</label>
-      <input
-        style={inputStyle}
-        type="number"
-        value={odd}
-        onChange={(e) => setOdd(e.target.value)}
-        placeholder="Ex: 1.85"
-      />
-    </>
-  )}
-</div>
-
-{/* 🔥 BOTÃO ANALISAR */}
-<button
-  id="botao-analisar"
+              <label>🎮 Confronto:</label>
+              <input style={inputStyle} value={timeA} onChange={(e) => setTimeA(e.target.value)} placeholder="Time da Casa"/>
+              <input style={inputStyle} value={timeB} onChange={(e) => setTimeB(e.target.value)} placeholder="Time Visitante"/>
+              <label>🎯 Mercado (opcional):</label>
+              <input style={inputStyle} value={mercado} onChange={(e) => setMercado(e.target.value)} placeholder="Ex: Over 2.5"/>
+              {mercado && (
+                <>
+                  <label>💰 Odd (opcional):</label>
+                  <input style={inputStyle} type="number" value={odd} onChange={(e) => setOdd(e.target.value)} placeholder="Ex: 1.85"/>
+                </>
+              )}
+              <button
   onClick={handleAnalise}
   disabled={carregando}
   className={carregando ? "botao-loading" : ""}
@@ -785,8 +736,6 @@ const analiseFormatada = formatAnaliseTexto(resultado);
   {carregando && <div className="spinner"></div>}
   {carregando ? carregandoFrase : "Analisar"}
 </button>
-
-
 
             </>
           ) : (
