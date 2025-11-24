@@ -17,7 +17,7 @@ html, body {
 .select-display {
   background: rgba(17,24,39,0.8);
   color: #fff;
-  padding: 12px 14px;
+  padding: 8px 14px;
   border-radius: 10px;
 
   border: 1px solid rgba(255,255,255,0.15);
@@ -62,7 +62,7 @@ html, body {
 
 .select-options li {
   list-style: none;
-  padding: 14px 16px;
+  padding: 8px 14px;
   font-size: 1.1rem;
   color: #fff;
   cursor: pointer;
@@ -207,6 +207,7 @@ html, body {
     margin-top: 0;
   }
 }
+
 
 
 
