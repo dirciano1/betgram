@@ -596,7 +596,7 @@ const analiseFormatada = formatAnaliseTexto(resultado);
         {!mostraHistorico && !showBetgramPayModal && (
           !panelFlip ? (
             <><label className="campo-label">🏅 Esporte:</label>
-<select className="campo-select" value={esporte} onChange={(e) => setEsporte(e.target.value)}>
+<select style={inputStyle} value={esporte} onChange={(e) => setEsporte(e.target.value)}>
   <option value="futebol">⚽ Futebol</option>
   <option value="basquete">🏀 Basquete</option>
   <option value="tenis">🎾 Tênis</option>
