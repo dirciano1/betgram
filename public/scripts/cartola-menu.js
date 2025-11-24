@@ -1,45 +1,49 @@
-console.log("🔥 SCRIPT CARTOLA ATIVO!");
+console.log("🔥 SCRIPT CARTOLA CARREGADO!");
 
-function iniciarCartola() {
-  const esporte = window.__ESPORT_SELECTED;
-  const blocoCompeticao = document.getElementById("bloco-competicao");
-  const blocoConfronto = document.getElementById("bloco-confronto");
-  const blocoMercado = document.getElementById("bloco-mercado");
-  const inputAno = document.getElementById("bloco-ano");
-
-  // Se ainda não existe, tenta novamente
-  if (!blocoCompeticao || !blocoConfronto || !blocoMercado) {
-    return false;
-  }
-
-  console.log("💚 ELEMENTOS ENCONTRADOS!");
-
-  if (esporte === "cartola") {
-    console.log("🟢 ATIVANDO MODO CARTOLA");
-
-    blocoCompeticao.style.display = "none";
-    blocoConfronto.style.display = "none";
-    blocoMercado.style.display = "none";
-
-    if (inputAno) inputAno.value = "2025";
-  } else {
-    console.log("⚪ VOLTANDO AO PADRÃO");
-
-    blocoCompeticao.style.display = "";
-    blocoConfronto.style.display = "";
-    blocoMercado.style.display = "";
-  }
-
-  return true;
+// ---- Função segura para esconder mantendo layout bonito ----
+function esconderElemento(el) {
+  if (!el) return;
+  el.style.visibility = "hidden";
+  el.style.height = "0";
+  el.style.margin = "0";
+  el.style.padding = "0";
+  el.style.overflow = "hidden";
 }
 
-// Loop verificando se já pode aplicar mudanças
-const intervalo = setInterval(() => {
-  const ok = iniciarCartola();
-  if (ok) clearInterval(intervalo);
-}, 300);
+// ---- Função segura para mostrar ----
+function mostrarElemento(el) {
+  if (!el) return;
+  el.style.visibility = "visible";
+  el.style.height = "";
+  el.style.margin = "";
+  el.style.padding = "";
+  el.style.overflow = "";
+}
 
-// Observa mudanças no seletor de esporte
-setInterval(() => {
-  iniciarCartola();
-}, 400);
+// ---- Observa o valor selecionado ----
+function aplicarLayoutPorEsporte() {
+  const esporte = window.__ESPORT_SELECTED;
+
+  const blocoCompeticao = document.getElementById("bloco-competicao");
+  const blocoConfronto   = document.getElementById("bloco-confronto");
+  const blocoMercado     = document.getElementById("bloco-mercado");
+  const botaoAnalisar    = document.getElementById("botao-analisar");
+
+  if (esporte === "cartola") {
+    console.log("🟢 MODO CARTOLA ATIVADO");
+
+    esconderElemento(blocoCompeticao);
+    esconderElemento(blocoConfronto);
+    esconderElemento(blocoMercado);
+
+  } else {
+    console.log("⚽ MODO NORMAL ATIVADO");
+
+    mostrarElemento(blocoCompeticao);
+    mostrarElemento(blocoConfronto);
+    mostrarElemento(blocoMercado);
+  }
+}
+
+// ---- A cada 400ms atualiza a interface ----
+setInterval(aplicarLayoutPorEsporte, 400);
