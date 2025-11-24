@@ -1,16 +1,15 @@
-console.log("🔥 SCRIPT CARTOLA CARREGADO!");
+console.log("🔥 CARTOLA MODE SCRIPT LOADED");
 
-// ---- Função segura para esconder mantendo layout bonito ----
+// Funções seguras de esconder/mostrar sem quebrar layout
 function esconderElemento(el) {
   if (!el) return;
   el.style.visibility = "hidden";
-  el.style.height = "0";
+  el.style.height = "0px";
   el.style.margin = "0";
   el.style.padding = "0";
   el.style.overflow = "hidden";
 }
 
-// ---- Função segura para mostrar ----
 function mostrarElemento(el) {
   if (!el) return;
   el.style.visibility = "visible";
@@ -20,30 +19,69 @@ function mostrarElemento(el) {
   el.style.overflow = "";
 }
 
-// ---- Observa o valor selecionado ----
+// controla o comportamento do bloco de posição no cartola
+function atualizarPosicaoCartola() {
+  const tipo = document.getElementById("cartola-tipo");
+  const posicao = document.getElementById("cartola-posicao");
+  if (!tipo || !posicao) return;
+
+  const modo = tipo.value;
+
+  // só mostra posição nos modos que fazem sentido
+  if (modo === "melhor-posicao" || modo === "custo-beneficio") {
+    mostrarElemento(posicao.parentElement);
+  } else {
+    esconderElemento(posicao.parentElement);
+  }
+}
+
 function aplicarLayoutPorEsporte() {
   const esporte = window.__ESPORT_SELECTED;
 
   const blocoCompeticao = document.getElementById("bloco-competicao");
-  const blocoConfronto   = document.getElementById("bloco-confronto");
-  const blocoMercado     = document.getElementById("bloco-mercado");
-  const botaoAnalisar    = document.getElementById("botao-analisar");
+  const blocoConfronto = document.getElementById("bloco-confronto");
+  const blocoMercado = document.getElementById("bloco-mercado");
+  const blocoCartola = document.getElementById("bloco-cartola");
+
+  if (!blocoCartola) return;
 
   if (esporte === "cartola") {
     console.log("🟢 MODO CARTOLA ATIVADO");
 
+    // esconde apostação normal
     esconderElemento(blocoCompeticao);
     esconderElemento(blocoConfronto);
     esconderElemento(blocoMercado);
 
-  } else {
-    console.log("⚽ MODO NORMAL ATIVADO");
+    // mostra bloco cartola
+    blocoCartola.style.display = "block";
+    mostrarElemento(blocoCartola);
 
+    atualizarPosicaoCartola();
+
+  } else {
+    console.log("⚽ MODO ESPORTE NORMAL");
+
+    // mostra tudo do esporte
     mostrarElemento(blocoCompeticao);
     mostrarElemento(blocoConfronto);
     mostrarElemento(blocoMercado);
+
+    // esconde cartola
+    blocoCartola.style.display = "none";
+    esconderElemento(blocoCartola);
   }
 }
 
-// ---- A cada 400ms atualiza a interface ----
-setInterval(aplicarLayoutPorEsporte, 400);
+// aguarda inputs existirem
+function initCartolaListeners() {
+  const tipo = document.getElementById("cartola-tipo");
+  if (!tipo) return;
+
+  tipo.addEventListener("change", atualizarPosicaoCartola);
+}
+
+setInterval(() => {
+  aplicarLayoutPorEsporte();
+  initCartolaListeners();
+}, 300);
