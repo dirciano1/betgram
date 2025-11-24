@@ -364,13 +364,22 @@ export default function HomePage() {
   }
 
   async function handleAnalise() {
-    if (!user) return alert("⚠️ Faça login primeiro.");
-    if (!timeA || !timeB) return alert("Preencha os dois times.");
-    const snap = await getDoc(doc(db, "users", user.uid));
-    const dados = snap.data();
-    if (dados.creditos <= 0) return alert("❌ Créditos insuficientes.");
-    setShowConfirmacaoModal(true);
+  if (!user) return alert("⚠️ Faça login primeiro.");
+
+  // 👉 Se for modo CARTOLA, NÃO verificar timeA e timeB
+  if (esporte !== "cartola") {
+    if (!timeA || !timeB) {
+      return alert("Preencha os dois times.");
+    }
   }
+
+  const snap = await getDoc(doc(db, "users", user.uid));
+  const dados = snap.data();
+  if (dados.creditos <= 0) return alert("❌ Créditos insuficientes.");
+
+  setShowConfirmacaoModal(true);
+}
+
 
   async function handleHistorico() {
     if (!user) return alert("⚠️ Faça login primeiro.");
