@@ -3,9 +3,6 @@
 //  Defesa | Meio | Ataque
 // ===============================
 
-/**
- * Função base para montar o prompt
- */
 function montarPromptBase(tipo, orcamento, posicao, rodada) {
   return `
 ⚠️ INSTRUÇÃO SISTÊMICA — NÃO MOSTRAR NA RESPOSTA ⚠️
@@ -29,9 +26,10 @@ Agora gere a análise abaixo.
 `.trim();
 }
 
-// ===============================
-// DEFESA — GOL + ZAG
-// ===============================
+// =====================================
+// SUBPROMPTS — DEFESA | MEIO | ATAQUE
+// =====================================
+
 export function gerarPromptDefesa(orcamento, posicao, rodada) {
   return `
 ${montarPromptBase("DEFESA", orcamento, posicao, rodada)}
@@ -56,14 +54,9 @@ Escolher os melhores jogadores de defesa para a rodada:
 - Top 3 melhores ZAG
 - Indicar 1 diferente e barato
 - Montar defesa ideal com justificativa
-
-Organize com Emojis Betgram e tópicos.
-  `.trim();
+`.trim();
 }
 
-// ===============================
-// MEIO + LATERAIS
-// ===============================
 export function gerarPromptMeio(orcamento, posicao, rodada) {
   return `
 ${montarPromptBase("MEIO + LATERAIS", orcamento, posicao, rodada)}
@@ -87,12 +80,9 @@ Selecionar:
 - Top 3 melhores MEI
 - Jogador custo-benefício
 - Seleção ideal do setor + justificativa
-  `.trim();
+`.trim();
 }
 
-// ===============================
-// ATAQUE — ATA + CAP
-// ===============================
 export function gerarPromptAtaque(orcamento, posicao, rodada) {
   return `
 ${montarPromptBase("ATAQUE", orcamento, posicao, rodada)}
@@ -115,5 +105,45 @@ Selecionar:
 - Top 3 atacantes da rodada
 - Indicar 1 barato que pode surpreender
 - Melhor capitão com justificativa forte
-  `.trim();
+`.trim();
+}
+
+// ====================================================
+// FUNÇÃO PRINCIPAL — AGORA É COMPATÍVEL COM SUA APP
+// ====================================================
+
+export function gerarPrompt(tipo, orcamento, posicao, rodada) {
+  switch (tipo) {
+    case "defesa":
+      return gerarPromptDefesa(orcamento, posicao, rodada);
+
+    case "meio":
+      return gerarPromptMeio(orcamento, posicao, rodada);
+
+    case "ataque":
+      return gerarPromptAtaque(orcamento, posicao, rodada);
+
+    case "time-completo":
+      return `
+${montarPromptBase("TIME COMPLETO", orcamento, posicao, rodada)}
+
+🎯 OBJETIVO:
+Montar a escalação COMPLETA da rodada conforme orçamento:
+- GOL
+- ZAG x2
+- LAT x2
+- MEI x3
+- ATA x3
+- CAPITÃO
+
+💡 Entrega:
+- Lista final dos 12 jogadores
+- Justificativa rápida por setor
+- Jogador custo-benefício
+- Sugestão alternativa com preço menor
+`.trim();
+
+    default:
+      return "Erro: tipo inválido no prompt Cartola.";
+  }
 }
