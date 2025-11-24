@@ -32,47 +32,68 @@ html, body {
   font-size: 12px;
 }
 
-/* 🔥 CORREÇÃO MAIS IMPORTANTE */
+/* ===============================
+   SELECT CUSTOMIZADO BETGRAM
+   =============================== */
+
 .select-options {
   position: absolute;
-  top: 110%;
-  left: 0;        /* GARANTE alinhamento */
-  right: 0;       /* GARANTE alinhamento */
-  width: 100%;    /* MESMA largura do campo */
-  box-sizing: border-box; /* evita ultrapassar */
-  
-  background: rgba(17,24,39,0.95);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 10px;
+  top: calc(100% + 6px);   /* Espaço elegante entre campo e menu */
+  left: 0;
+  right: 0;
+  width: 100%;
+  box-sizing: border-box;
 
-  max-height: 260px;
+  background: #141a2a;     /* Fundo mais legível */
+  border: 1px solid #22c55e55; /* Bordas neon suaves BetGram */
+  border-radius: 14px;
+
+  padding: 6px 0;
+  max-height: 300px;
   overflow-y: auto;
-  z-index: 100;
-  animation: fadeIn 0.15s ease;
+
+  z-index: 999;            /* Fica acima do botão Analisar */
+  box-shadow: 
+    0 10px 25px rgba(0,0,0,0.45),
+    0 0 12px rgba(34,197,94,0.35); /* Glow BetGram */
+
+  animation: fadeIn 0.18s ease-out;
 }
 
 .select-options li {
   list-style: none;
-  padding: 12px 14px;
+  padding: 14px 16px;
+  font-size: 1.1rem;
   color: #fff;
   cursor: pointer;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.select-options li:last-child {
+  border-bottom: none;
 }
 
 .select-options li:hover {
-  background: rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.08);
 }
 
 .select-options li.selected {
   background: rgba(34,197,94,0.2);
   color: #22c55e;
-  font-weight: bold;
+  font-weight: 700;
 }
 
+/* Animação suave */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-5px); }
+  from { opacity: 0; transform: translateY(-6px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
 
 
 button {
@@ -186,6 +207,7 @@ html, body {
     margin-top: 0;
   }
 }
+
 
 
 
