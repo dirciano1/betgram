@@ -125,6 +125,61 @@ function ConfirmacaoModal({ show, onConfirm, onCancel, timeA, timeB, creditos })
     </div>
   );
 }
+// =========================================
+// SELECT CUSTOMIZADO (ESTILIZADO 100% DARK)
+// =========================================
+function SelectEsporte({ value, onChange }) {
+  const [open, setOpen] = useState(false);
+
+  const esportes = [
+    { value: "futebol", label: "⚽ Futebol" },
+    { value: "basquete", label: "🏀 Basquete" },
+    { value: "tenis", label: "🎾 Tênis" },
+    { value: "volei", label: "🏐 Vôlei" },
+    { value: "mma", label: "🥊 MMA / UFC" },
+    { value: "boxe", label: "🥊 Boxe" },
+    { value: "eSports", label: "🎮 eSports (CS2, LoL, Valorant...)" },
+    { value: "handebol", label: "🤾 Handebol" },
+    { value: "futsal", label: "⚽ Futsal" },
+    { value: "beisebol", label: "⚾ Beisebol" },
+    { value: "rugby", label: "🏉 Rugby" },
+    { value: "hoquei", label: "🏒 Hóquei no Gelo" },
+    { value: "corrida", label: "🏎️ Fórmula 1" },
+    { value: "ciclismo", label: "🚴 Ciclismo" },
+    { value: "golfe", label: "🏌️ Golfe" },
+    { value: "criquete", label: "🏏 Críquete" },
+    { value: "snooker", label: "🎱 Snooker / Bilhar" },
+    { value: "dardos", label: "🎯 Dardos" },
+    { value: "politica", label: "🏛️ Política" },
+    { value: "entretenimento", label: "🎬 Entretenimento" },
+  ];
+
+  return (
+    <div className="select-custom">
+      <div className="select-display" onClick={() => setOpen(!open)}>
+        {esportes.find(e => e.value === value)?.label}
+        <span className="select-arrow">▼</span>
+      </div>
+
+      {open && (
+        <ul className="select-options">
+          {esportes.map(item => (
+            <li
+              key={item.value}
+              className={item.value === value ? "selected" : ""}
+              onClick={() => {
+                onChange(item.value);
+                setOpen(false);
+              }}
+            >
+              {item.label}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
 
 export default function HomePage() {
   const [user, setUser] = useState(null);
@@ -596,28 +651,8 @@ const analiseFormatada = formatAnaliseTexto(resultado);
         {!mostraHistorico && !showBetgramPayModal && (
           !panelFlip ? (
             <><label className="campo-label">🏅 Esporte:</label>
-<select style={inputStyle} value={esporte} onChange={(e) => setEsporte(e.target.value)}>
-  <option value="futebol">⚽ Futebol</option>
-  <option value="basquete">🏀 Basquete</option>
-  <option value="tenis">🎾 Tênis</option>
-  <option value="volei">🏐 Vôlei</option>
-  <option value="mma">🥊 MMA / UFC</option>
-  <option value="boxe">🥊 Boxe</option>
-  <option value="eSports">🎮 eSports</option>
-  <option value="handebol">🤾 Handebol</option>
-  <option value="futsal">⚽ Futsal</option>
-  <option value="beisebol">⚾ Beisebol</option>
-  <option value="rugby">🏉 Rugby</option>
-  <option value="hoquei">🏒 Hóquei no Gelo</option>
-  <option value="corrida">🏎️ Fórmula 1</option>
-  <option value="ciclismo">🚴 Ciclismo</option>
-  <option value="golfe">🏌️ Golfe</option>
-  <option value="criquete">🏏 Críquete</option>
-  <option value="snooker">🎱 Snooker</option>
-  <option value="dardos">🎯 Dardos</option>
-  <option value="politica">🏛️ Política</option>
-  <option value="entretenimento">🎬 Entretenimento</option>
-</select>
+<label>🏅 Esporte:</label>
+<SelectEsporte value={esporte} onChange={setEsporte} />
 
               <label>🏆 Competição:</label>
               <div
