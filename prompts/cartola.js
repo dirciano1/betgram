@@ -1,110 +1,98 @@
 // prompts/cartola.js
-import { GLOBAL_PROMPT } from "./global.js";
 
-/* ============================================================
-   MAPAS DE TEXTO PARA OS TIPOS E POSIÇÕES DO CARTOLA FC
-   ============================================================ */
-const mapTipo = {
-  "time-completo": "Montar o melhor time completo para a rodada",
-  "melhor-posicao": "Indicar os melhores jogadores por posição",
-  "custo-beneficio": "Apontar jogadores com excelente custo-benefício",
-  "baratos": "Listar jogadores baratos que costumam pontuar bem",
-  "valorizacao": "Indicar os melhores jogadores para valorizar na rodada",
-  "orcamento": "Montar sugestões com base no orçamento disponível",
-  "capitao": "Apontar os melhores capitães para a rodada",
-};
+import { getMercadoCartola } from "../lib/cartola.js";
 
-const mapPosicao = {
-  "": "(todas as posições)",
-  GOL: "Goleiro",
-  ZAG: "Zagueiro",
-  LAT: "Lateral",
-  MEI: "Meia",
-  ATA: "Atacante",
-  TEC: "Técnico",
-};
-
-/* ============================================================
-   PROMPT PRINCIPAL — CARTOLA FC
-   ============================================================ */
-export function gerarPrompt({ competicao, ano, tipo, orcamento, posicao }) {
-  const descTipo =
-    mapTipo[tipo] || "Montar recomendações gerais para a rodada do Cartola FC";
-  const descPosicao = mapPosicao[posicao] || "(todas as posições)";
-  const orc = orcamento ? `${orcamento} cartoletas` : "orçamento não informado";
+export async function gerarPrompt(tipo, orcamento, posicao) {
+  
+  // Carrega os dados reais do Cartola
+  const jogadores = await getMercadoCartola();
 
   return `
+⚽ **ANÁLISE CARTOLA FC – Modo Betgram**
 
-${GLOBAL_PROMPT}
+Use os dados reais fornecidos abaixo para montar a análise.
+Sempre considere:
 
-============================================================
-🏆 ANÁLISE CARTOLA FC — FANTASY GAME (NÃO É APOSTA ESPORTIVA)
-============================================================
+- Preço (cartoletas)
+- Média de pontuação
+- Valorização
+- Regularidade
+- Posição
+- Chances de jogar
+- Custo-benefício real
 
-Você agora é um **ESPECIALISTA PROFISSIONAL DE CARTOLA FC**.
-Sua função é gerar recomendações inteligentes e estratégicas
-para a rodada, com foco em PERFORMANCE REAL e LÓGICA DE FANTASY.
+=========================================
+📘 **TIPO DE ANÁLISE SOLICITADA:** ${tipo}
+💰 **Orçamento:** ${orcamento || "Sem limite"}
+🧩 **Posição desejada:** ${posicao || "(todas)"}
+=========================================
 
-📌 *Faça análises realistas, sem inventar estatísticas absurdas.*
+### 📝 **BASE DE DADOS OFICIAL CARTOLA**
+Aqui estão TODOS os jogadores do mercado **em JSON real**. 
+Use isso como banco de dados:
 
-------------------------------------------------------------
-📘 DADOS DA RODADA (INFORMADOS PELO USUÁRIO)
-------------------------------------------------------------
-• Competição/Rodada: **${competicao || "Brasileirão Série A"}**
-• Ano: **${ano || "2025"}**
-• Tipo de análise escolhida: **${descTipo}**
-• Orçamento disponível: **${orc}**
-• Posição foco: **${descPosicao}**
+\`\`\`json
+${JSON.stringify(jogadores, null, 2)}
+\`\`\`
 
-------------------------------------------------------------
-📌 COMO VOCÊ DEVE TRABALHAR:
-------------------------------------------------------------
-1. **NÃO trate como aposta esportiva. É Cartola.**
-2. Analise com base em:
-   - Média de pontuação recente
-   - Regularidade
-   - Mandante x Visitante
-   - Força ofensiva/defensiva
-   - Potencial de valorização
-   - Preço e custo-benefício
-3. Para time completo, crie:
-   - 1 goleiro
-   - 2 laterais
-   - 2 zagueiros
-   - 3 meias
-   - 3 atacantes
-   - 1 técnico
-4. Ao sugerir jogadores, explique o *porquê*.
-5. Se o tipo for **capitão**, destaque 3 opções:
-   ⭐ Conservador  
-   🔥 Agresivo  
-   🎯 Equilibrado
-6. Sempre escreva em português natural e fluído.
-7. Use formatação RICA como você faz no Betgram:
+=========================================
+### 🎯 INSTRUÇÕES PARA A IA
 
-   🧩 **Estratégia Geral da Rodada**
-   🧱 **Defesa**
-   🎯 **Meio-Campo**
-   🔥 **Ataque**
-   ⭐ **Capitães Recomendados**
-   ⚠️ **Cuidados / Riscos**
+1. Leia toda a lista JSON acima.
+2. Filtre apenas a posição solicitada (se houver).
+3. Aplique o orçamento (se houver).
+4. Para cada tipo de análise, siga a regra:
 
-------------------------------------------------------------
-📌 FORMATO OBRIGATÓRIO DA RESPOSTA:
-------------------------------------------------------------
-- Use títulos com emojis  
-- Use listas explicativas  
-- Destaque nomes de jogadores com **negrito**  
-- Finalize com uma seção:
+---
 
-🔎 **Conclusão da Rodada (Cartola FC)**
+### 🧠 Regras por modo:
 
-------------------------------------------------------------
-📌 AGORA GERE A ANÁLISE COMPLETA:
-------------------------------------------------------------
+#### **1) Montar time completo**
+- Escale 11 jogadores + 1 técnico  
+- Respeite orçamento  
+- Priorize custo-benefício  
+- Evite jogadores duvidosos/lesionados
 
-Responda com a análise mais detalhada e organizada possível,
-seguindo EXATAMENTE as instruções acima.
+#### **2) Melhor jogador por posição**
+- Escolha 1 por posição  
+- Baseie em média + regularidade + próximo confronto  
 
+#### **3) Melhor custo-benefício**
+- Jogadores baratos que pontuam MUITO  
+
+#### **4) Baratos que pontuam bem**
+- Lista de jogadores até 10 cartoletas  
+- Média acima da média da posição  
+
+#### **5) Valorização**
+- Jogadores com grande chance de valorizar  
+- Basear na regra de valorização do Cartola  
+
+#### **6) Sugestões por orçamento**
+- Crie times possíveis com o orçamento fornecido  
+
+#### **7) Melhor capitão**
+- Escolha baseado em média + regularidade + confronto fácil  
+
+---
+
+### 🏁 **FORMATO DA RESPOSTA (OBRIGATÓRIO)**
+
+A IA deve retornar:
+
+- 🔥 Destaques principais  
+- 📝 Mini justificativas curtas  
+- 💰 Preço de cada jogador  
+- ⭐ Média e valorização  
+- 🧠 Por que ele é boa opção  
+
+E no final:
+
+### ✔ Melhor time / melhores opções da rodada  
+### ✔ Melhor capitão  
+
+---
+
+Agora gere a análise COMPLETA com base nisso.
 `;
 }
