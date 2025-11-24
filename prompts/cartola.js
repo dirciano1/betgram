@@ -1,117 +1,136 @@
 // ===============================
 //  PROMPT CARTOLA FC — BETGRAM
-//  Defesa | Meio | Ataque
+//  Defesa | Meio | Ataque | Técnico
 // ===============================
 
 function montarPromptBase(tipo, orcamento, posicao, rodada) {
   return `
 ⚠️ INSTRUÇÃO SISTÊMICA — NÃO MOSTRAR NA RESPOSTA ⚠️
 Você é a IA da Betgram, especialista em Cartola FC.
-- Sempre considere dados da temporada atual do Cartola.
-- Use informações reais de pontuação, média, variação e custo.
-- Quando não houver informação exata de preço, gere valores plausíveis.
-- Priorize desempenho RECENTE, regularidade, mandante/visitante, adversário e potencial de pontuação.
-- Nunca invente estatísticas absurdas — mantenha plausível.
-- Não use notícias antigas.
-- Não repita informações.
-- Entregue o conteúdo em formato claro, organizado e MUITO objetivo.
+- Sempre use dados plausíveis da temporada atual.
+- Considere média, valorização, custo e desempenho recente.
+- Não invente estatísticas irreais.
+- Sempre mantenha coerência com o Cartola atual.
+- Evite notícias antigas.
+- Seja direto, organizado e muito objetivo.
 
-=== CONTEXTO DA ANÁLISE ===
+=== CONTEXTO ===
 • Tipo: ${tipo}
-• Orçamento disponível: ${orcamento ? orcamento + " cartoletas" : "não informado"}
-• Posição selecionada: ${posicao || "qualquer"}
+• Orçamento: ${orcamento ? orcamento + " cartoletas" : "não informado"}
+• Filtro de posição: ${posicao || "nenhum"}
 • Rodada: ${rodada || "atual"}
 
-Agora gere a análise abaixo.
+Agora gere a análise.
 `.trim();
 }
 
-// =====================================
-// SUBPROMPTS — DEFESA | MEIO | ATAQUE
-// =====================================
-
+// ===============================
+// DEFESA — GOL + ZAG
+// ===============================
 export function gerarPromptDefesa(orcamento, posicao, rodada) {
   return `
-${montarPromptBase("DEFESA", orcamento, posicao, rodada)}
+${montarPromptBase("DEFESA (GOL + ZAG)", orcamento, posicao, rodada)}
 
 🎯 OBJETIVO:
-Escolher os melhores jogadores de defesa para a rodada:
+Selecionar os melhores defensores:
 - Goleiros (GOL)
 - Zagueiros (ZAG)
-- Caso o usuário tenha escolhido uma posição específica, priorize ela.
 
 ⭐ Considere:
 • SG (saldo de gols)
 • Defesa difícil
 • Regularidade
 • Adversário
-• Média dos últimos jogos
+• Média recente
 • Custo-benefício
-• Chances de valorização
 
-💡 Entrega final:
-- Top 3 melhores GOL
-- Top 3 melhores ZAG
-- Indicar 1 diferente e barato
-- Montar defesa ideal com justificativa
+💡 Entrega:
+- Top 3 goleiros
+- Top 3 zagueiros
+- 1 opção barata
+- Defesa ideal com justificativa
 `.trim();
 }
 
+// ===============================
+// MEIO + LATERAIS
+// ===============================
 export function gerarPromptMeio(orcamento, posicao, rodada) {
   return `
-${montarPromptBase("MEIO + LATERAIS", orcamento, posicao, rodada)}
+${montarPromptBase("MEIO + LATERAIS (MEI + LAT)", orcamento, posicao, rodada)}
 
 🎯 OBJETIVO:
 Selecionar:
-- Laterais (LAT)
 - Meias (MEI)
+- Laterais (LAT)
 
 ⭐ Considere:
-• Ofensividade
 • Assistências
 • Finalizações
 • Desarmes
-• Regularidade
-• Pontuação recente
+• Ofensividade
 • Potencial de valorização
 
-💡 Entrega final:
-- Top 3 melhores LAT
-- Top 3 melhores MEI
-- Jogador custo-benefício
-- Seleção ideal do setor + justificativa
+💡 Entrega:
+- Top 3 laterais
+- Top 3 meias
+- 1 barato diferenciado
+- Seleção ideal com justificativa
 `.trim();
 }
 
+// ===============================
+// ATAQUE — ATA + CAPITÃO
+// ===============================
 export function gerarPromptAtaque(orcamento, posicao, rodada) {
   return `
-${montarPromptBase("ATAQUE", orcamento, posicao, rodada)}
+${montarPromptBase("ATAQUE (ATA + CAPITÃO)", orcamento, posicao, rodada)}
 
 🎯 OBJETIVO:
 Selecionar:
 - Atacantes (ATA)
-- Melhor opção de CAPITÃO da rodada
+- Melhor Capitão (CAP)
 
 ⭐ Considere:
 • Finalizações
 • Gols
+• Participação ofensiva
 • Confronto
 • Média recente
-• Chances de SG do adversário
-• Participação em gols
-• Custo x potencial
 
-💡 Entrega final:
-- Top 3 atacantes da rodada
-- Indicar 1 barato que pode surpreender
+💡 Entrega:
+- Top 3 atacantes
+- 1 barato com potencial
 - Melhor capitão com justificativa forte
 `.trim();
 }
 
-// ====================================================
-// FUNÇÃO PRINCIPAL — AGORA É COMPATÍVEL COM SUA APP
-// ====================================================
+// ===============================
+// TÉCNICO — INDIVIDUAL
+// ===============================
+export function gerarPromptTecnico(orcamento, rodada) {
+  return `
+${montarPromptBase("TÉCNICO (INDIVIDUAL)", orcamento, "TEC", rodada)}
 
+🎯 OBJETIVO:
+Escolher o melhor técnico para a rodada.
+
+⭐ Considere:
+• Chances de SG
+• Potencial ofensivo do time
+• Regularidade na pontuação
+• Custo-benefício
+
+💡 Entrega:
+- Top 3 técnicos
+- 1 técnico barato
+- Melhor técnico geral com justificativa
+`.trim();
+}
+
+// ===============================
+// FUNÇÃO PRINCIPAL
+// ===============================
 export function gerarPrompt(tipo, orcamento, posicao, rodada) {
   switch (tipo) {
     case "defesa":
@@ -123,25 +142,8 @@ export function gerarPrompt(tipo, orcamento, posicao, rodada) {
     case "ataque":
       return gerarPromptAtaque(orcamento, posicao, rodada);
 
-    case "time-completo":
-      return `
-${montarPromptBase("TIME COMPLETO", orcamento, posicao, rodada)}
-
-🎯 OBJETIVO:
-Montar a escalação COMPLETA da rodada conforme orçamento:
-- GOL
-- ZAG x2
-- LAT x2
-- MEI x3
-- ATA x3
-- CAPITÃO
-
-💡 Entrega:
-- Lista final dos 12 jogadores
-- Justificativa rápida por setor
-- Jogador custo-benefício
-- Sugestão alternativa com preço menor
-`.trim();
+    case "tecnico":
+      return gerarPromptTecnico(orcamento, rodada);
 
     default:
       return "Erro: tipo inválido no prompt Cartola.";
