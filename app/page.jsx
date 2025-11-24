@@ -755,6 +755,7 @@ const analiseFormatada = formatAnaliseTexto(resultado);
   <option value="defesa">Defesa (GOL + ZAG)</option>
   <option value="meio">Meio Campo + Laterais (MEI + LAT)</option>
   <option value="ataque">Ataque (ATA + TEC)</option>
+  <option value="ataque">Individual</option>
   </select>
 
   <label>💰 Cartoletas:</label>
