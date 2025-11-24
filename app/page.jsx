@@ -768,14 +768,6 @@ const analiseFormatada = formatAnaliseTexto(resultado);
 <select id="cartola-posicao" style={inputStyle}>
   <option value="">(todos)</option>
 
-  {/* POSIÇÕES TRADICIONAIS */}
-  <option value="GOL">Goleiro</option>
-  <option value="ZAG">Zagueiro</option>
-  <option value="LAT">Lateral</option>
-  <option value="MEI">Meia</option>
-  <option value="ATA">Atacante</option>
-  <option value="TEC">Técnico</option>
-
   {/* ESPECIAIS */}
   <option value="capitao">Melhor Capitão</option>
   <option value="topo">Topo Pontuadores da Rodada</option>
