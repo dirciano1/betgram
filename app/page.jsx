@@ -94,7 +94,7 @@ function ConfirmacaoModal({ show, onConfirm, onCancel, timeA, timeB, creditos })
   return (
     <div style={modalBackdropStyle}>
       <div style={modalContentStyle}>
-        <h3 style={{ color: "#22c55e", marginBottom: "15px" }}>Confirmar Análise 🤖</h3>
+        <h3 style={{ color: "#22c55e", marginBottom: "15px" }}>Confirmar Análise </h3>
         <p style={{ color: "#ccc", marginBottom: "20px" }}>
           Você está prestes a gerar a análise para:
           <br />
