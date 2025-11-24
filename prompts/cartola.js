@@ -1,24 +1,28 @@
 // ===============================
 //  PROMPT CARTOLA FC — BETGRAM
 //  Defesa | Meio | Ataque | Técnico
+//  Agora com jogadores reais
 // ===============================
 
-function montarPromptBase(tipo, orcamento, posicao, rodada) {
+function montarPromptBase(tipo, orcamento, posicao, rodada, jogadores) {
   return `
 ⚠️ INSTRUÇÃO SISTÊMICA — NÃO MOSTRAR NA RESPOSTA ⚠️
 Você é a IA da Betgram, especialista em Cartola FC.
-- Sempre use dados plausíveis da temporada atual.
-- Considere média, valorização, custo e desempenho recente.
-- Não invente estatísticas irreais.
-- Sempre mantenha coerência com o Cartola atual.
-- Evite notícias antigas.
-- Seja direto, organizado e muito objetivo.
+- Use **somente os jogadores fornecidos na lista abaixo**.
+- NÃO invente nomes.
+- NÃO use jogadores que não estão na lista.
+- Considere média, custo, valorização, fase recente e confronto.
+- Dados devem ser PLAUSÍVEIS e baseados na lista.
+- Nunca use informações antigas.
 
 === CONTEXTO ===
 • Tipo: ${tipo}
 • Orçamento: ${orcamento ? orcamento + " cartoletas" : "não informado"}
-• Filtro de posição: ${posicao || "nenhum"}
+• Filtro de posição: ${posicao || "todos"}
 • Rodada: ${rodada || "atual"}
+
+=== LISTA REAL DE JOGADORES ===
+${JSON.stringify(jogadores, null, 2)}
 
 Agora gere a análise.
 `.trim();
@@ -27,9 +31,9 @@ Agora gere a análise.
 // ===============================
 // DEFESA — GOL + ZAG
 // ===============================
-export function gerarPromptDefesa(orcamento, posicao, rodada) {
+export function gerarPromptDefesa(orcamento, posicao, rodada, jogadores) {
   return `
-${montarPromptBase("DEFESA (GOL + ZAG)", orcamento, posicao, rodada)}
+${montarPromptBase("DEFESA (GOL + ZAG)", orcamento, posicao, rodada, jogadores)}
 
 🎯 OBJETIVO:
 Selecionar os melhores defensores:
@@ -55,9 +59,9 @@ Selecionar os melhores defensores:
 // ===============================
 // MEIO + LATERAIS
 // ===============================
-export function gerarPromptMeio(orcamento, posicao, rodada) {
+export function gerarPromptMeio(orcamento, posicao, rodada, jogadores) {
   return `
-${montarPromptBase("MEIO + LATERAIS (MEI + LAT)", orcamento, posicao, rodada)}
+${montarPromptBase("MEIO + LATERAIS (MEI + LAT)", orcamento, posicao, rodada, jogadores)}
 
 🎯 OBJETIVO:
 Selecionar:
@@ -82,9 +86,9 @@ Selecionar:
 // ===============================
 // ATAQUE — ATA + CAPITÃO
 // ===============================
-export function gerarPromptAtaque(orcamento, posicao, rodada) {
+export function gerarPromptAtaque(orcamento, posicao, rodada, jogadores) {
   return `
-${montarPromptBase("ATAQUE (ATA + CAPITÃO)", orcamento, posicao, rodada)}
+${montarPromptBase("ATAQUE (ATA + CAPITÃO)", orcamento, posicao, rodada, jogadores)}
 
 🎯 OBJETIVO:
 Selecionar:
@@ -108,9 +112,9 @@ Selecionar:
 // ===============================
 // TÉCNICO — INDIVIDUAL
 // ===============================
-export function gerarPromptTecnico(orcamento, rodada) {
+export function gerarPromptTecnico(orcamento, rodada, jogadores) {
   return `
-${montarPromptBase("TÉCNICO (INDIVIDUAL)", orcamento, "TEC", rodada)}
+${montarPromptBase("TÉCNICO (INDIVIDUAL)", orcamento, "TEC", rodada, jogadores)}
 
 🎯 OBJETIVO:
 Escolher o melhor técnico para a rodada.
@@ -131,19 +135,19 @@ Escolher o melhor técnico para a rodada.
 // ===============================
 // FUNÇÃO PRINCIPAL
 // ===============================
-export function gerarPrompt(tipo, orcamento, posicao, rodada) {
+export function gerarPrompt(tipo, orcamento, posicao, rodada, jogadores) {
   switch (tipo) {
     case "defesa":
-      return gerarPromptDefesa(orcamento, posicao, rodada);
+      return gerarPromptDefesa(orcamento, posicao, rodada, jogadores);
 
     case "meio":
-      return gerarPromptMeio(orcamento, posicao, rodada);
+      return gerarPromptMeio(orcamento, posicao, rodada, jogadores);
 
     case "ataque":
-      return gerarPromptAtaque(orcamento, posicao, rodada);
+      return gerarPromptAtaque(orcamento, posicao, rodada, jogadores);
 
     case "tecnico":
-      return gerarPromptTecnico(orcamento, rodada);
+      return gerarPromptTecnico(orcamento, rodada, jogadores);
 
     default:
       return "Erro: tipo inválido no prompt Cartola.";
