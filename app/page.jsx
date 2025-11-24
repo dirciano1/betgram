@@ -338,31 +338,50 @@ export default function HomePage() {
 
 let prompt;
 
-// 🎩 MODO CARTOLA
+// 🎩 MODO CARTOLA — COM JOGADORES REAIS
 if (esporte === "cartola") {
 
+  // coleta inputs
   const tipo = document.getElementById("cartola-tipo")?.value || "defesa";
   const orcamento = document.getElementById("cartola-orcamento")?.value || "";
   const posicao = document.getElementById("cartola-posicao")?.value || "";
-  const rodada = ""; // opcional
+  const rodada = "";
 
+  // busca dados REAIS pela sua própria API (sem CORS)
+  const apiCartola = await fetch("/api/cartola").then(r => r.json());
+
+  // reduz o payload para evitar custo no Gemini
+  const jogadores = apiCartola.atletas.map(a => ({
+    nome: a.apelido,
+    posicao: a.posicao_id,
+    clube: a.clube_id,
+    preco: a.preco_num,
+    media: a.media_num
+  }));
+
+  // monta prompt com jogadores reais
   switch (tipo) {
     case "defesa":
-      prompt = modulo.gerarPromptDefesa(orcamento, posicao, rodada);
+      prompt = modulo.gerarPromptDefesa(orcamento, posicao, rodada, jogadores);
       break;
+
     case "meio":
-      prompt = modulo.gerarPromptMeio(orcamento, posicao, rodada);
+      prompt = modulo.gerarPromptMeio(orcamento, posicao, rodada, jogadores);
       break;
+
     case "ataque":
-      prompt = modulo.gerarPromptAtaque(orcamento, posicao, rodada);
+      prompt = modulo.gerarPromptAtaque(orcamento, posicao, rodada, jogadores);
       break;
-      case "tecnico":
-    prompt = modulo.gerarPromptTecnico(orcamento, rodada);
-    break;
+
+    case "tecnico":
+      prompt = modulo.gerarPromptTecnico(orcamento, posicao, rodada, jogadores);
+      break;
 
     default:
       prompt = "Erro: tipo inválido no prompt Cartola.";
   }
+}
+
 
 // ⚽ MODO ESPORTE NORMAL (Betgram padrão)
 } else {
