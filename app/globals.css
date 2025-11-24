@@ -7,6 +7,43 @@ html, body {
   font-family: monospace;
   margin-top:-2vh;
 }
+/* ===== CAMPOS DA BETGRAM ===== */
+
+.campo-label {
+  color: #ffffff;
+  font-weight: 600;
+  margin-bottom: 6px;
+  display: block;
+  font-size: 15px;
+}
+
+.campo-select {
+  background-color: #0d0d0d !important; /* Fundo escuro */
+  color: #ffffff !important;           /* Texto branco */
+  border: 1px solid #333;              /* Borda discreta */
+  padding: 10px 12px;
+  width: 100%;
+  border-radius: 8px;
+  font-size: 15px;
+  outline: none;
+  appearance: none;
+}
+
+.campo-select option {
+  background-color: #0d0d0d;  /* Fundo do dropdown */
+  color: #fff;                /* Texto branco */
+}
+
+/* Hover */
+.campo-select:hover {
+  border-color: #22c55e; /* Verde Betgram */
+}
+
+/* Focus */
+.campo-select:focus {
+  border-color: #38bdf8; /* Azul Betgram */
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.3);
+}
 
 button {
   background: #22c55e;
@@ -119,4 +156,5 @@ html, body {
     margin-top: 0;
   }
 }
+
 
