@@ -373,10 +373,6 @@ if (esporte === "cartola") {
       prompt = modulo.gerarPromptAtaque(orcamento, posicao, rodada, jogadores);
       break;
 
-    case "tecnico":
-      prompt = modulo.gerarPromptTecnico(orcamento, posicao, rodada, jogadores);
-      break;
-
     default:
       prompt = "Erro: tipo inválido no prompt Cartola.";
   }
@@ -776,7 +772,6 @@ const analiseFormatada = formatAnaliseTexto(resultado);
   <option value="defesa">Defesa (GOL + ZAG)</option>
   <option value="meio">Meio Campo + Laterais (MEI + LAT)</option>
   <option value="ataque">Ataque (ATA + TEC)</option>
-  <option value="tecnico">Técnico</option>
   </select>
 
   <label>💰 Cartoletas:</label>
