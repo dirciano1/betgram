@@ -380,7 +380,6 @@ if (esporte === "cartola") {
     default:
       prompt = "Erro: tipo inválido no prompt Cartola.";
   }
-}
 
 
 // ⚽ MODO ESPORTE NORMAL (Betgram padrão)
