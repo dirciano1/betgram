@@ -5,7 +5,7 @@ import Script from "next/script";
 export const metadata = {
   metadataBase: new URL("https://betgram.com.br"),
 
-  // 🔥 CANONICAL CORRIGIDO
+  
   alternates: {
     canonical: "/",
   },
