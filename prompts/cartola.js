@@ -155,22 +155,22 @@ Selecionar laterais e meias.
 }
 
 // ===============================
-// ATAQUE — ATA + CAPITÃO
+// ATAQUE — ATA
 // ===============================
 export function gerarPromptAtaque(orcamento, posicao, rodada, jogadores) {
   return `
-${montarPromptBase("ATAQUE + CAPITÃO", orcamento, posicao, rodada)}
+${montarPromptBase("ATAQUE ", orcamento, posicao, rodada)}
 
 📌 LISTA REAL DE JOGADORES:
 ${JSON.stringify(jogadores)}
 
 🎯 OBJETIVO:
-Selecionar os atacantes e o capitão.
+Selecionar os atacantes
 
 💡 Entrega:
 - Top 3 atacantes
 - 1 barato
-- Capitão
+- goleador
 `.trim();
 }
 
