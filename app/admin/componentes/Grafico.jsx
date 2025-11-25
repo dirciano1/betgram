@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { db } from "../../../lib/firebase";
-import { collection, getDocs, query, where, orderBy } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 
 export default function Grafico() {
   const [loading, setLoading] = useState(true);
@@ -13,7 +13,10 @@ export default function Grafico() {
     async function carregar() {
       try {
         const ref = collection(db, "users");
-        const q = query(ref, where("jaComprou", "==", true), orderBy("criadoEm", "desc"));
+
+        // 🔥 Removido orderBy porque criadoEm é string
+        const q = query(ref, where("jaComprou", "==", true));
+
         const snap = await getDocs(q);
 
         let lista = [];
@@ -74,7 +77,7 @@ export default function Grafico() {
 
       </div>
 
-      {/* === TABELA === */}
+      {/* === LISTA === */}
       <h3 className="text-lg font-semibold text-green-400 mb-3">📦 Últimos Usuários que Compraram</h3>
 
       {compradores.length === 0 ? (
@@ -87,7 +90,7 @@ export default function Grafico() {
                 <th className="p-3">Nome</th>
                 <th className="p-3">Email</th>
                 <th className="p-3">Créditos</th>
-                <th className="p-3">Criado em</th>
+                <th className="p-3">Status</th>
               </tr>
             </thead>
 
@@ -97,7 +100,7 @@ export default function Grafico() {
                   <td className="p-3">{c.nome}</td>
                   <td className="p-3">{c.email}</td>
                   <td className="p-3">{c.creditos}</td>
-                  <td className="p-3">{c.criadoEm}</td>
+                  <td className="p-3 text-green-400">Comprou ✔</td>
                 </tr>
               ))}
             </tbody>
