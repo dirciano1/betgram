@@ -1,28 +1,24 @@
 // ===============================
 //  PROMPT CARTOLA FC — BETGRAM
-//  Defesa | Meio | Ataque | Técnico
-//  Agora com jogadores reais
+//  Defesa | Meio | Ataque
 // ===============================
 
-function montarPromptBase(tipo, orcamento, posicao, rodada, jogadores) {
+function montarPromptBase(tipo, orcamento, posicao, rodada) {
   return `
 ⚠️ INSTRUÇÃO SISTÊMICA — NÃO MOSTRAR NA RESPOSTA ⚠️
 Você é a IA da Betgram, especialista em Cartola FC.
-- Use **somente os jogadores fornecidos na lista abaixo**.
-- NÃO invente nomes.
-- NÃO use jogadores que não estão na lista.
-- Considere média, custo, valorização, fase recente e confronto.
-- Dados devem ser PLAUSÍVEIS e baseados na lista.
-- Nunca use informações antigas.
+- Sempre use dados plausíveis da temporada atual.
+- Considere média, valorização, custo e desempenho recente.
+- Nunca invente estatísticas irreais.
+- Sempre mantenha coerência com o Cartola atual.
+- Evite notícias antigas.
+- Seja direto, organizado e muito objetivo.
 
 === CONTEXTO ===
 • Tipo: ${tipo}
 • Orçamento: ${orcamento ? orcamento + " cartoletas" : "não informado"}
-• Filtro de posição: ${posicao || "todos"}
+• Filtro de posição: ${posicao || "nenhum"}
 • Rodada: ${rodada || "atual"}
-
-=== LISTA REAL DE JOGADORES ===
-${JSON.stringify(jogadores, null, 2)}
 
 Agora gere a análise.
 `.trim();
@@ -33,7 +29,10 @@ Agora gere a análise.
 // ===============================
 export function gerarPromptDefesa(orcamento, posicao, rodada, jogadores) {
   return `
-${montarPromptBase("DEFESA (GOL + ZAG)", orcamento, posicao, rodada, jogadores)}
+${montarPromptBase("DEFESA (GOL + ZAG)", orcamento, posicao, rodada)}
+
+📌 LISTA REAL DE JOGADORES (use somente estes):
+${JSON.stringify(jogadores)}
 
 🎯 OBJETIVO:
 Selecionar os melhores defensores:
@@ -61,7 +60,10 @@ Selecionar os melhores defensores:
 // ===============================
 export function gerarPromptMeio(orcamento, posicao, rodada, jogadores) {
   return `
-${montarPromptBase("MEIO + LATERAIS (MEI + LAT)", orcamento, posicao, rodada, jogadores)}
+${montarPromptBase("MEIO + LATERAIS (MEI + LAT)", orcamento, posicao, rodada)}
+
+📌 LISTA REAL DE JOGADORES (use somente estes):
+${JSON.stringify(jogadores)}
 
 🎯 OBJETIVO:
 Selecionar:
@@ -88,7 +90,10 @@ Selecionar:
 // ===============================
 export function gerarPromptAtaque(orcamento, posicao, rodada, jogadores) {
   return `
-${montarPromptBase("ATAQUE (ATA + CAPITÃO)", orcamento, posicao, rodada, jogadores)}
+${montarPromptBase("ATAQUE (ATA + CAPITÃO)", orcamento, posicao, rodada)}
+
+📌 LISTA REAL DE JOGADORES (use somente estes):
+${JSON.stringify(jogadores)}
 
 🎯 OBJETIVO:
 Selecionar:
@@ -110,29 +115,6 @@ Selecionar:
 }
 
 // ===============================
-// TÉCNICO — INDIVIDUAL
-// ===============================
-export function gerarPromptTecnico(orcamento, rodada, jogadores) {
-  return `
-${montarPromptBase("TÉCNICO (INDIVIDUAL)", orcamento, "TEC", rodada, jogadores)}
-
-🎯 OBJETIVO:
-Escolher o melhor técnico para a rodada.
-
-⭐ Considere:
-• Chances de SG
-• Potencial ofensivo do time
-• Regularidade na pontuação
-• Custo-benefício
-
-💡 Entrega:
-- Top 3 técnicos
-- 1 técnico barato
-- Melhor técnico geral com justificativa
-`.trim();
-}
-
-// ===============================
 // FUNÇÃO PRINCIPAL
 // ===============================
 export function gerarPrompt(tipo, orcamento, posicao, rodada, jogadores) {
@@ -145,9 +127,6 @@ export function gerarPrompt(tipo, orcamento, posicao, rodada, jogadores) {
 
     case "ataque":
       return gerarPromptAtaque(orcamento, posicao, rodada, jogadores);
-
-    case "tecnico":
-      return gerarPromptTecnico(orcamento, rodada, jogadores);
 
     default:
       return "Erro: tipo inválido no prompt Cartola.";
