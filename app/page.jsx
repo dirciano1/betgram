@@ -767,7 +767,7 @@ const analiseFormatada = formatAnaliseTexto(resultado);
 {/* ÁREA CARTOLA – FORA do area-normal */}
 <div id="area-cartola" style={{ display:"none" }}>
 
-  <label>🧩 Tipo de Análise (Cartola):</label>
+  <label>🧩 Posição para Análisar:</label>
   <select id="cartola-tipo" style={inputStyle}>
   <option value="defesa">Defesa (GOL + ZAG)</option>
   <option value="meio">Meio Campo + Laterais (MEI + LAT)</option>
