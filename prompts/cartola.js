@@ -86,11 +86,11 @@ Selecionar:
 }
 
 // ===============================
-// ATAQUE — ATA + CAPITÃO
+// ATAQUE — ATA
 // ===============================
 export function gerarPromptAtaque(orcamento, posicao, rodada, jogadores) {
   return `
-${montarPromptBase("ATAQUE (ATA + CAPITÃO)", orcamento, posicao, rodada)}
+${montarPromptBase("ATAQUE (ATA)", orcamento, posicao, rodada)}
 
 📌 LISTA REAL DE JOGADORES (use somente estes):
 ${JSON.stringify(jogadores)}
@@ -98,7 +98,6 @@ ${JSON.stringify(jogadores)}
 🎯 OBJETIVO:
 Selecionar:
 - Atacantes (ATA)
-- Melhor Capitão (CAP)
 
 ⭐ Considere:
 • Finalizações
@@ -110,7 +109,6 @@ Selecionar:
 💡 Entrega:
 - Top 3 atacantes
 - 1 barato com potencial
-- Melhor capitão com justificativa forte
 `.trim();
 }
 
