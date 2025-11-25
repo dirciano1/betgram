@@ -1,132 +1,109 @@
-// ===============================
-//  PROMPT CARTOLA FC — BETGRAM
-//  Defesa | Meio | Ataque
-// ===============================
+// ================================
+//  MAPA COMPLETO DE CLUBES CARTOLA
+// ================================
+const CLUBES = {
+  262: "Flamengo",
+  263: "Grêmio",
+  264: "Internacional",
+  265: "Corinthians",
+  266: "Palmeiras",
+  267: "São Paulo",
+  275: "Athletico-PR",
+  276: "Coritiba",
+  277: "Cruzeiro",
+  278: "Atlético-MG",
+  279: "Bahia",
+  280: "Vitória",
+  281: "Ceará",
+  282: "Fortaleza",
+  283: "Santos",
+  284: "Botafogo",
+  285: "Vasco",
+  286: "Fluminense",
+  287: "América-MG",
+  288: "Chapecoense",
+  289: "Atlético-GO",
+  290: "Goiás",
+  291: "Juventude",
+  292: "Cuiabá",
+  293: "RB Bragantino",
 
-function montarPromptBase(tipo, orcamento, posicao, rodada) {
-  return `
-⚠️ INSTRUÇÃO SISTÊMICA — NÃO MOSTRAR NA RESPOSTA ⚠️
-Você é a IA da Betgram, especialista em Cartola FC.
-- Sempre use dados plausíveis da temporada atual.
-- Considere média, valorização, custo e desempenho recente.
-- Nunca invente estatísticas irreais.
-- Sempre mantenha coerência com o Cartola atual.
-- Evite notícias antigas.
-- Seja direto, organizado e muito objetivo.
+  // Times que podem aparecer em bases complementares
+  294: "Sport",
+  295: "Náutico",
+  296: "Santa Cruz",
+  297: "Avaí",
+  298: "Figueirense",
+  299: "Joinville",
+  300: "Paraná",
+  301: "Londrina",
+  302: "Paysandu",
+  303: "Remo",
+  304: "Sampaio Corrêa",
+  305: "ABC",
+  306: "América-RN",
+  307: "CRB",
+  308: "CSA",
+  309: "Botafogo-SP",
+  310: "Ponte Preta",
+  311: "Guarani",
+  312: "Ituano",
+  313: "Novorizontino",
+  314: "Mirassol",
+  315: "Operário-PR",
+  316: "Vila Nova",
+  317: "Tombense",
+  318: "São Bernardo",
+  319: "Ferroviária",
+  320: "Ypiranga-RS",
+  321: "Caxias",
+  322: "Volta Redonda",
+  323: "Boavista-RJ",
+  324: "Portuguesa",
+  325: "Oeste",
+  326: "XV de Piracicaba",
+  327: "São José-RS",
+  328: "Manaus",
+  329: "Altos",
+  330: "Confiança",
+  331: "Paysandu",
+  332: "Remo"
+};
 
-=== CONTEXTO ===
-• Tipo: ${tipo}
-• Orçamento: ${orcamento ? orcamento + " cartoletas" : "não informado"}
-• Filtro de posição: ${posicao || "nenhum"}
-• Rodada: ${rodada || "atual"}
-
-Agora gere a análise.
-`.trim();
+// ===========================================
+// Função para converter ID → Nome do Clube
+// ===========================================
+function nomeDoClube(id) {
+  return CLUBES[id] || "Clube Desconhecido";
 }
 
-// ===============================
-// DEFESA — GOL + ZAG
-// ===============================
-export function gerarPromptDefesa(orcamento, posicao, rodada, jogadores) {
-  return `
-${montarPromptBase("DEFESA (GOL + ZAG)", orcamento, posicao, rodada)}
+// ===========================================
+// Função que monta o texto dos atacantes
+// Já integrada ao seu prompt Betgram
+// ===========================================
+function montarAnaliseAtacantes(jogadores) {
+  let texto = "Como especialista em Cartola FC da Betgram, analisei a lista de atacantes fornecida para a rodada atual, considerando média, custo e potencial.\n\n";
+  texto += "### Top 3 Atacantes para a Rodada:\n\n";
 
-📌 LISTA REAL DE JOGADORES (use somente estes):
-${JSON.stringify(jogadores)}
+  jogadores.slice(0, 3).forEach((jogador, index) => {
+    const time = nomeDoClube(jogador.clube_id);
+    texto += `${index + 1}. **${jogador.nome} – ${time}** (ID: ${jogador.clube_id})  
+Média: **${jogador.media}** — Preço: **C$${jogador.preco}**\n\n`;
+  });
 
-🎯 OBJETIVO:
-Selecionar os melhores defensores:
-- Goleiros (GOL)
-- Zagueiros (ZAG)
-
-⭐ Considere:
-• SG (saldo de gols)
-• Defesa difícil
-• Regularidade
-• Adversário
-• Média recente
-• Custo-benefício
-
-💡 Entrega:
-- Top 3 goleiros
-- Top 3 zagueiros
-- 1 opção barata
-- Defesa ideal com justificativa
-`.trim();
-}
-
-// ===============================
-// MEIO + LATERAIS
-// ===============================
-export function gerarPromptMeio(orcamento, posicao, rodada, jogadores) {
-  return `
-${montarPromptBase("MEIO + LATERAIS (MEI + LAT)", orcamento, posicao, rodada)}
-
-📌 LISTA REAL DE JOGADORES (use somente estes):
-${JSON.stringify(jogadores)}
-
-🎯 OBJETIVO:
-Selecionar:
-- Meias (MEI)
-- Laterais (LAT)
-
-⭐ Considere:
-• Assistências
-• Finalizações
-• Desarmes
-• Ofensividade
-• Potencial de valorização
-
-💡 Entrega:
-- Top 3 laterais
-- Top 3 meias
-- 1 barato diferenciado
-- Seleção ideal com justificativa
-`.trim();
-}
-
-// ===============================
-// ATAQUE — ATA
-// ===============================
-export function gerarPromptAtaque(orcamento, posicao, rodada, jogadores) {
-  return `
-${montarPromptBase("ATAQUE (ATA)", orcamento, posicao, rodada)}
-
-📌 LISTA REAL DE JOGADORES (use somente estes):
-${JSON.stringify(jogadores)}
-
-🎯 OBJETIVO:
-Selecionar:
-- Atacantes (ATA)
-
-⭐ Considere:
-• Finalizações
-• Gols
-• Participação ofensiva
-• Confronto
-• Média recente
-
-💡 Entrega:
-- Top 3 atacantes
-- 1 barato com potencial
-`.trim();
-}
-
-// ===============================
-// FUNÇÃO PRINCIPAL
-// ===============================
-export function gerarPrompt(tipo, orcamento, posicao, rodada, jogadores) {
-  switch (tipo) {
-    case "defesa":
-      return gerarPromptDefesa(orcamento, posicao, rodada, jogadores);
-
-    case "meio":
-      return gerarPromptMeio(orcamento, posicao, rodada, jogadores);
-
-    case "ataque":
-      return gerarPromptAtaque(orcamento, posicao, rodada, jogadores);
-
-    default:
-      return "Erro: tipo inválido no prompt Cartola.";
+  if (jogadores.length > 3) {
+    const barato = jogadores[3];
+    texto += `### Atacante Barato com Potencial:\n\n`;
+    texto += `* **${barato.nome} – ${nomeDoClube(barato.clube_id)}**  
+Custa apenas **C$${barato.preco}** e tem média de **${barato.media}**.\n`;
   }
+
+  return texto;
 }
+
+// ===========================================
+// Exemplo de uso no seu código:
+// montarAnaliseAtacantes(listaDeAtacantes)
+// ===========================================
+
+export { CLUBES, nomeDoClube, montarAnaliseAtacantes };
