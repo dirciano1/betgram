@@ -64,10 +64,7 @@ Antes de gerar a análise, fazer buscas internas sobre **${confronto}**, coletan
 📌 AJUSTE INTERNO DE FORÇA + ODD JUSTA
 ===========================
 
-- 1 titular relevante fora: -3% a -5%
-- 2 titulares relevantes: -6% a -10%
-- 3+ titulares: -10% a -18%
-- Ausência crítica (craque, goleiro titular, armador, artilheiro): -5% a -12% extra
+- Ausência crítica (craque, goleiro titular, armador, artilheiro): -3%
 
 ⚠️ Jamais exibir cálculos ou porcentagens.
 
