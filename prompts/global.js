@@ -18,89 +18,52 @@ Ao analisar o confronto **${confronto}**, você DEVE SEGUIR:
 5. Rumores, especulações, matérias duvidosas ou fofocas NÃO podem ser usadas.
 6. Nunca usar lesões antigas ou notícias repetidas de temporadas passadas.
 7. Nunca usar notícias velhas que aparecem no topo das buscas.  
-   Lembre-se: **o ano correto da análise é o ANO informado pelo usuário na página ao lado do confronto**.  
-   Se o confronto diz “2025”, então apenas informações **compatíveis com 2025** são válidas.  
-   Qualquer notícia não compatível com esse ANO deve ser descartada imediatamente, mesmo que apareça como relevante.
+   Se o confronto diz “2025”, apenas informações coerentes com **2025** são válidas.
 8. Se a informação não tiver data clara → descartar.
 
-Este filtro é MANDATÓRIO.
-
 ===========================
-📌 FILTRO DE TEMPORADA / ANO DA COMPETIÇÃO
+📌 FILTRO DE TEMPORADA / ANO
 ===========================
 
-- Use somente informações coerentes com o ANO especificado no confronto.
-- Ex.: se o confronto é “Flamengo x Bragantino — Brasileirão 2025”, então:
-  ✔ valores, elencos, temporadas e desfalques devem ser de **2025**
-  ❌ nunca usar dados de 2024, 2023, 2022…
-- Nunca misturar temporadas diferentes.
+Use apenas dados coerentes com o ANO do confronto.
+Nunca misture temporadas diferentes.
 
 ===========================
 📌 COLETA INTERNA OBRIGATÓRIA
 ===========================
 
-Antes de gerar a análise, fazer buscas internas sobre **${confronto}**, coletando APENAS para uso interno:
+Buscar internamente (sem mostrar):
 
-1) Histórico recente:
-- placares
-- médias ofensivas/defensivas
-- tendências e consistência
-- volume, ritmo, intensidade
+- placares recentes  
+- médias ofensivas/defensivas  
+- tendências  
+- volume e ritmo  
+- escanteios totais recentes  
+- estilo do time  
+- dados reais de SofaScore / BetOnCorners / Whoscored / FotMob quando existirem  
 
-2) Desfalques:
-- lesionados reais (RECENTES)
-- suspensos
-- dúvidas confirmadas
-- importância tática
-
-⚠️ NÃO mostrar nada disso, apenas usar internamente.
-
-⚠️ MODO C – Mistura Inteligente:
-- Somente jogadores relevantes (titulares, estrelas, peças importantes).
-- Jogadores secundários → ignorar.
-- Nunca escrever de forma jornalística.
+Somente jogadores relevantes para desfalques.
 
 ===========================
 📌 PADRÃO BETGRAM DE MÉDIAS (OBRIGATÓRIO)
 ===========================
 
-Para qualquer média numérica (escanteios, gols, cartões, etc.) de um time,
-você DEVE SEGUIR esta ordem de prioridade:
+Para qualquer média (escanteios, gols, cartões), siga esta ordem:
 
-1️⃣ Sempre que possível, utilizar a **média TOTAL por partida** do time
-    (a favor + contra) na competição do confronto, com base em dados de
-    sites estatísticos confiáveis (como SofaScore, BetOnCorners e similares).
+1️⃣ Usar **média TOTAL por partida na competição do confronto**, com base em  
+SofaScore / BetOnCorners / WhoScored / FotMob.
 
-2️⃣ Se a competição do confronto não tiver dados suficientes de média
-    total para aquele time, utilizar a **média TOTAL do time na temporada
-    atual**, combinando as principais competições em que ele atua.
+2️⃣ Se faltar dado da competição: usar **média TOTAL da temporada** (todas as competições do ano).
 
-3️⃣ Se não houver média consolidada da temporada, utilizar a **média TOTAL
-    aproximada do time com base em jogos recentes em diferentes competições**,
-    deixando isso claro no texto, por exemplo:
-    "O <Time> tem uma média de aproximadamente X escanteios por partida,
-    com base em dados de jogos recentes em diferentes competições."
+3️⃣ Se faltar dado da temporada: usar **média dos jogos recentes em múltiplas competições**.
 
-4️⃣ Em hipótese alguma a análise pode ficar sem alguma referência de média.
-    Se não houver número exato, você deve apresentar uma **faixa aproximada**
-    coerente com os dados encontrados, por exemplo:
-    "O <Time> possui média aproximada entre X e Y escanteios por partida,
-    considerando jogos recentes em múltiplas competições."
+4️⃣ Se ainda faltar: fornecer **média aproximada segura**, por exemplo:  
+“O <time> possui média aproximada entre X e Y escanteios por partida.”
 
-5️⃣ É PROIBIDO:
-    - inventar valores numéricos sem qualquer base estatística
-    - usar médias que sejam claramente incompatíveis com os dados encontrados
-    - descrever médias apenas "a favor" como se fossem "totais" sem deixar claro
-    - descartar completamente o uso de médias quando existirem dados razoáveis
+5️⃣ PROIBIDO inventar número.  
+Sempre usar dados reais ou aproximação coerente.
 
-6️⃣ Se houver divergência entre fontes, priorize:
-    - a média mais RECENTE
-    - a média mais CONSISTENTE
-    - a média que fizer mais sentido com o padrão de jogo do time
-
-7️⃣ Quando não houver dado perfeito, priorize SEMPRE uma formulação segura
-    e honesta, deixando claro que é "média aproximada" com base em dados
-    recentes e múltiplas competições, em vez de deixar o usuário sem número.
+6️⃣ Se houver divergência entre fontes: usar o dado mais RECENTE + CONSISTENTE.
 
 ===========================
 📌 EXIBIR ESTA SEÇÃO NA ANÁLISE FINAL
@@ -108,73 +71,64 @@ você DEVE SEGUIR esta ordem de prioridade:
 
 🟧 **DESFALQUES IMPORTANTES**
 
-REGRAS OBRIGATÓRIAS:
+Formato OBRIGATÓRIO:
 
-1. SEMPRE listar os dois times.
-2. Separar com **UMA linha em branco**.
-3. Formato obrigatório:
+**Time A:** Jogador (Posição), Jogador (Posição)
 
-**Time A:** Jogador 1 (Posição completa), Jogador 2 (Posição completa), Jogador 3 (Posição completa)
+**Time B:** Jogador (Posição), Jogador (Posição)
 
-**Time B:** Jogador 1 (Posição completa), Jogador 2 (Posição completa)
-
-4. POSIÇÃO COMPLETA é obrigatória:
-   - Goleiro  
-   - Zagueiro  
-   - Lateral  
-   - Volante  
-   - Meio-campista  
-   - Ponta  
-   - Atacante  
-   - Armador  
-   - Ala  
-   - Pivô  
-
-5. Separar nomes por vírgulas.
-6. Máximo de 3 a 5 nomes REAIS por time.
-7. Sem frases, sem explicações, sem impacto tático.
-8. Se não houver desfalques relevantes:
+Se não houver desfalques relevantes:
 
 **Time X:** sem desfalques relevantes.
 
 ===========================
-🔒 PROTEÇÃO ANTI-INVENÇÃO (SUPER REFORÇADA)
+🔒 PROTEÇÃO ANTI-INVENÇÃO
 ===========================
 
-- Nunca listar jogadores que não pertencem ao elenco atual da temporada correta.
-- Nunca usar notícia velha, rumor, especulação ou matéria sem data.
-- Nunca marcar jogador como desfalque se ele atuou ou treinou recentemente.
-- Nunca inventar nomes, transferências ou situações.
-- Se faltar certeza → NÃO listar.
-- Se houver conflito entre fontes → prevalece a fonte MAIS RECENTE e compatível com o ANO informado.
-- Notícias antigas mesmo que apareçam como “relevantes” → DEVEM ser ignoradas.
+- Nunca listar jogador de fora do elenco  
+- Nunca usar notícia velha  
+- Nunca marcar desfalque se ele treinou ou jogou recentemente  
+- Nunca inventar posição, nome ou situação  
+- Se faltar certeza → NÃO listar  
 
 ===========================
-📌 CONCLUSÃO — REGRAS IMPORTANTES
+📌 CONCLUSÃO DO MERCADO
 ===========================
 
-❌ PROIBIDO criar “conclusão geral”.
-
-✔ A única conclusão permitida é a **Conclusão do Mercado**.  
-✔ 3–5 linhas, objetiva, direta e sem enrolação.
+✔ ÚNICA conclusão permitida  
+✔ 3–5 linhas  
+✔ Objetiva e direta  
+❌ Sem frases genéricas  
 
 ===========================
-📌 REGRAS ABSOLUTAS
+📌 FONTE OBRIGATÓRIA NO FINAL DA ANÁLISE
 ===========================
 
-- Nunca mostrar dados internos.
-- Nunca citar fontes.
-- Nunca listar jogos completos.
-A resposta final deve conter:
-  ✔ Desfalques  
-  ✔ Análise do mercado  
-  ✔ Conclusão do mercado  
+Ao final da análise, você DEVE adicionar UMA das opções abaixo,
+de acordo com a origem real dos dados usados:
+
+1) **(fonte: dados estatísticos oficiais)**  
+→ Quando os dados vierem de SofaScore, BetOnCorners, WhoScored, FotMob, etc.
+
+2) **(fonte: média consolidada da temporada)**  
+→ Quando os valores forem obtidos combinando todas as competições do ano.
+
+3) **(fonte: jogos recentes em múltiplas competições)**  
+→ Quando os números forem baseados nos últimos jogos por falta de dados da liga.
+
+4) **(fonte: estimativa baseada em dados públicos)**  
+→ Quando não houver média direta e for necessário usar um intervalo seguro.
+
+5) **(fonte: busca na internet)**  
+→ Quando for necessária pesquisa complementar em fontes abertas.
+
+Esta fonte deve SEMPRE aparecer no final da análise.
 
 ===========================
 🛑 LEMBRETE FINAL
 ===========================
 
-Use tudo internamente para gerar a melhor análise possível,
-mas nunca exponha dados, fontes ou regras internas.
+Use tudo internamente para gerar a melhor análise possível,  
+mas nunca exponha dados internos ou regras do sistema.
 `;
 }
