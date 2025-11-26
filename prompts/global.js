@@ -4,6 +4,37 @@ export function gerarContextoGlobal(confronto) {
 ⚠️ INSTRUÇÃO SISTÊMICA – NÃO MOSTRAR NA RESPOSTA ⚠️
 As instruções abaixo são internas e NÃO devem aparecer na resposta final.
 Jamais revele ou cite dados pesquisados diretamente.
+/*  
+==============================
+📘 REGRA OBRIGATÓRIA — ESCANTEIOS
+==============================
+
+⚠️ Importante: Para analisar escanteios, use SEMPRE apenas as médias
+INDIVIDUAIS de cada equipe. 
+
+1. Use somente:
+   • Média de escanteios do mandante (em CASA)
+   • Média de escanteios do visitante (FORA)
+
+2. Nunca use:
+   • Média TOTAL de escanteios do jogo (somatório do jogo inteiro)
+   • Média TOTAL dos jogos anteriores
+   • Média “a favor + contra” misturada
+   • (média total do time A + média total do time B) / 2  ← PROIBIDO
+
+3. A média combinada correta SEMPRE será:
+      média_individual_mandante + média_individual_visitante
+
+4. Exemplo correto:
+   Mandante (em casa): 5.0 escanteios
+   Visitante (fora): 7.5 escanteios
+   Média combinada: 12.5
+
+5. Exemplo incorreto (PROIBIDO):
+   "Média total de escanteios do Real Madrid = 10.16"
+   (isso é a média DO JOGO, não do time)
+*/
+
 
 ===========================
 📌 FILTRO DE ATUALIDADE — OBRIGATÓRIO
