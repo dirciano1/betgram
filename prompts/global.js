@@ -15,24 +15,17 @@ Ao analisar o confronto **${confronto}**, você DEVE SEGUIR:
 2. Notícias antigas (meses ou anos) DEVEM ser ignoradas sem exceção.
 3. Se houver QUALQUER dúvida sobre a data → NÃO usar.
 4. Se um jogador atuou, treinou ou foi relacionado nos últimos 30 dias → ele está DISPONÍVEL hoje.
-5. Rumores, especulações, matérias duvidosas ou fofocas NÃO podem ser usadas.
-6. Nunca usar lesões antigas ou notícias repetidas de temporadas passadas.
-7. Nunca usar notícias velhas que aparecem no topo das buscas.  
-   Lembre-se: **o ano correto da análise é o ANO informado pelo usuário na página ao lado do confronto**.  
-   Se o confronto diz “2025”, então apenas informações **compatíveis com 2025** são válidas.  
-   Qualquer notícia não compatível com esse ANO deve ser descartada imediatamente, mesmo que apareça como relevante.
-8. Se a informação não tiver data clara → descartar.
-
-Este filtro é MANDATÓRIO.
+5. Rumores, especulações, matérias duvidosas ou sem data → DESCARTAR.
+6. Nunca usar lesões antigas, recorrentes ou repetidas em temporadas passadas.
+7. Nunca usar notícias velhas que aparecem no topo das buscas.
+8. Se a informação não tiver **data clara (dia/mês/ano)** → DESCARTAR imediatamente.
 
 ===========================
 📌 FILTRO DE TEMPORADA / ANO DA COMPETIÇÃO
 ===========================
 
 - Use somente informações coerentes com o ANO especificado no confronto.
-- Ex.: se o confronto é “Flamengo x Bragantino — Brasileirão 2025”, então:
-  ✔ valores, elencos, temporadas e desfalques devem ser de **2025**
-  ❌ nunca usar dados de 2024, 2023, 2022…
+- Se o confronto diz “2025”, então apenas informações compatíveis com **2025** são válidas.
 - Nunca misturar temporadas diferentes.
 
 ===========================
@@ -44,21 +37,42 @@ Antes de gerar a análise, fazer buscas internas sobre **${confronto}**, coletan
 1) Histórico recente:
 - placares
 - médias ofensivas/defensivas
+- volume total por jogo (gols, escanteios, cartões)
 - tendências e consistência
-- volume, ritmo, intensidade
+- ritmo e intensidade
 
 2) Desfalques:
-- lesionados reais (RECENTES)
-- suspensos
-- dúvidas confirmadas
-- importância tática
+- apenas lesões **com data real**
+- suspensos confirmados
+- dúvidas APENAS se houver data dentro dos últimos 30 dias
 
 ⚠️ NÃO mostrar nada disso, apenas usar internamente.
 
-⚠️ MODO C – Mistura Inteligente:
-- Somente jogadores relevantes (titulares, estrelas, peças importantes).
-- Jogadores secundários → ignorar.
-- Nunca escrever de forma jornalística.
+===========================
+📌 REGRAS ESPECIAIS PARA ESCANTEIOS (BLINDAGEM TOTAL)
+===========================
+
+Ao analisar escanteios:
+
+1. Usar **média TOTAL por jogo** (a favor + contra).
+2. Nunca usar apenas “média a favor”.
+3. Preferir dados de:
+   - SofaScore  
+   - BetOnCorners  
+   - WhoScored  
+   - FotMob  
+   - FlashScore  
+4. Se não houver dados completos → usar **intervalo seguro**, assim:
+   - “O Olympiacos costuma gerar entre 7 e 10 escanteios totais por jogo.”
+   - “O Real Madrid costuma variar entre 9 e 12 escanteios totais por partida.”
+5. Nunca inventar valores exatos quando faltar dado.
+6. Probabilidade deve ser baseada em **tendência realista**, não Poisson puro:
+   - média total alta → probabilidade moderada/alta
+   - média total média → probabilidade moderada
+   - média total baixa → probabilidade baixa
+7. Nunca usar probabilidade maior que 80% para escanteios.
+8. Nunca usar média combinada absurda (ex.: > 20) sem justificar.
+9. Sempre informar a fonte no final.
 
 ===========================
 📌 EXIBIR ESTA SEÇÃO NA ANÁLISE FINAL
@@ -69,64 +83,37 @@ Antes de gerar a análise, fazer buscas internas sobre **${confronto}**, coletan
 REGRAS OBRIGATÓRIAS:
 
 1. SEMPRE listar os dois times.
-2. Separar com **UMA linha em branco**.
-3. Formato obrigatório:
-
-**Time A:** Jogador 1 (Posição completa), Jogador 2 (Posição completa), Jogador 3 (Posição completa)
-
-**Time B:** Jogador 1 (Posição completa), Jogador 2 (Posição completa)
-
-4. POSIÇÃO COMPLETA é obrigatória:
-   - Goleiro  
-   - Zagueiro  
-   - Lateral  
-   - Volante  
-   - Meio-campista  
-   - Ponta  
-   - Atacante  
-   - Armador  
-   - Ala  
-   - Pivô  
-
-5. Separar nomes por vírgulas.
-6. Máximo de 3 a 5 nomes REAIS por time.
-7. Sem frases, sem explicações, sem impacto tático.
-8. Se não houver desfalques relevantes:
-
-**Time X:** sem desfalques relevantes.
+2. Usar apenas desfalques com **data válida e dentro de 30 dias**.
+3. Se não houver nenhuma informação 100% confiável → escrever:
+   **Time X:** sem desfalques relevantes.
+4. Nunca listar jogador se:
+   - atuou nos últimos 30 dias,
+   - treinou recentemente,
+   - voltou de lesão,
+   - notícia é velha ou sem data.
+5. Máximo 3–5 nomes reais por time.
+6. Sem frases, sem impacto tático.
 
 ===========================
 🔒 PROTEÇÃO ANTI-INVENÇÃO (SUPER REFORÇADA)
 ===========================
 
-- Nunca listar jogadores que não pertencem ao elenco atual da temporada correta.
-- Nunca usar notícia velha, rumor, especulação ou matéria sem data.
-- Nunca marcar jogador como desfalque se ele atuou ou treinou recentemente.
-- Nunca inventar nomes, transferências ou situações.
-- Se faltar certeza → NÃO listar.
-- Se houver conflito entre fontes → prevalece a fonte MAIS RECENTE e compatível com o ANO informado.
-- Notícias antigas mesmo que apareçam como “relevantes” → DEVEM ser ignoradas.
+- Nunca inventar nomes.
+- Nunca inventar médias.
+- Nunca inventar desfalques.
+- Nunca inventar estatísticas específicas sem base.
+- Se faltar qualquer dado → usar intervalo aproximado + fonte.
+- Nunca marcar jogador como desfalque sem data recente.
+- Se houver conflito entre informações → descartar e escrever “sem desfalques relevantes”.
 
 ===========================
 📌 CONCLUSÃO — REGRAS IMPORTANTES
 ===========================
 
 ❌ PROIBIDO criar “conclusão geral”.
-
-✔ A única conclusão permitida é a **Conclusão do Mercado**.  
-✔ 3–5 linhas, objetiva, direta e sem enrolação.
-
-===========================
-📌 REGRAS ABSOLUTAS
-===========================
-
-- Nunca mostrar dados internos.
-- Nunca citar fontes.
-- Nunca listar jogos completos.
-A resposta final deve conter:
-  ✔ Desfalques  
-  ✔ Análise do mercado  
-  ✔ Conclusão do mercado  
+✔ A única conclusão permitida é a **Conclusão do Mercado** (3–5 linhas).
+✔ Sempre adicionar ao final:  
+(fonte: dados estatísticos oficiais | média consolidada da temporada | jogos recentes | estimativa baseada em dados públicos | busca na internet)
 
 ===========================
 🛑 LEMBRETE FINAL
