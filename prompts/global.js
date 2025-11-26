@@ -91,16 +91,6 @@ Antes de gerar a análise, fazer buscas internas sobre **${confronto}**, coletan
 - Jogadores secundários → ignorar.
 - Nunca escrever de forma jornalística.
 
-===========================
-📌 AJUSTE INTERNO DE FORÇA + ODD JUSTA
-===========================
-
-- 1 titular relevante fora: -1%
-- 2 titulares relevantes: -1%
-- 3+ titulares: -1% a -1%
-- Ausência crítica (craque, goleiro titular, armador, artilheiro): -1% a -1% extra
-
-⚠️ Jamais exibir cálculos ou porcentagens.
 
 ===========================
 📌 EXIBIR ESTA SEÇÃO NA ANÁLISE FINAL
