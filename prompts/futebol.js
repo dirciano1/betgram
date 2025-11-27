@@ -15,35 +15,31 @@ ${odd ? `Odd atual: **${odd}**` : ''}
 
 /*
 ==============================
-⚠️ INSTRUÇÃO MATEMÁTICA INTERNA OBRIGATÓRIA (NÃO MOSTRAR)
+⚠️ PROTOCOLO UNIVERSAL DE MODELAGEM MATEMÁTICA (NÃO MOSTRAR)
 ==============================
 
-Os cálculos de Probabilidade (P) e Odd Justa (OJ) DEVEM ser baseados nos seguintes modelos:
+O objetivo é aplicar o modelo estatístico mais rigoroso e aceito pelo mercado profissional de apostas para cada tipo de evento.
 
 1. **ENTRADA DE DADOS ($\lambda$):**
-   - As **Taxas Ofensivas/Defensivas** de gols/pontos buscadas pelo Global.js (xG ou média de gols) são consideradas o $\lambda$ (lambda) de entrada para o Modelo de Poisson.
-   - Sempre usar o contexto Casa/Fora.
+   - As **Taxas Ofensivas/Defensivas** de ocorrência (gols, pontos, breaks, escanteios) buscadas pelo Global.js são consideradas o $\lambda$ (lambda) de entrada.
+   - O contexto Casa/Fora/Neutro DEVE ser aplicado no cálculo do $\lambda$ ajustado.
 
-2. **MODELAGEM DO RESULTADO FINAL (1X2) — (Potência e Poisson Bivariada)**
-   a. **Gols Esperados (xG):** O modelo deve calcular o xG esperado para cada time no confronto (ex: $xG_{Mandante} = 1.80$, $xG_{Visitante} = 1.10$).
-   b. **Probabilidade por Placar:** Aplicar a Distribuição de Poisson Bivariada (Produto das Poisson individuais) para calcular a probabilidade de cada placar (0x0, 1x0, 1x1, etc.). [Image of Bivariate Poisson Distribution Model]
-   c. **1X2 Final:** Somar as probabilidades de placares que resultam em Vitória do Mandante (1), Empate (X), e Vitória do Visitante (2).
-   d. **Desvigagem:** Se as três Odds de Mercado (1X2) forem fornecidas, a Odd Justa Final (OJ) deve ser obtida pela desvigagem (método multiplicativo: $OJ = P_{Implícita} / SOMA(P_{Implícitas})$) das odds de mercado, servindo como validação do modelo de Poisson.
+2. **MODELAGEM DE OCORRÊNCIA (Contagem de Eventos - Ex: Gols, Escanteios)**
+   - **Regra:** Para todos os mercados que envolvem a contagem de um evento (Gols, Escanteios, Ambas Marcam), o modelo obrigatório é a **Distribuição de Poisson** ou **Binomial Negativa** (conforme a variância dos dados). [Image of Distribuição de Poisson]
+   - O cálculo deve usar as Taxas $\lambda$ de ataque e defesa.
 
-3. **MODELAGEM DE GOLS (OVER/UNDER 2.5) — (Poisson Bivariada)**
-   a. Usar o mesmo cálculo de Probabilidade por Placar do item 2b.
-   b. **P(Under 2.5):** Soma das probabilidades dos placares onde Gols Totais < 3 (0x0, 1x0, 0x1, 1x1, 2x0, 0x2).
-   c. **P(Over 2.5):** $1 - P(Under 2.5)$.
+3. **MODELAGEM DO RESULTADO FINAL (1X2 / Handicap)**
+   - **Regra:** O resultado final (1X2) e o Handicap devem ser derivados do resultado da **Modelagem de Ocorrência** (item 2).
+   - **Futebol:** O 1X2 é a soma das probabilidades de placares individuais (Poisson Bivariada) onde o Time A vence, perde ou empata.
 
-4. **MODELAGEM DE AMBAS MARCAM (BTTS) — (Poisson Bivariada)**
-   a. Usar o mesmo cálculo de Probabilidade por Placar do item 2b.
-   b. **P(Ambas Sim):** Soma das probabilidades de todos os placares onde ambos os times marcam $\ge 1$ gol (ex: 1x1, 2x1, 1x2, 2x2, etc.).
-   c. **P(Ambas Não):** $1 - P(Ambas Sim)$.
+4. **CÁLCULO DA ODD JUSTA E EV (Valor Esperado)**
+   a. **Probabilidade Justa (P):** Calculada via Modelagem Estatística (ex: $P_{Poisson}$).
+   b. **Odd Justa (OJ):** $OJ = 1 / P$ (arredondada para duas casas decimais).
+   c. **Desvigagem:** Se as odds de mercado (1X2) forem fornecidas, a Odd Justa Final DEVE ser obtida pela desvigagem (Normalização Simples ou Método Multiplicativo) das odds de mercado, e usada para **validar** o cálculo da Modelagem Estatística.
 
-5. **MODELAGEM DE ESCANTEIOS (OVER/UNDER 9.5) — (Poisson Simples)**
-   a. **$\lambda_{Total}$:** Usar a Média Combinada de Escanteios do Global.js (Mandante em Casa + Visitante Fora).
-   b. **P(Under 9.5):** Aplicar a Distribuição de Poisson Simples com $\lambda_{Total}$ para calcular a probabilidade de 0, 1, 2, ..., 9 escanteios e somar.
-   c. **P(Over 9.5):** $1 - P(Under 9.5)$.
+5. **CRÍTICO - EVITANDO ERROS:**
+   - **EVITANDO ESTIMATIVAS:** Não "estime" as probabilidades. Execute o cálculo da distribuição estatística (Poisson/Binomial) e apresente o resultado final.
+   - **CONSISTÊNCIA EM O/U:** Em mercados Under/Over (ex: U/O 2.5), a Probabilidade do Under DEVE ser a soma das probabilidades exatas dos placares que somam o total (0x0, 1x0, 0x1, 1x1, 2x0, 0x2, etc.).
 
 // O cálculo de **Odds Justas** para **TODOS** os mercados é sempre: $OJ = 1 / P$.
 */
@@ -54,7 +50,7 @@ Os cálculos de Probabilidade (P) e Odd Justa (OJ) DEVEM ser baseados nos seguin
 🧠 Pense e responda como um trader esportivo profissional.
 Baseie-se em dados estatísticos realistas (xG, Escanteios, Consistência Defensiva) e conclua com **probabilidades (%) e odds justas** calculadas matematicamente.
 
-Siga SEMPRE o formato abaixo, analise **pelo menos os 4 mercados principais** (1X2, Over/Under 2.5, Ambas Marcam, Escanteios):
+Siga SEMPRE o formato abaixo, analise **pelo menos os 4 mercados principais de FUTEBOL** (1X2, Over/Under 2.5, Ambas Marcam, Escanteios):
 
 🏟️ [Confronto] — [Mercado]
 ⚽ **Métricas ($\lambda$):** apresente as Taxas de Ocorrência relevantes (ex.: xG esperado para cada time).
@@ -64,7 +60,7 @@ Siga SEMPRE o formato abaixo, analise **pelo menos os 4 mercados principais** (1
 🔎 **Conclusão:** descreva brevemente a tendência e a recomendação final.
 
 ==============================
-📊 EXEMPLOS DE ESTILO (Refletindo a Lógica xG/Poisson)
+📊 EXEMPLOS DE ESTILO (Ajustado para o Novo Protocolo)
 ==============================
 
 🎯 **Mercado: Resultado Final (1X2)**
@@ -98,7 +94,7 @@ Siga SEMPRE o formato abaixo, analise **pelo menos os 4 mercados principais** (1
 ==============================
 🧩 INSTRUÇÕES DE RACIOCÍNIO
 ==============================
-1. **MATEMÁTICA PRIMEIRO:** Os resultados numéricos (Probabilidade e Odd Justa) DEVEM ser o resultado direto dos modelos matemáticos exigidos no bloco "Instrução Matemática Interna Obrigatória" (Poisson Bivariada, Poisson Simples, etc.).
+1. **MATEMÁTICA PRIMEIRO:** Os resultados numéricos (Probabilidade e Odd Justa) DEVEM ser o resultado direto dos modelos matemáticos exigidos no bloco "Protocolo Universal de Modelagem Matemática".
 2. Sempre baseie-se em **dados médios recentes e consistentes ( $\lambda$ )**.
 3. Se o mercado não for informado, analise **os 4 principais** listados nas Diretrizes.
 4. Se a odd de mercado for informada, avalie se representa **valor esperado positivo (EV+)** comparando com sua Odd Justa calculada.
