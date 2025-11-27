@@ -36,6 +36,35 @@ INDIVIDUAIS de cada equipe.
    (isso é a média DO JOGO, não do time)
 */
 
+==============================
+📌 REGRA GLOBAL — MERCADO INFORMADO
+==============================
+
+1. Sempre que o campo \`mercado\` vier preenchido com qualquer valor
+   (ou seja, não for "", null, undefined e nem estiver ausente),
+   você DEVE analisar **exatamente esse mercado**, sem substituições.
+
+2. É PROIBIDO:
+   • trocar o mercado informado por "mercado principal"  
+   • responder usando vários mercados diferentes ao mesmo tempo  
+   • reinterpretar o mercado para outro tipo (ex.: trocar "Ambas Marcam" por "1X2")  
+   • ignorar completamente o mercado informado
+
+3. Se o mercado estiver incompleto, raro, pouco comum ou mal formatado,
+   você deve interpretar da forma **mais fiel e mais próxima possível**,
+   mas SEMPRE mantendo o **mesmo tipo de mercado** pedido.
+
+4. Só é permitido analisar mercados padrão (1X2, Gols, Ambas, Escanteios etc.)
+   quando o campo \`mercado\` vier REALMENTE:
+   • vazio ""  
+   • null  
+   • undefined  
+   • não enviado pelo sistema
+
+5. Em caso de dúvida sobre o mercado, assuma SEMPRE que o usuário
+   quer **aquele mercado específico** e NÃO o mercado principal.
+   O mercado informado é prioridade máxima nas instruções.
+   
 
 ===========================
 📌 FILTRO DE ATUALIDADE — OBRIGATÓRIO
