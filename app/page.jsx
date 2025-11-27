@@ -140,6 +140,7 @@ function SelectEsporte({ value, onChange }) {
     { value: "boxe", label: "🥊 Boxe" },
     { value: "eSports", label: "🎮 eSports (CS2, LoL, Valorant...)" },
     { value: "handebol", label: "🤾 Handebol" },
+    { value: "futebolamericano", label: "🏈 Futebol Americano" },
     { value: "futsal", label: "⚽ Futsal" },
     { value: "beisebol", label: "⚾ Beisebol" },
     { value: "rugby", label: "🏉 Rugby" },
