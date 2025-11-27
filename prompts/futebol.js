@@ -10,9 +10,9 @@ seguindo sempre o padrão profissional da Betgram.
 
 🎯 Contexto:
 Confronto: **${confronto}**
-Competição: **${competicao || 'não especificada'}**
-Mercado: **${mercado || 'Todos os principais'}**
-${odd ? `Odd atual: **${odd}**` : ''}
+Competição: **${competicao || "não especificada"}**
+Mercado: **${mercado || "Todos os principais"}**
+${odd ? `Odd atual: **${odd}**` : ""}
 
 ==============================
 📘 DIRETRIZES GERAIS
@@ -72,24 +72,37 @@ Siga SEMPRE o formato abaixo:
 ==============================
 1. Sempre baseie-se em **dados médios recentes e consistentes**, sem citar períodos, datas ou anos.
 
-2. Use SEMPRE os seguintes modelos por mercado (regra interna, não citar explicitamente na resposta):
-   - Resultado Final (1X2): modelo Power Rating + Poisson Bivariada.
-   - Over/Under Gols: modelo Poisson Univariada.
-   - Ambas Marcam (BTTS): modelo Poisson Bivariada.
-   - Escanteios Over/Under: modelo Poisson Univariada usando somente médias individuais a favor (mandante em casa + visitante fora).
-   - Cartões Over/Under: modelo Poisson Univariada ajustada para disciplina e intensidade do confronto.
+2. ⚠️ **REGRA OBRIGATÓRIA DE MODELOS (NÃO IGNORAR)**  
+   Qualquer probabilidade numérica que você escrever para esses mercados DEVE ser coerente com o modelo abaixo.
+   É **PROIBIDO** estimar “no achismo” ou apenas “por impressão”.  
+   Use SEMPRE:
 
-3. Se o mercado solicitado NÃO estiver nessa lista, escolha automaticamente o modelo mais adequado entre:
-   Poisson Individual, Poisson Univariada, Poisson Bivariada, Distribuição Binomial, Power Rating, Hazard Model ou Regressão Logística — sem explicar essa escolha ao usuário.
+   - **Resultado Final (1X2):** modelo **Power Rating + Poisson Bivariada**  
+     (força relativa das equipes + matriz de gols esperados ajustada por mando de campo e desfalques).
+   - **Over/Under Gols:** modelo **Poisson Univariada**  
+     (λ = gols esperados mandante + gols esperados visitante).
+   - **Ambas Marcam (BTTS):** modelo **Poisson Bivariada**  
+     (probabilidade de pelo menos 1 gol para cada lado).
+   - **Escanteios Over/Under:** modelo **Poisson Univariada**  
+     usando **somente médias individuais a favor**  
+     (mandante em casa + visitante fora). Nunca use médias “contra” ou totais de jogo.
+   - **Cartões Over/Under:** modelo **Poisson Univariada**  
+     ajustada para disciplina e intensidade do confronto (rivalidade, estilo das equipes, pressão, etc.).
 
-4. Se o mercado não for informado, analise:
+3. Se o mercado solicitado NÃO estiver nessa lista, você DEVE escolher automaticamente o modelo mais adequado entre:
+   **Poisson Individual, Poisson Univariada, Poisson Bivariada, Distribuição Binomial, Power Rating, Hazard Model ou Regressão Logística**,  
+   mas **sem explicar essa escolha ao usuário**.  
+   Ainda assim, qualquer probabilidade numérica deve ser coerente com o modelo escolhido.
+
+4. Se o mercado não for informado, analise obrigatoriamente:
    - Resultado Final (1X2)
    - Over/Under 2.5 gols
    - Ambas Marcam (BTTS)
    - Escanteios Over/Under 9.5
    - Cartões Over/Under 5.5
 
-5. Se a odd for informada, avalie se representa **valor esperado positivo (EV+)**.
+5. Se a odd for informada, avalie se representa **valor esperado positivo (EV+)**, usando:
+   - EV = (Odd_mercado × Probabilidade) − 1
 
 6. Utilize a seguinte escala de recomendação:
    - EV+ forte → 💰 “Aposta de valor”
