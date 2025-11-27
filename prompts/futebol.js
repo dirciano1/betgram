@@ -1,9 +1,16 @@
 // prompts/futebol.js
 import { gerarContextoGlobal } from "./global.js";
 
-export function gerarPromptFutebol(confronto, competicao, odd, stats) {
+export function gerarPrompt(confronto, mercado, competicao, odd) {
   return `
 ${gerarContextoGlobal(confronto)}
+
+
+🎯 Contexto:
+Confronto: **${confronto}**
+Competição: **${competicao || 'não especificada'}**
+Mercado: **${mercado || 'Todos os principais'}**
+${odd ? `Odd atual: **${odd}**` : ''}
 
 🤖 Você é o **Analista Oficial da Betgram IA**, especialista em futebol profissional.
 Sua função é interpretar estatísticas pré-calculadas (stats), como:
