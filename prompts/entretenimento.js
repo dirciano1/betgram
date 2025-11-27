@@ -1,4 +1,4 @@
-// prompts/entreterimento.js
+// prompts/entretenimento.js
 import { gerarContextoGlobal } from "./global.js";
 
 export function gerarPrompt(confronto, mercado, competicao, odd, stats) {
@@ -38,9 +38,8 @@ Selecione o modelo ideal baseado em:
 - Tendência de crescimento de popularidade  
 - Histórico de votos anteriores  
 - Força do fã-clube  
-- Desempenho em provas / apresentações (dependendo do evento)  
+- Desempenho em provas / apresentações  
 - Perfis mais votados para eliminar / manter  
-- Conexão emocional com o público  
 - Narrativa e momento atual do participante  
 
 Nunca revele o modelo usado.  
