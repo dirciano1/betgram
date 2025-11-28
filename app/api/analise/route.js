@@ -33,7 +33,7 @@ function respostaInvalida(prompt, texto) {
 }
 
 // ======================================================
-// 🧠 3. GEMINI (REUTILIZADO PARA TUDO)
+// 🧠 3. GEMINI
 // ======================================================
 const apiKey = process.env.GEMINI_API_KEY;
 const ai = new GoogleGenerativeAI(apiKey);
@@ -42,7 +42,7 @@ const model = ai.getGenerativeModel({
   tools: [{ googleSearch: {} }],
 });
 
-// Retry inteligente para o prompt final
+// Retry
 async function gerarComGemini(prompt) {
   const MAX_RETRY = 5;
   const delays = [0, 800, 1500, 2500, 3500];
@@ -57,9 +57,7 @@ async function gerarComGemini(prompt) {
 
       const text = response.response.text();
 
-      if (!text || text.trim() === "") {
-        throw new Error("Resposta vazia do Gemini");
-      }
+      if (!text || text.trim() === "") throw new Error("Resposta vazia do Gemini");
 
       return { ok: true, text, tentativa: i + 1 };
     } catch (error) {
@@ -71,8 +69,7 @@ async function gerarComGemini(prompt) {
         error.message.includes("temporarily") ||
         error.message.includes("unavailable")
       ) {
-        console.log("⏳ Gemini sobrecarregado — nova tentativa…");
-        await new Promise((res) => setTimeout(res, delays[i]));
+        await new Promise((r) => setTimeout(r, delays[i]));
         continue;
       }
 
@@ -84,10 +81,9 @@ async function gerarComGemini(prompt) {
 }
 
 // ======================================================
-// 🧩 4. COLETA UNIVERSAL DE MÉDIAS (feitos / sofridos)
+// 🧩 4. COLETA UNIVERSAL DE MÉDIAS
 // ======================================================
 function montarPromptStatsUniversal(esporte, time, ano) {
-  // Tudo vira "feitos" e "sofridos", mas a IA sabe o que é por esporte
   switch (esporte) {
     case "futebol":
     case "futsal":
@@ -96,11 +92,11 @@ function montarPromptStatsUniversal(esporte, time, ano) {
     case "rugby":
       return `
 Você é um coletor de estatísticas oficiais da temporada ${ano}.
-Retorne APENAS este JSON, sem texto extra:
+Retorne APENAS este JSON:
 
 {
-  "feitos": <média de gols marcados por jogo na temporada ${ano}>,
-  "sofridos": <média de gols sofridos por jogo na temporada ${ano}>
+  "feitos": <média de gols marcados>,
+  "sofridos": <média de gols sofridos>
 }
 
 Time: ${time}
@@ -110,12 +106,9 @@ Ano: ${ano}
 
     case "basquete":
       return `
-Você é um coletor de estatísticas oficiais da temporada ${ano}.
-Retorne APENAS este JSON, sem texto extra:
-
 {
-  "feitos": <média de pontos marcados por jogo na temporada ${ano}>,
-  "sofridos": <média de pontos sofridos por jogo na temporada ${ano}>
+  "feitos": <média de pontos marcados>,
+  "sofridos": <média de pontos sofridos>
 }
 
 Time: ${time}
@@ -125,12 +118,9 @@ Ano: ${ano}
 
     case "volei":
       return `
-Você é um coletor de estatísticas oficiais da temporada ${ano}.
-Retorne APENAS este JSON, sem texto extra:
-
 {
-  "feitos": <média de sets vencidos por partida na temporada ${ano}>,
-  "sofridos": <média de sets perdidos por partida na temporada ${ano}>
+  "feitos": <média de sets vencidos>,
+  "sofridos": <média de sets perdidos>
 }
 
 Time: ${time}
@@ -140,12 +130,9 @@ Ano: ${ano}
 
     case "tenis":
       return `
-Você é um coletor de estatísticas oficiais da temporada ${ano}.
-Retorne APENAS este JSON, sem texto extra:
-
 {
-  "feitos": <média de games vencidos por partida/set na temporada ${ano}>,
-  "sofridos": <média de games perdidos por partida/set na temporada ${ano}>
+  "feitos": <média de games vencidos>,
+  "sofrridos": <média de games perdidos>
 }
 
 Jogador: ${time}
@@ -156,27 +143,21 @@ Ano: ${ano}
     case "mma":
     case "boxe":
       return `
-Você é um coletor de estatísticas oficiais recentes.
-Retorne APENAS este JSON, sem texto extra:
-
 {
-  "feitos": <golpes significativos conectados por minuto>,
-  "sofridos": <golpes significativos absorvidos por minuto>
+  "feitos": <golpes significativos conectados/min>,
+  "sofridos": <golpes absorvidos/min>
 }
 
 Lutador: ${time}
-Esporte: ${esporte.toUpperCase()}
+Esporte: ${esporte}
 Ano: ${ano}
 `;
 
     case "eSports":
       return `
-Você é um coletor de estatísticas oficiais recentes.
-Retorne APENAS este JSON, sem texto extra:
-
 {
-  "feitos": <média de rounds/mapas vencidos por partida>,
-  "sofridos": <média de rounds/mapas perdidos por partida>
+  "feitos": <rounds/mapas vencidos>,
+  "sofridos": <rounds/mapas perdidos>
 }
 
 Time: ${time}
@@ -185,17 +166,13 @@ Ano: ${ano}
 `;
 
     default:
-      // fallback genérico
       return `
-Você é um coletor de estatísticas oficiais da temporada ${ano}.
-Retorne APENAS este JSON, sem texto extra:
-
 {
-  "feitos": <métrica ofensiva média da temporada (o que o time produz)>,
-  "sofridos": <métrica defensiva média da temporada (o que o time cede)>
+  "feitos": <métrica ofensiva>,
+  "sofridos": <métrica defensiva>
 }
 
-Time ou participante: ${time}
+Time/Participante: ${time}
 Esporte: ${esporte}
 Ano: ${ano}
 `;
@@ -221,15 +198,13 @@ async function obterMediasUniversais(esporte, time, ano) {
     ) {
       return json;
     }
-  } catch (e) {
-    console.log("⚠️ Falha ao parsear JSON de stats:", texto);
-  }
+  } catch {}
 
   return null;
 }
 
 // ======================================================
-// 🧠 5. MODELO UNIVERSAL (Modelo B + Poisson/Proporcional)
+// 🧠 5. MODELO UNIVERSAL (Modelo B)
 // ======================================================
 function fatorial(n) {
   let r = 1;
@@ -241,10 +216,7 @@ function poisson(k, lambda) {
   return (Math.pow(lambda, k) * Math.exp(-lambda)) / fatorial(k);
 }
 
-// esportes onde faz sentido empate + placar baixo
 const ESPORTES_COM_POISSON = ["futebol", "futsal", "handebol", "hoquei", "rugby"];
-
-// esportes com mando de campo
 const ESPORTES_COM_MANDO = [
   "futebol",
   "futsal",
@@ -259,7 +231,6 @@ const ESPORTES_COM_MANDO = [
 function calcularModeloUniversal(esporte, timeA, timeB, mediasA, mediasB) {
   const ataqueA = mediasA.feitos;
   const defesaA = mediasA.sofridos;
-
   const ataqueB = mediasB.feitos;
   const defesaB = mediasB.sofridos;
 
@@ -267,16 +238,15 @@ function calcularModeloUniversal(esporte, timeA, timeB, mediasA, mediasB) {
   let lambdaB = 0.6 * ataqueB + 0.4 * defesaA;
 
   if (ESPORTES_COM_MANDO.includes(esporte)) {
-    lambdaA *= 1.1; // mandante levemente favorecido
+    lambdaA *= 1.1;
     lambdaB *= 0.95;
   }
 
-  let probCasa = 0;
-  let probEmpate = 0;
-  let probVisitante = 0;
+  let probCasa = 0,
+    probEmpate = 0,
+    probVisitante = 0;
 
   if (ESPORTES_COM_POISSON.includes(esporte)) {
-    // Poisson clássico 0–10 (placar baixo)
     const max = 10;
     for (let gA = 0; gA <= max; gA++) {
       const pA = poisson(gA, lambdaA);
@@ -289,22 +259,15 @@ function calcularModeloUniversal(esporte, timeA, timeB, mediasA, mediasB) {
       }
     }
   } else {
-    // Esportes sem empate ou de placar alto (basquete, tênis, MMA, etc.)
     const total = lambdaA + lambdaB || 1;
     probCasa = lambdaA / total;
     probVisitante = lambdaB / total;
-    probEmpate = 0;
   }
 
   const soma = probCasa + probEmpate + probVisitante || 1;
-
   probCasa /= soma;
   probEmpate /= soma;
   probVisitante /= soma;
-
-  const oddCasa = probCasa > 0 ? 1 / probCasa : null;
-  const oddEmpate = probEmpate > 0 ? 1 / probEmpate : null;
-  const oddVisitante = probVisitante > 0 ? 1 / probVisitante : null;
 
   return {
     lambdaA,
@@ -312,16 +275,16 @@ function calcularModeloUniversal(esporte, timeA, timeB, mediasA, mediasB) {
     probCasa,
     probEmpate,
     probVisitante,
-    oddCasa,
-    oddEmpate,
-    oddVisitante,
+    oddCasa: probCasa > 0 ? 1 / probCasa : null,
+    oddEmpate: probEmpate > 0 ? 1 / probEmpate : null,
+    oddVisitante: probVisitante > 0 ? 1 / probVisitante : null,
     mediasA,
     mediasB,
   };
 }
 
 // ======================================================
-// 🧱 6. BLOCO INTERNO DO MODELO (INSTRUÇÃO SISTÊMICA)
+// 🧱 6. BLOCO INTERNO DO MODELO
 // ======================================================
 function montarBlocoModeloUniversal({
   esporte,
@@ -336,38 +299,34 @@ function montarBlocoModeloUniversal({
 
   return `
 ⚠️ INSTRUÇÃO SISTÊMICA BETGRAM — NÃO MOSTRAR AO USUÁRIO ⚠️
-As informações abaixo são internas, calculadas pelo Motor Universal Betgram
-(Modelo B) e NÃO podem ser alteradas ou recalculadas pela IA.
+NÚMEROS FIXOS DO MOTOR UNIVERSAL (Modelo B)
 
 Esporte: ${esporte}
 Confronto: ${confronto}
-Time A (mandante): ${timeA}
-Time B (visitante): ${timeB}
 
-MÉDIAS UNIVERSAIS DA TEMPORADA (feitos / sofridos)
-- ${timeA} — feitos: ${modelo.mediasA.feitos}, sofridos: ${modelo.mediasA.sofridos}
-- ${timeB} — feitos: ${modelo.mediasB.feitos}, sofridos: ${modelo.mediasB.sofridos}
+MÉDIAS UNIVERSAIS
+${timeA} — feitos: ${modelo.mediasA.feitos}, sofridos: ${modelo.mediasA.sofridos}
+${timeB} — feitos: ${modelo.mediasB.feitos}, sofridos: ${modelo.mediasB.sofridos}
 
-MODELO B (60% ofensivo + 40% defensivo), com ajuste de mando quando aplicável:
-- lambda_A (mandante): ${modelo.lambdaA.toFixed(3)}
-- lambda_B (visitante): ${modelo.lambdaB.toFixed(3)}
+LAMBDA
+- ${timeA}: ${modelo.lambdaA.toFixed(3)}
+- ${timeB}: ${modelo.lambdaB.toFixed(3)}
 
-PROBABILIDADES FIXAS CALCULADAS PELO MOTOR (NÃO ALTERAR)
+PROBABILIDADES FIXAS
 - Vitória ${timeA}: ${probCasaPct}%
 - Empate: ${probEmpatePct}% 
 - Vitória ${timeB}: ${probVisitantePct}%
 
-ODDS JUSTAS DO MOTOR (NÃO ALTERAR)
-- ${timeA}: ${modelo.oddCasa ? modelo.oddCasa.toFixed(2) : "N/A"}
-- Empate: ${modelo.oddEmpate ? modelo.oddEmpate.toFixed(2) : "N/A"}
-- ${timeB}: ${modelo.oddVisitante ? modelo.oddVisitante.toFixed(2) : "N/A"}
+ODDS JUSTAS FIXAS
+- ${timeA}: ${modelo.oddCasa?.toFixed(2)}
+- Empate: ${modelo.oddEmpate?.toFixed(2)}
+- ${timeB}: ${modelo.oddVisitante?.toFixed(2)}
 
-REGRAS OBRIGATÓRIAS:
-1. Você NÃO pode recalcular essas probabilidades.
-2. Você NÃO pode ajustar essas odds justas.
-3. Sua função é APENAS interpretar, explicar e comparar com a odd enviada
-   pelo usuário (quando existir), seguindo o formato do prompt abaixo.
-4. Nunca contradiga esses números. Trate-os como verdade absoluta do sistema.
+REGRAS:
+1. Não recalcular nada.
+2. Não alterar probabilidades.
+3. Não alterar odds.
+4. Usar esses números exatamente.
 `;
 }
 
@@ -377,44 +336,25 @@ REGRAS OBRIGATÓRIAS:
 export async function POST(req) {
   try {
     if (hostInvalido(req)) {
-      console.log("🚫 Bloqueado: Host inválido.");
       return NextResponse.json(
-        { error: "Instância inválida. Tente novamente.", retry: true },
+        { error: "Instância inválida.", retry: true },
         { status: 503 }
       );
     }
 
     const body = await req.json();
 
-    // LEGADO: se vier só { prompt }, mantém comportamento antigo
+    // LEGADO
     if (typeof body === "object" && body.prompt && !body.esporte) {
-      const { prompt, confronto } = body;
+      const { prompt } = body;
 
       if (!prompt || prompt.trim().length < 3) {
         return NextResponse.json({ error: "Prompt inválido." }, { status: 400 });
       }
 
-      // só para manter compatível, sem usar aqui
-      const promptGlobal = gerarContextoGlobal(
-        confronto || "Confronto não informado"
-      );
-      void promptGlobal;
-
       const gemini = await gerarComGemini(prompt);
 
       if (gemini.ok) {
-        if (respostaInvalida(prompt, gemini.text)) {
-          return NextResponse.json(
-            {
-              error:
-                "A análise não está consistente com o esporte selecionado. Nenhum crédito foi descontado. Tente novamente.",
-              retry: true,
-              invalid: true,
-            },
-            { status: 503 }
-          );
-        }
-
         return NextResponse.json({
           content: gemini.text,
           fallback: false,
@@ -425,43 +365,37 @@ export async function POST(req) {
       }
 
       return NextResponse.json(
-        {
-          error:
-            "Os servidores estão um pouco lentos agora. Nenhum crédito foi descontado. Tente novamente em instantes.",
-          retry: true,
-        },
+        { error: "Servidores lentos. Tente novamente.", retry: true },
         { status: 503 }
       );
     }
 
-    // NOVO MODO UNIVERSAL
+    // NOVO MODELO UNIVERSAL
     const {
       prompt,
       esporte,
       timeA,
       timeB,
       competicao,
-      anoCompeticao,
+      ano,
       mercado,
       odd,
     } = body;
 
-    if (!prompt || !esporte || !timeA || !timeB || !anoCompeticao) {
+    if (!prompt || !esporte || !timeA || !timeB || !ano) {
       return NextResponse.json(
-        { error: "Parâmetros insuficientes para motor universal." },
+        { error: "Parâmetros insuficientes.", retry: true },
         { status: 400 }
       );
     }
 
     const confronto = `${timeA} x ${timeB}`;
 
-    // 1) Coletar médias universais de A e B
-    const mediasA = await obterMediasUniversais(esporte, timeA, anoCompeticao);
-    const mediasB = await obterMediasUniversais(esporte, timeB, anoCompeticao);
+    // COLETAR MÉDIAS
+    const mediasA = await obterMediasUniversais(esporte, timeA, ano);
+    const mediasB = await obterMediasUniversais(esporte, timeB, ano);
 
     if (!mediasA || !mediasB) {
-      console.log("⚠️ Falha na coleta de stats universais, caindo para modo antigo.");
-      // fallback: usa prompt original sem bloco extra
       const gemini = await gerarComGemini(prompt);
       if (gemini.ok) {
         return NextResponse.json({
@@ -473,25 +407,14 @@ export async function POST(req) {
         });
       }
       return NextResponse.json(
-        {
-          error:
-            "Não foi possível coletar dados estatísticos agora. Nenhum crédito foi descontado.",
-          retry: true,
-        },
+        { error: "Falha ao coletar estatísticas.", retry: true },
         { status: 503 }
       );
     }
 
-    // 2) Modelo universal (Modelo B)
-    const modelo = calcularModeloUniversal(
-      esporte,
-      timeA,
-      timeB,
-      mediasA,
-      mediasB
-    );
+    // MODELO UNIVERSAL
+    const modelo = calcularModeloUniversal(esporte, timeA, timeB, mediasA, mediasB);
 
-    // 3) Monta bloco interno fixo + prompt original
     const blocoInterno = montarBlocoModeloUniversal({
       esporte,
       confronto,
@@ -503,35 +426,21 @@ export async function POST(req) {
     const promptFinal = `
 ${blocoInterno}
 
-/* A partir daqui, siga EXATAMENTE o formato e as instruções do prompt Betgram abaixo. 
-   Use SEMPRE as probabilidades e odds já calculadas no bloco interno.
-*/
+/* A partir daqui, siga EXACTAMENTE o formato do prompt Betgram. NÃO altere as probabilidades e odds. */
 
 ${prompt}
     `.trim();
 
-    // 4) Chama Gemini com retry
     const gemini = await gerarComGemini(promptFinal);
 
     if (gemini.ok) {
-      if (respostaInvalida(promptFinal, gemini.text)) {
-        return NextResponse.json(
-          {
-            error:
-              "A análise não está consistente com o esporte selecionado. Nenhum crédito foi descontado. Tente novamente.",
-            retry: true,
-            invalid: true,
-          },
-          { status: 503 }
-        );
-      }
-
       return NextResponse.json({
         content: gemini.text,
         fallback: false,
         retry: false,
         model: "gemini-universal",
         tentativas: gemini.tentativa,
+
         stats: {
           confronto,
           esporte,
@@ -548,21 +457,14 @@ ${prompt}
     }
 
     return NextResponse.json(
-      {
-        error:
-          "Os servidores estão um pouco lentos agora. Nenhum crédito foi descontado. Tente novamente em instantes.",
-        retry: true,
-      },
+      { error: "Servidores lentos. Nenhum crédito foi descontado.", retry: true },
       { status: 503 }
     );
   } catch (error) {
-    console.error("🔥 ERRO GERAL (motor universal):", error);
+    console.error("🔥 ERRO GERAL:", error);
 
     return NextResponse.json(
-      {
-        error: "Erro inesperado. Nenhum crédito foi descontado.",
-        retry: true,
-      },
+      { error: "Erro interno. Nenhum crédito descontado.", retry: true },
       { status: 500 }
     );
   }
