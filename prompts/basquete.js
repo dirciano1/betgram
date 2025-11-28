@@ -2,12 +2,6 @@
 import { gerarContextoGlobal } from "./global.js";
 
 export function gerarPrompt(confronto, mercado, competicao, odd, stats) {
-
-  // 🔥 Fallback seguro de mercado
-  if (!mercado || mercado.trim() === "") {
-    mercado = "Principais";
-  }
-
   return `
 ${gerarContextoGlobal(confronto)}
 
