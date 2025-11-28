@@ -384,7 +384,16 @@ if (esporte === "cartola") {
   prompt = modulo.gerarPrompt(confronto, mercado, competicao, odd);
 }
 
-      const resposta = await gerarAnalise(prompt);
+      const resposta = await gerarAnalise({
+  prompt,
+  esporte,
+  timeA,
+  timeB,
+  competicao,
+  ano: anoCompeticao,
+  mercado,
+  odd,
+});
 
       await addDoc(collection(db, "analises"), {
         uid: user.uid,
