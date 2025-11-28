@@ -108,7 +108,8 @@ A IA deve usar EXCLUSIVAMENTE estatísticas da temporada correspondente a esse A
    ✔ Ranking atual da temporada
 
 3) PROIBIDO:
-  
+   ❌ usar APENAS os últimos 3, 5 ou 10 jogos como base estatística
+   ❌ usar APENAS estatisticas mensais
    ❌ “forma recente”
    ❌ recortes isolados
    ❌ misturar temporadas
