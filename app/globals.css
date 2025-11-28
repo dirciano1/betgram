@@ -8,7 +8,7 @@ html, body {
   margin-top:-2vh;
 }
 
-html {
+main {
   zoom: 0.85 !important;
 }
 
@@ -212,7 +212,7 @@ html, body {
     margin-top: 0;
   }
 
-  html {
+  main {
   zoom: 1 !important; 
 }
   .select-options {
@@ -220,6 +220,7 @@ html, body {
   padding-bottom:50px;
 }
 }
+
 
 
 
