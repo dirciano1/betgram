@@ -8,6 +8,10 @@ html, body {
   margin-top:-2vh;
 }
 
+html {
+  zoom: 0.75 !important;
+}
+
 .select-custom {
   position: relative;
   width: 100%;
@@ -207,11 +211,16 @@ html, body {
   html, body {
     margin-top: 0;
   }
+
+  html {
+  zoom: 1 !important; 
+}
   .select-options {
   
   padding-bottom:50px;
 }
 }
+
 
 
 
