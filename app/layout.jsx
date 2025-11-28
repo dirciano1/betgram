@@ -5,7 +5,6 @@ import Script from "next/script";
 export const metadata = {
   metadataBase: new URL("https://betgram.com.br"),
 
-  
   alternates: {
     canonical: "/",
   },
@@ -70,7 +69,6 @@ export default function RootLayout({ children }) {
           strategy="afterInteractive"
           src="https://www.googletagmanager.com/gtag/js?id=AW-17759121897"
         />
-
         <Script id="google-ads-tag" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
@@ -79,6 +77,17 @@ export default function RootLayout({ children }) {
             gtag('config', 'AW-17759121897');
           `}
         </Script>
+
+        {/*
+        ------------------------------------------------------
+        ⭐ JIVOCHAT — SUPORTE ONLINE
+        Carrega em todas as páginas (logado e deslogado)
+        ------------------------------------------------------
+        */}
+        <Script
+          src="//code.jivosite.com/widget/DYJJvyDmji"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );
