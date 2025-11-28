@@ -109,8 +109,8 @@ A IA deve usar EXCLUSIVAMENTE estatísticas da temporada correspondente a esse A
 
 3) PROIBIDO:
    ❌ usar APENAS os últimos 3, 5 ou 10 jogos como base estatística
-   ❌ usar APENAS estatisticas mensais
-   ❌ “forma recente”
+   ❌ usar APENAS estatísticas mensais como base principal
+   ❌ “forma recente” como substituto da temporada
    ❌ recortes isolados
    ❌ misturar temporadas
    ❌ pré-temporada
@@ -190,6 +190,60 @@ Regras rápidas:
 - Jogador que atuou recentemente = não é desfalque.
 - Em caso de dúvida → NÃO listar.
 - Conflito → prevalece a fonte mais recente e compatível com o ANO.
+
+===========================
+📌 MODELO ÚNICO E PADRÃO PARA TODOS OS ESPORTES
+===========================
+
+⚠️ REGRA ABSOLUTA — CONSISTÊNCIA ACIMA DE TUDO
+
+1. O cálculo estatístico de projeções (pontos, gols, totais, etc.) deve usar SEMPRE
+   um modelo simples, fixo e único para todos os esportes, baseado em:
+
+   • médias ofensivas da temporada (o que cada time marca)  
+   • médias defensivas da temporada (o que cada time sofre)  
+   • combinação dessas médias para chegar na projeção final  
+
+2. MODELO PADRÃO OBRIGATÓRIO (RESUMO):
+
+   • Projeção para o desempenho ofensivo do Time A:
+       ataque_A = média_ofensiva_A + média_defensiva_B
+
+   • Projeção para o desempenho ofensivo do Time B:
+       ataque_B = média_ofensiva_B + média_defensiva_A
+
+   • Projeção final de linha (total esperado, quando fizer sentido):
+       projeção_final = média(ataque_A, ataque_B)
+
+   Cada esporte pode adaptar a interpretação (gols, pontos, games, etc.),
+   mas SEMPRE respeitando essa lógica de combinação OFENSIVA + DEFENSIVA
+   da temporada completa.
+
+3. É PROIBIDO, EM QUALQUER ESPORTE:
+
+   ❌ alternar entre modelos diferentes de uma análise para outra  
+   ❌ escolher modelo diferente com base na disponibilidade de dados  
+   ❌ usar métricas avançadas como base principal de cálculo, tais como:
+        Pace, ORtg, DRtg, eFG%, TS%, PER, RAPM, xG, xGA, xThreat,
+        EPA, DVOA, CPOE e similares  
+   ❌ misturar modelos avançados com o modelo simples de forma a alterar
+      a projeção final  
+   ❌ mudar pesos, fórmulas ou lógicas entre análises do mesmo confronto  
+
+4. MÉTRICAS AVANÇADAS (USO LIMITADO):
+
+   • Podem ser mencionadas apenas em TEXTO (descrição/explicação),
+     desde que sejam REAIS e da temporada correta.  
+   • NÃO podem, em hipótese alguma, alterar as projeções numéricas finais
+     de pontos/gols/totais ou probabilidades.  
+
+5. OBJETIVO:
+
+   • Garantir que análises idênticas, com os mesmos dados, gerem SEMPRE
+     resultados idênticos.  
+   • Evitar qualquer sensação de aleatoriedade na escolha do modelo.  
+   • Manter a Betgram consistente, previsível e profissional em TODAS
+     as modalidades esportivas.
 
 ===========================
 📌 MODELOS OBRIGATÓRIOS POR ESPORTE
