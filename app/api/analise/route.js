@@ -1,13 +1,10 @@
 // Betgram/app/api/analise/route.js
 import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import OpenAI from "openai";
-
-// IMPORT CORRETO DO GLOBAL.JS (SEM @)
 import { gerarContextoGlobal } from "../../../prompts/global";
 
 // ======================================================
-// 🔥 1. GEMINI PRINCIPAL — COM PESQUISA REAL
+// 🔥 GEMINI PRINCIPAL — COM RETRY INTELIGENTE (5 TENTATIVAS)
 // ======================================================
 async function gerarComGemini(prompt) {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -18,132 +15,56 @@ async function gerarComGemini(prompt) {
     tools: [{ googleSearch: {} }],
   });
 
-  const maxTentativas = 3;
+  const MAX_RETRY = 5;
 
-  for (let i = 0; i < maxTentativas; i++) {
+  const delays = [
+    0,      // tentativa 1: sem delay
+    800,    // tentativa 2: rápido
+    1500,   // tentativa 3: começa a avisar lentidão
+    2500,   // tentativa 4
+    3500    // tentativa 5
+  ];
+
+  for (let i = 0; i < MAX_RETRY; i++) {
     try {
-      console.log(`🔎 Gemini tentativa ${i + 1}/${maxTentativas}`);
+      console.log(`🔎 Gemini tentativa ${i + 1}/${MAX_RETRY}`);
 
       const response = await model.generateContent({
         contents: [{ role: "user", parts: [{ text: prompt }] }],
       });
 
       const text = response.response.text();
-      if (!text) throw new Error("Resposta vazia do Gemini");
 
-      return { ok: true, text };
+      if (!text || text.trim() === "") {
+        throw new Error("Resposta vazia do Gemini");
+      }
+
+      return { ok: true, text, tentativa: i + 1 };
+
     } catch (error) {
-      if (error.status === 503 || error.message.includes("overloaded")) {
-        console.log("⚠️ Gemini sobrecarregado — retry…");
-        await new Promise((res) => setTimeout(res, 1200));
+      console.log("⚠️ Erro Gemini:", error.message);
+
+      // Only retry when overloaded
+      if (
+        error.status === 503 ||
+        error.message.includes("overloaded") ||
+        error.message.includes("temporarily") ||
+        error.message.includes("unavailable")
+      ) {
+        console.log("⚠️ Gemini sobrecarregado — nova tentativa…");
+        await new Promise((res) => setTimeout(res, delays[i]));
         continue;
       }
 
-      console.log("❌ Erro no Gemini:", error.message);
       return { ok: false, error };
     }
   }
 
-  return { ok: false, error: new Error("Gemini falhou após 3 tentativas") };
+  return { ok: false, error: new Error("Gemini falhou após 5 tentativas") };
 }
 
 // ======================================================
-// 🔥 2. PROMPT UNIVERSAL PARA FALLBACK
-// ======================================================
-function montarPromptFallback(promptOriginal, promptGlobal) {
-  return `
-⚠️ INSTRUÇÃO INTERNA — MODO FALLBACK SEM INTERNET  
-Estas regras NÃO devem aparecer na resposta final.
-
-==============================
-📌 COMO FUNCIONA O FALLBACK
-==============================
-- Você NÃO tem acesso à internet.
-- NÃO mencione que está sem internet.
-- NÃO mencione fallback.
-- NÃO pesquise nada externo.
-- NÃO invente jogos específicos.
-- Gere uma análise EXTREMAMENTE completa.
-- Mínimo obrigatório de **600 palavras**.
-- Siga exatamente os mercados do prompt do esporte.
-- NÃO adicione mercados novos.
-- Não retire mercados solicitados.
-
-==============================
-📌 CONTEXTO GLOBAL (NÃO EXIBIR)
-==============================
-${promptGlobal}
-
-==============================
-📌 PROMPT ORIGINAL DO ESPORTE
-==============================
-${promptOriginal}
-
-==============================
-📌 ESTILO BETGRAM IA
-==============================
-- Títulos com emojis.
-- Análise profunda e técnica.
-- Probabilidades estimadas.
-- Odds justas quando aplicável.
-- Valor esperado quando aplicável.
-- Cada mercado analisado separadamente.
-- Conclusão clara.
-
-Agora gere a análise COMPLETA.
-`;
-}
-
-// ======================================================
-// 🔥 3. FALLBACK GPT-5-mini
-// ======================================================
-async function gerarComGPT5(promptOriginal, promptGlobal) {
-  try {
-    console.log("🟠 Fallback → GPT-5-mini…");
-
-    const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-    const prompt = montarPromptFallback(promptOriginal, promptGlobal);
-
-    const completion = await client.chat.completions.create({
-      model: "gpt-5-mini",
-      messages: [{ role: "user", content: prompt }],
-      max_completion_tokens: 6000,
-      
-    });
-
-    return { ok: true, text: completion.choices[0].message.content };
-  } catch (error) {
-    console.log("❌ Erro no GPT-5-mini:", error.message);
-    return { ok: false, error };
-  }
-}
-
-// ======================================================
-// 🔥 4. FALLBACK GPT-4o-mini
-// ======================================================
-async function gerarComGPT4(promptOriginal, promptGlobal) {
-  try {
-    console.log("🟡 Fallback → GPT-4o-mini…");
-
-    const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-    const prompt = montarPromptFallback(promptOriginal, promptGlobal);
-
-    const completion = await client.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [{ role: "user", content: prompt }],
-      max_tokens: 6000,
-      temperature: 0.7,
-    });
-
-    return { ok: true, text: completion.choices[0].message.content };
-  } catch (error) {
-    console.log("❌ Erro no GPT-4o-mini:", error.message);
-    return { ok: false, error };
-  }
-}
-
-// ======================================================
-// 🔥 5. ROTA PRINCIPAL
+// 🔥 ROTA PRINCIPAL — USANDO SOMENTE GEMINI
 // ======================================================
 export async function POST(req) {
   try {
@@ -156,48 +77,45 @@ export async function POST(req) {
       );
     }
 
-    // Gera as regras ocultas do global.js
+    // Regras ocultas do global.js
     const promptGlobal = gerarContextoGlobal(confronto || "Confronto não informado");
 
-    // 1️⃣ Gemini principal
+    // ======================================================
+    // 1️⃣ Tenta SOMENTE o Gemini (com retries)
+    // ======================================================
     const gemini = await gerarComGemini(prompt);
+
     if (gemini.ok) {
       return NextResponse.json({
         content: gemini.text,
         fallback: false,
+        retry: false,
+        model: "gemini",
+        tentativas: gemini.tentativa
       });
     }
 
-    console.log("⚠️ Gemini falhou — iniciando fallback…");
-
-    // 2️⃣ Fallback GPT-5-mini
-    const gpt5 = await gerarComGPT5(prompt, promptGlobal);
-    if (gpt5.ok) {
-      return NextResponse.json({
-        content: gpt5.text,
-        fallback: true,
-      });
-    }
-
-    console.log("⚠️ GPT-5-mini falhou — tentando GPT-4o-mini…");
-
-    // 3️⃣ Fallback GPT-4o-mini
-    const gpt4 = await gerarComGPT4(prompt, promptGlobal);
-    if (gpt4.ok) {
-      return NextResponse.json({
-        content: gpt4.text,
-        fallback: true,
-      });
-    }
-
+    // ======================================================
+    // ❌ Gemini não conseguiu (mesmo após 5 tentativas)
+    //     → NÃO desconta crédito
+    //     → Pede para o usuário tentar novamente
+    // ======================================================
     return NextResponse.json(
-      { error: "Nenhum modelo conseguiu gerar resposta." },
-      { status: 500 }
+      {
+        error: "Os servidores estão um pouco lentos no momento. Nenhum crédito foi descontado. Tente novamente em alguns instantes.",
+        retry: true
+      },
+      { status: 503 }
     );
+
   } catch (error) {
     console.error("🔥 ERRO GERAL:", error);
+
     return NextResponse.json(
-      { error: error.message || "Erro desconhecido" },
+      {
+        error: "Erro inesperado no servidor. Nenhum crédito foi descontado.",
+        retry: true
+      },
       { status: 500 }
     );
   }
