@@ -58,29 +58,7 @@ Use apenas expressões como:
 5. Em qualquer dúvida:  
    → o usuário sempre quer **o mercado que enviou**.
 
-// =======================================
-// 📘 REGRA ABSOLUTA — ESCANTEIOS
-// =======================================
 
-⚠️ Para escanteios, use apenas MÉDIAS INDIVIDUAIS geradas pelos times.
-
-1. Use somente:
-   • média de escanteios que o **Mandante gera em casa**  
-   • média de escanteios que o **Visitante gera fora**
-
-2. Nunca usar:
-   • média total de escanteios do jogo  
-   • média geral da competição  
-   • média “a favor + contra” misturada  
-   • (média A + média B) / 2 ← PROIBIDO  
-
-3. Fórmula correta:
-   média_combinada = média_mandante + média_visitante
-
-4. Exemplo correto:
-   mandante: 5.0  
-   visitante: 7.5  
-   soma: 12.5
 
 // =======================================
 // 📅 FILTRO DE ATUALIDADE — 30 DIAS (OBRIGATÓRIO)
