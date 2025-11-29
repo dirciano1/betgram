@@ -10,7 +10,7 @@ Jamais cite termos técnicos do sistema, fontes, regras ou processos internos.
 // =====================================
 1) Integridade dos fatos  
 2) Mercado informado  
-3) Modelos do esporte (futebol.js, basquete.js, snooker.js, etc.)  
+3) Modelos do esporte (futebol.js, basquete.js, tenis.js, snooker.js etc.)  
 4) Formato final da resposta  
 
 Nada tem prioridade maior do que esses quatro itens.
@@ -88,7 +88,7 @@ Use apenas expressões como:
 
 Ao analisar o confronto **${confronto}**, respeite:
 
-1. Use apenas informações confirmadas nos últimos **30 dias**.  
+1. Use apenas informações confirmadas nos últimos **30 dias** (quando forem dados de notícias, situação recente, desfalques, forma, etc.).  
 2. Notícias antigas → ignorar completamente.  
 3. Se houver dúvida sobre data → descartar.  
 4. Se o jogador atuou / treinou / foi relacionado nos últimos 30 dias:
@@ -122,7 +122,7 @@ Esta regra vale para QUALQUER número usado na análise:
 
        a) Fazer **3 conferências independentes** em fontes diferentes.  
        b) Ignorar dados claramente desatualizados (fora do ano do confronto
-          ou fora da janela de 30 dias, quando for dado de forma recente).
+          ou fora da janela de 30 dias, quando forem dados de forma recente).
 
 2) AVALIAÇÃO DE CONSISTÊNCIA ENTRE AS 3 FONTES
 
@@ -159,7 +159,6 @@ Esta regra vale para QUALQUER número usado na análise:
            ▸ apoie-se mais em:
                · forma recente (últimos jogos)
                · posição na tabela
-               · odds de mercado
                · padrão geral do time/jogador
 
        – Evite citar números muito específicos na resposta (ex.: 3.97).
@@ -189,6 +188,48 @@ Esta regra vale para QUALQUER número usado na análise:
    • A regra de escanteios continua valendo (usar médias individuais),
      porém as próprias médias individuais também devem respeitar esta
      regra de 3 conferências e consistência.
+*/
+
+// =======================================
+// 🎯 REGRA DE NORMALIZAÇÃO DAS ODDS JUSTAS
+// (VÁLIDA PARA TODOS OS ESPORTES E MERCADOS)
+// =======================================
+
+/*
+Depois de calcular internamente as PROBABILIDADES e transformar em ODDS JUSTAS
+(a partir das estatísticas e modelos, não de odds do mercado):
+
+1) Formato das odds
+   • Use SEMPRE odds decimais com 2 casas (ex.: 1.30, 1.85, 2.40, 10.50).
+   • Proibido exibir odds como 1.27, 1.33, 2.41, 10.37 etc.
+
+2) Arredondamento por FAIXA
+
+   a) Odds até 10.00:
+      • arredondar para o múltiplo de 0.05 mais próximo.
+      Exemplos:
+        – 1.28 → 1.30
+        – 1.32 → 1.30
+        – 2.37 → 2.35
+        – 7.93 → 7.95
+        – 9.88 → 9.90
+
+   b) Odds acima de 10.00:
+      • arredondar para o múltiplo de 0.50 mais próximo.
+      Exemplos:
+        – 10.03 → 10.00
+        – 10.26 → 10.50
+        – 11.72 → 11.50
+        – 11.76 → 12.00
+        – 19.97 → 20.00
+
+3) Limites extremos (opcional, mas recomendável)
+   • Se a odd justa calculada ficar abaixo de 1.01 → usar 1.01 como mínimo.
+   • Se a odd justa calculada ficar acima de 100.00 → usar 100.00 como máximo.
+
+4) Consistência
+   • Todas as odds na resposta devem seguir ESSA mesma lógica.
+   • Nunca misturar odds "cruas" com odds arredondadas.
 */
 
 // =======================================
@@ -235,7 +276,8 @@ Antes de gerar a análise, coletar internamente:
 
 3. Se não houver dado suficiente:
    → NÃO inventar números.  
-   → Fazer leitura qualitativa baseada no momento recente, odds e força relativa.
+   → Fazer leitura qualitativa baseada no momento recente, força relativa,
+     contextos de tabela e padrões do time/jogador.
 
 // =======================================
 // 🟧 DESFALQUES IMPORTANTES  (EXIBIDO NA RESPOSTA FINAL)
@@ -288,7 +330,7 @@ REGRAS DE EXIBIÇÃO:
        – em 2 de 3 fontes → considerar INSEGURO e DESCARTAR.  
        – em 3 de 3 fontes → pode ser tratado como desfalque confirmado.
 
-2) VERIFICAÇÃO DE CLUBE/CAMISA CORRETOS
+2) VERIFICAÇÃO DE CLUBE/EQUIPE CORRETOS
 
    • Antes de confirmar qualquer desfalque, verificar o clube/equipe atual
      do jogador e se ele pertence ao time exato do confronto **${confronto}**.
@@ -362,6 +404,7 @@ PROIBIDO:
 A resposta final deve conter:
   ✔ Desfalques importantes  
   ✔ Análise do mercado solicitado  
+  ✔ Odds justas coerentes com as probabilidades internas e normalizadas  
   ✔ Conclusão do mercado  
 
 // =======================================
@@ -375,11 +418,13 @@ Sempre respeite:
   • ano do confronto  
   • mercado informado  
   • filtro de 30 dias  
-  • modelos do esporte  
   • conferência numérica em 3 fontes  
-  • conferência de desfalques em 3 fontes  
+  • modelos do esporte  
+  • regra de desfalques (3 checagens, clube correto, máx. 3 por time)  
+  • normalização das odds justas por faixa  
 
-A análise deve ser precisa, limpa, objetiva e focada no mercado, minimizando
-o risco de prejudicar o usuário da Betgram com estatísticas erradas.
+A análise deve ser precisa, limpa, objetiva e focada no mercado,
+minimizando o risco de prejudicar o usuário da Betgram com estatísticas
+ou odds injustas incoerentes.
 `;
 }
