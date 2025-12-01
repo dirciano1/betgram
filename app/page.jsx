@@ -188,7 +188,7 @@ export default function HomePage() {
   const [dadosUser, setDadosUser] = useState(null);
   const [esporte, setEsporte] = useState("futebol");
   const [competicao, setCompeticao] = useState("");
-  const [dataJogo, setDataJogo] = useState("");
+  const [anoCompeticao, setAnoCompeticao] = useState("2025");
   const [timeA, setTimeA] = useState("");
   const [timeB, setTimeB] = useState("");
   const [mercado, setMercado] = useState("");
@@ -381,7 +381,7 @@ if (esporte === "cartola") {
 
 // ⚽ MODO ESPORTE NORMAL (Betgram padrão)
 } else {
-  prompt = modulo.gerarPrompt(confronto, mercado, icao, odd);
+  prompt = modulo.gerarPrompt(confronto, mercado, competicao, odd);
 }
 
       const resposta = await gerarAnalise(prompt);
@@ -391,7 +391,7 @@ if (esporte === "cartola") {
         nome: dados.nome,
         timestamp: new Date().toISOString(),
         esporte,
-        icao,
+        competicao,
         confronto,
         mercado,
         odd,
@@ -412,42 +412,19 @@ if (esporte === "cartola") {
   }
 
   async function handleAnalise() {
-  if (!user) {
-    alert("⚠️ Faça login primeiro.");
-    return;
-  }
+  if (!user) return alert("⚠️ Faça login primeiro.");
 
-  // 👉 Para todos os esportes normais (menos Cartola)
+  // 👉 Se for modo CARTOLA, NÃO verificar timeA e timeB
   if (esporte !== "cartola") {
-    // 1) DATA OBRIGATÓRIA
-    if (!dataJogo.trim()) {
-      alert("Informe a data do jogo (ex: 01/12/2025).");
-      return;
-    }
-
-    // 2) FORMATO DD/MM/AAAA
-    const regexData = /^([0-2]\d|3[01])\/(0\d|1[0-2])\/\d{4}$/;
-    if (!regexData.test(dataJogo.trim())) {
-      alert("Use o formato DD/MM/AAAA (ex: 01/12/2025).");
-      return;
-    }
-
-    // 3) TIMES OBRIGATÓRIOS
-    if (!timeA.trim() || !timeB.trim()) {
-      alert("Preencha os dois times.");
-      return;
+    if (!timeA || !timeB) {
+      return alert("Preencha os dois times.");
     }
   }
 
-  // 4) VERIFICA CRÉDITOS
   const snap = await getDoc(doc(db, "users", user.uid));
   const dados = snap.data();
-  if (!dados || (dados.creditos ?? 0) <= 0) {
-    alert("❌ Créditos insuficientes.");
-    return;
-  }
+  if (dados.creditos <= 0) return alert("❌ Créditos insuficientes.");
 
-  // 5) ABRE MODAL DE CONFIRMAÇÃO
   setShowConfirmacaoModal(true);
 }
 
@@ -752,10 +729,9 @@ const analiseFormatada = formatAnaliseTexto(resultado);
             {/* ÁREA NORMAL */}
 <div id="area-normal">
 
-  <div style={{ display: "flex", gap: "10px", marginBottom: "14px" }}>
-  {/* Coluna da competição */}
-  <div style={{ flex: 1 }}>
-    <label>🏆 Competição:</label>
+  <label>🏆 Competição:</label>
+
+  <div style={{ display:"flex", gap:"10px", marginBottom:"14px" }}>
     <input
       type="text"
       value={competicao}
@@ -763,20 +739,15 @@ const analiseFormatada = formatAnaliseTexto(resultado);
       placeholder="Competição (ex: Brasileirão)"
       style={inputStyle}
     />
-  </div>
 
-  {/* Coluna da data do jogo */}
-  <div style={{ width: "140px" }}>
-    <label>📅 Data do jogo:</label>
     <input
-      type="text"
-      value={dataJogo}
-      onChange={(e) => setDataJogo(e.target.value)}
-      placeholder="01/12/2025"
-      style={{ ...inputStyle, textAlign: "center", marginBottom: 0 }}
+      type="number"
+      value={anoCompeticao}
+      onChange={(e) => setAnoCompeticao(e.target.value)}
+      placeholder="2025"
+      style={{ ...inputStyle, width:"90px", textAlign:"center" }}
     />
   </div>
-</div>
 
   <label>🎮 Confronto:</label>
   <input style={inputStyle} value={timeA} onChange={(e)=>setTimeA(e.target.value)} placeholder="Time da Casa"/>
