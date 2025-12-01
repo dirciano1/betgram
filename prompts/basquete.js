@@ -8,8 +8,8 @@ export function gerarPrompt(
   odd,
   dataJogo = ""
 ) {
-  return  `
-${gerarContextoGlobal(confronto)}
+  return `
+${gerarContextoGlobal(confronto, mercado, dataJogo)}
 
 🤖 Você é o Analista Oficial da Betgram IA, especialista em Basquete
 (NBA, NBB e competições internacionais). Gere análises técnicas, objetivas
@@ -23,7 +23,8 @@ Confronto: ${confronto}
 Competição: ${competicao || "não especificada"}
 Mercado solicitado: ${mercado || "4 principais"}
 ${odd ? `Odd do usuário: ${odd}` : ""}
-Data do jogo: **${dataJogo || "não informada"}**
+Data do jogo: ${dataJogo || "não informada"}
+
 ===========================================
 🏀 MERCADOS OBRIGATÓRIOS
 ===========================================
@@ -62,15 +63,6 @@ Com base na diferença entre odd justa e odd enviada:
 - Diferença menor: "Sem distorção relevante"
 
 Não altere a probabilidade real por causa da odd pública.
-
-===========================================
-📚 DADOS RECEBIDOS (stats)
-===========================================
-${
-  stats
-    ? JSON.stringify(stats, null, 2)
-    : "Nenhum stats enviado — utilize pace, médias recentes e ratings internos."
-}
 
 ===========================================
 📌 FORMATO FINAL — OBRIGATÓRIO
