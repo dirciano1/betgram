@@ -188,7 +188,7 @@ export default function HomePage() {
   const [dadosUser, setDadosUser] = useState(null);
   const [esporte, setEsporte] = useState("futebol");
   const [competicao, setCompeticao] = useState("");
-  const [anoCompeticao, setAnoCompeticao] = useState("2025");
+  const [dataJogo, setDataJogo] = useState("");
   const [timeA, setTimeA] = useState("");
   const [timeB, setTimeB] = useState("");
   const [mercado, setMercado] = useState("");
@@ -412,19 +412,42 @@ if (esporte === "cartola") {
   }
 
   async function handleAnalise() {
-  if (!user) return alert("⚠️ Faça login primeiro.");
+  if (!user) {
+    alert("⚠️ Faça login primeiro.");
+    return;
+  }
 
-  // 👉 Se for modo CARTOLA, NÃO verificar timeA e timeB
+  // 👉 Para todos os esportes normais (menos Cartola)
   if (esporte !== "cartola") {
-    if (!timeA || !timeB) {
-      return alert("Preencha os dois times.");
+    // 1) DATA OBRIGATÓRIA
+    if (!dataJogo.trim()) {
+      alert("Informe a data do jogo (ex: 01/12/2025).");
+      return;
+    }
+
+    // 2) FORMATO DD/MM/AAAA
+    const regexData = /^([0-2]\d|3[01])\/(0\d|1[0-2])\/\d{4}$/;
+    if (!regexData.test(dataJogo.trim())) {
+      alert("Use o formato DD/MM/AAAA (ex: 01/12/2025).");
+      return;
+    }
+
+    // 3) TIMES OBRIGATÓRIOS
+    if (!timeA.trim() || !timeB.trim()) {
+      alert("Preencha os dois times.");
+      return;
     }
   }
 
+  // 4) VERIFICA CRÉDITOS
   const snap = await getDoc(doc(db, "users", user.uid));
   const dados = snap.data();
-  if (dados.creditos <= 0) return alert("❌ Créditos insuficientes.");
+  if (!dados || (dados.creditos ?? 0) <= 0) {
+    alert("❌ Créditos insuficientes.");
+    return;
+  }
 
+  // 5) ABRE MODAL DE CONFIRMAÇÃO
   setShowConfirmacaoModal(true);
 }
 
@@ -741,13 +764,13 @@ const analiseFormatada = formatAnaliseTexto(resultado);
     />
 
     <input
-      type="number"
-      value={anoCompeticao}
-      onChange={(e) => setAnoCompeticao(e.target.value)}
-      placeholder="2025"
-      style={{ ...inputStyle, width:"90px", textAlign:"center" }}
-    />
-  </div>
+    type="text"
+    value={dataJogo}
+    onChange={(e) => setDataJogo(e.target.value)}
+    placeholder="01/12/2025"
+    style={{ ...inputStyle, width:"140px", textAlign:"center" }}
+  />
+</div>
 
   <label>🎮 Confronto:</label>
   <input style={inputStyle} value={timeA} onChange={(e)=>setTimeA(e.target.value)} placeholder="Time da Casa"/>
