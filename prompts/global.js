@@ -22,6 +22,38 @@ Jamais cite termos técnicos do sistema, fontes, regras ou processos internos.
 
 Nada tem prioridade maior do que esses quatro itens.
 
+===========================================
+💹 REGRA — ODDS DE MERCADO (INFORMAÇÃO EXTRA)
+===========================================
+
+Sempre que possível, para o confronto ${confronto} na data ${dataJogo || "não informada"}
+e para o MESMO mercado solicitado (${mercado || "não informado"}):
+
+1) Use a ferramenta de busca (ex.: pesquisa na web) para coletar
+   odds de pelo menos 3 casas de apostas conhecidas
+   (Bet365, Betano, Pinnacle, etc.), sempre na data mais recente possível.
+
+2) A partir dessas odds, calcule para cada opção:
+   - odd_mínima
+   - odd_máxima
+   - odd_média_aproximada
+
+3) Na resposta final, SEMPRE exiba um bloco em linguagem simples:
+
+📊 Odds de mercado hoje (faixa/média aproximada):
+• Opção 1 — entre X.xx e Y.yy (média ~Z.zz)
+• Opção 2 — entre X.xx e Y.yy (média ~Z.zz)
+...
+
+4) ESSAS ODDS DE MERCADO SÃO APENAS REFERÊNCIA.
+   É PROIBIDO:
+   - usar essas odds de mercado como base para as PROBABILIDADES reais;
+   - “puxar” a odd justa Betgram só para ficar parecida com a média do mercado.
+
+5) A odd justa Betgram IA deve ser SEMPRE calculada a partir das estatísticas
+   e modelos internos (gols esperados, força relativa, etc.), não das odds do mercado.
+*/
+
 // =======================================
 // 📌 CONTEXTO DO CONFRONTO E DA DATA
 // =======================================
