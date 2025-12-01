@@ -1,8 +1,14 @@
 // prompts/basquete.js
 import { gerarContextoGlobal } from "./global.js";
 
-export function gerarPrompt(confronto, mercado, competicao, odd, stats) {
-  return `
+export function gerarPrompt(
+  confronto,
+  mercado,
+  competicao,
+  odd,
+  dataJogo = ""
+) {
+  return  `
 ${gerarContextoGlobal(confronto)}
 
 🤖 Você é o Analista Oficial da Betgram IA, especialista em Basquete
@@ -17,7 +23,7 @@ Confronto: ${confronto}
 Competição: ${competicao || "não especificada"}
 Mercado solicitado: ${mercado || "4 principais"}
 ${odd ? `Odd do usuário: ${odd}` : ""}
-
+Data do jogo: **${dataJogo || "não informada"}**
 ===========================================
 🏀 MERCADOS OBRIGATÓRIOS
 ===========================================
