@@ -476,6 +476,11 @@ if (esporte === "cartola") {
       '<span style="color:#fb923c;font-weight:700;">💰 Odds Justas:</span>'
     )
 
+     // === Odds de Mercado (faixa aproximada) ===
+    .replace(/🧭\s*Odds de mercado hoje \(faixa aproximada\):/gi,
+      '<span style="color:#22c55e;font-weight:700;">🧭 Odds de mercado hoje (faixa aproximada):</span>'
+    )
+    
     // === Valor Esperado (EV) ===
     .replace(/Valor esperado \(EV\):/gi,
       '<span style="color:#34d399;font-weight:700;">Valor esperado (EV):</span>'
