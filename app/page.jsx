@@ -188,7 +188,7 @@ export default function HomePage() {
   const [dadosUser, setDadosUser] = useState(null);
   const [esporte, setEsporte] = useState("futebol");
   const [competicao, setCompeticao] = useState("");
-  const [anoCompeticao, setAnoCompeticao] = useState("2025");
+  const [anoCompeticao, setAnoCompeticao] = useState("01/12/2025");
   const [timeA, setTimeA] = useState("");
   const [timeB, setTimeB] = useState("");
   const [mercado, setMercado] = useState("");
@@ -741,7 +741,7 @@ const analiseFormatada = formatAnaliseTexto(resultado);
     />
 
     <input
-      type="number"
+      type="text"
       value={anoCompeticao}
       onChange={(e) => setAnoCompeticao(e.target.value)}
       placeholder="2025"
