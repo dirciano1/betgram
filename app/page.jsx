@@ -381,7 +381,7 @@ if (esporte === "cartola") {
 
 // ⚽ MODO ESPORTE NORMAL (Betgram padrão)
 } else {
-  prompt = modulo.gerarPrompt(confronto, mercado, competicao, odd);
+  prompt = modulo.gerarPrompt(confronto, mercado, icao, odd);
 }
 
       const resposta = await gerarAnalise(prompt);
@@ -391,7 +391,7 @@ if (esporte === "cartola") {
         nome: dados.nome,
         timestamp: new Date().toISOString(),
         esporte,
-        competicao,
+        icao,
         confronto,
         mercado,
         odd,
@@ -752,9 +752,10 @@ const analiseFormatada = formatAnaliseTexto(resultado);
             {/* ÁREA NORMAL */}
 <div id="area-normal">
 
-  <label>🏆 Competição:</label>
-
-  <div style={{ display:"flex", gap:"10px", marginBottom:"14px" }}>
+  <div style={{ display: "flex", gap: "10px", marginBottom: "14px" }}>
+  {/* Coluna da competição */}
+  <div style={{ flex: 1 }}>
+    <label>🏆 Competição:</label>
     <input
       type="text"
       value={competicao}
@@ -762,14 +763,19 @@ const analiseFormatada = formatAnaliseTexto(resultado);
       placeholder="Competição (ex: Brasileirão)"
       style={inputStyle}
     />
+  </div>
 
+  {/* Coluna da data do jogo */}
+  <div style={{ width: "140px" }}>
+    <label>📅 Data do jogo:</label>
     <input
-    type="text"
-    value={dataJogo}
-    onChange={(e) => setDataJogo(e.target.value)}
-    placeholder="01/12/2025"
-    style={{ ...inputStyle, width:"140px", textAlign:"center" }}
-  />
+      type="text"
+      value={dataJogo}
+      onChange={(e) => setDataJogo(e.target.value)}
+      placeholder="01/12/2025"
+      style={{ ...inputStyle, textAlign: "center", marginBottom: 0 }}
+    />
+  </div>
 </div>
 
   <label>🎮 Confronto:</label>
