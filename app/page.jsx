@@ -734,41 +734,43 @@ const analiseFormatada = formatAnaliseTexto(resultado);
             {/* ÁREA NORMAL */}
 <div id="area-normal">
 
-  <label>🏆 Competição:</label>
-
-<div style={{ display: "flex", gap: "10px", marginBottom: "14px", alignItems:"flex-end" }}>
-  <input
-    type="text"
-    value={competicao}
-    onChange={(e) => setCompeticao(e.target.value)}
-    placeholder="Competição (ex: Brasileirão)"
-    style={inputStyle}
-  />
-
-  {/* Bloco de Data */}
-  <div style={{ display: "flex", flexDirection: "column" }}>
-    <span style={{ 
-      color: "#fff", 
-      fontSize: "12px", 
-      marginBottom: "4px",
-      marginLeft: "4px"
-    }}>
-      Data do jogo:
-    </span>
-
+  {/* Bloco Competição + Ano da temporada */}
+<div
+  style={{
+    display: "flex",
+    gap: "10px",
+    marginBottom: "14px",
+  }}
+>
+  {/* Coluna da competição */}
+  <div style={{ flex: 1 }}>
+    <label>🏆 Competição:</label>
     <input
       type="text"
+      value={competicao}
+      onChange={(e) => setCompeticao(e.target.value)}
+      placeholder="Competição (ex: Brasileirão)"
+      style={inputStyle}
+    />
+  </div>
+
+  {/* Coluna do ano da competição */}
+  <div style={{ width: "140px" }}>
+    <label>📅 Ano da temporada:</label>
+    <input
+      type="text"              // pode trocar para "number" se preferir
       value={anoCompeticao}
       onChange={(e) => setAnoCompeticao(e.target.value)}
-      placeholder="01/12/2025"
-      style={{ 
-        ...inputStyle, 
-        width:"130px",
-        textAlign:"center"
+      placeholder="2025"
+      style={{
+        ...inputStyle,
+        width: "140px",
+        textAlign: "center",
       }}
     />
   </div>
 </div>
+
 
 
 
