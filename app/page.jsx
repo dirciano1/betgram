@@ -779,7 +779,7 @@ const analiseFormatada = formatAnaliseTexto(resultado);
   <input style={inputStyle} value={timeB} onChange={(e)=>setTimeB(e.target.value)} placeholder="Time Visitante"/>
 
   <label>🎯 Mercado (opcional):</label>
-  <input style={inputStyle} value={mercado} onChange={(e)=>setMercado(e.target.value)} placeholder="Ex: Over 2.5"/>
+  <input style={inputStyle} value={mercado} onChange={(e)=>setMercado(e.target.value)} placeholder="Ex: Over 2.5 Gols"/>
 
   {mercado && (
     <>
