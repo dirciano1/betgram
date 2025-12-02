@@ -736,7 +736,7 @@ const analiseFormatada = formatAnaliseTexto(resultado);
 
   <label>🏆 Competição:</label>
 
-<div style={{ display: "flex", gap: "10px", marginBottom: "14px" }}>
+<div style={{ display: "flex", gap: "10px", marginBottom: "14px", alignItems:"flex-end" }}>
   <input
     type="text"
     value={competicao}
@@ -745,10 +745,16 @@ const analiseFormatada = formatAnaliseTexto(resultado);
     style={inputStyle}
   />
 
+  {/* Bloco de Data */}
   <div style={{ display: "flex", flexDirection: "column" }}>
-    <label style={{ color: "#fff", fontSize: "12px", marginBottom: "4px" }}>
+    <span style={{ 
+      color: "#fff", 
+      fontSize: "12px", 
+      marginBottom: "4px",
+      marginLeft: "4px"
+    }}>
       Data do jogo:
-    </label>
+    </span>
 
     <input
       type="text"
@@ -757,12 +763,13 @@ const analiseFormatada = formatAnaliseTexto(resultado);
       placeholder="01/12/2025"
       style={{ 
         ...inputStyle, 
-        width: "130px",     // AUMENTADO DE 90 PARA 130PX
-        textAlign: "center" 
+        width:"130px",
+        textAlign:"center"
       }}
     />
   </div>
 </div>
+
 
 
   <label>🎮 Confronto:</label>
