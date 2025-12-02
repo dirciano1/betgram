@@ -756,7 +756,7 @@ const analiseFormatada = formatAnaliseTexto(resultado);
 
   {/* Coluna do ano da competição */}
   <div style={{ width: "140px" }}>
-    <label>📅Data Jogo:</label>
+    <label>📅Data Do Jogo:</label>
     <input
       type="text"              // pode trocar para "number" se preferir
       value={anoCompeticao}
