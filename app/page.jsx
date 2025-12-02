@@ -736,23 +736,34 @@ const analiseFormatada = formatAnaliseTexto(resultado);
 
   <label>🏆 Competição:</label>
 
-  <div style={{ display:"flex", gap:"10px", marginBottom:"14px" }}>
-    <input
-      type="text"
-      value={competicao}
-      onChange={(e) => setCompeticao(e.target.value)}
-      placeholder="Competição (ex: Brasileirão)"
-      style={inputStyle}
-    />
+<div style={{ display: "flex", gap: "10px", marginBottom: "14px" }}>
+  <input
+    type="text"
+    value={competicao}
+    onChange={(e) => setCompeticao(e.target.value)}
+    placeholder="Competição (ex: Brasileirão)"
+    style={inputStyle}
+  />
+
+  <div style={{ display: "flex", flexDirection: "column" }}>
+    <label style={{ color: "#fff", fontSize: "12px", marginBottom: "4px" }}>
+      Data do jogo:
+    </label>
 
     <input
       type="text"
       value={anoCompeticao}
       onChange={(e) => setAnoCompeticao(e.target.value)}
-      placeholder="2025"
-      style={{ ...inputStyle, width:"90px", textAlign:"center" }}
+      placeholder="01/12/2025"
+      style={{ 
+        ...inputStyle, 
+        width: "130px",     // AUMENTADO DE 90 PARA 130PX
+        textAlign: "center" 
+      }}
     />
   </div>
+</div>
+
 
   <label>🎮 Confronto:</label>
   <input style={inputStyle} value={timeA} onChange={(e)=>setTimeA(e.target.value)} placeholder="Time da Casa"/>
