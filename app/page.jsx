@@ -126,84 +126,6 @@ function ConfirmacaoModal({ show, onConfirm, onCancel, timeA, timeB, creditos })
     </div>
   );
 }
-
-// =============================
-// Modal de Erro de Captura
-// =============================
-function ModalErroCaptura({ show, onClose, faixaMin, faixaMax, oddIA }) {
-  if (!show) return null;
-
-  return (
-    <div style={{
-      position: "fixed",
-      top: 0, left: 0, right: 0, bottom: 0,
-      background: "rgba(0,0,0,0.75)",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      zIndex: 2000,
-    }}>
-      <div style={{
-        width: "90%",
-        maxWidth: "360px",
-        background: "#111827",
-        border: "2px solid #ef4444",
-        borderRadius: "14px",
-        padding: "25px",
-        textAlign: "center",
-        boxShadow: "0 0 20px rgba(239,68,68,0.4)",
-      }}>
-        <h3 style={{ color: "#ef4444", marginBottom: "10px" }}>
-          🚨 Possível Erro de Captura
-        </h3>
-
-        <p style={{ color: "#ccc", fontSize: "0.95rem", lineHeight: "1.4" }}>
-          Detectamos que a odd utilizada pode estar incorreta.
-        </p>
-
-        <div style={{
-          marginTop: "12px",
-          padding: "12px",
-          background: "rgba(239,68,68,0.15)",
-          borderRadius: "8px",
-          color: "#f87171",
-          fontWeight: "600",
-          fontSize: "0.9rem"
-        }}>
-          Faixa real: <b>{faixaMin} – {faixaMax}</b><br/><br/>
-          Odd capturada: <b>{oddIA}</b>
-        </div>
-
-        <p style={{
-          color: "#facc15",
-          marginTop: "15px",
-          fontSize: "0.9rem"
-        }}>
-          Fale conosco no <b>JivoChat</b> para avaliarmos a análise e, se for confirmado,
-          reembolsaremos seu crédito.
-        </p>
-
-        <button
-          onClick={onClose}
-          style={{
-            marginTop: "18px",
-            width: "100%",
-            background: "#ef4444",
-            border: "none",
-            padding: "12px",
-            borderRadius: "8px",
-            color: "#fff",
-            fontWeight: "700",
-            cursor: "pointer",
-          }}
-        >
-          Fechar
-        </button>
-      </div>
-    </div>
-  );
-}
-
 // =========================================
 // SELECT CUSTOMIZADO (ESTILIZADO 100% DARK)
 // =========================================
@@ -263,17 +185,6 @@ function SelectEsporte({ value, onChange }) {
 }
 
 export default function HomePage() {
-const [favoritoIA, setFavoritoIA] = useState(null);
- 
-const [showModalErro, setShowModalErro] = useState(false);
-const [faixaMinError, setFaixaMinError] = useState(null);
-const [faixaMaxError, setFaixaMaxError] = useState(null);
-const [oddIAError, setOddIAError] = useState(null);
-const [erroVerificado, setErroVerificado] = useState(false);
-
-const [favoritoCasa, setFavoritoCasa] = useState(null);
-const [precisaVerificar, setPrecisaVerificar] = useState(false);
-
   const [user, setUser] = useState(null);
   const [dadosUser, setDadosUser] = useState(null);
   const [esporte, setEsporte] = useState("futebol");
@@ -493,10 +404,6 @@ if (esporte === "cartola") {
       setDadosUser({ ...dados, creditos: dados.creditos - 1 });
       setResultado(resposta);
       setPanelFlip(true);
-    
-
-// Ativa verificação
-setPrecisaVerificar(true);
     } catch (e) {
       alert("Erro ao gerar análise.");
       console.error(e);
@@ -944,43 +851,6 @@ const analiseFormatada = formatAnaliseTexto(resultado);
                 background:"rgba(11,19,36,0.7)",border:"1px solid rgba(34,197,94,0.2)",
                 borderRadius:"10px",padding:"15px",maxHeight:"300px",overflowY:"auto"
               }} dangerouslySetInnerHTML={{ __html: analiseFormatada }}/>
-
-              {/* DETECÇÃO DE ERRO DE CAPTURA — TOLERÂNCIA ±15% */}
-{resultado && !erroVerificado && (() => {
-  const faixa = resultado.match(/entre\s([\d.]+)\s*e\s*([\d.]+)/i);
-  const oddMatch = resultado.match(/@\s*([\d.]+)/);
-
-  if (!faixa || !oddMatch) {
-    setErroVerificado(true);
-    return null;
-  }
-
-  const faixaMin = parseFloat(faixa[1]);
-  const faixaMax = parseFloat(faixa[2]);
-  const oddIA = parseFloat(oddMatch[1]);
-
-  const toleranciaMin = faixaMin * 0.85;
-  const toleranciaMax = faixaMax * 1.15;
-
-  const dentroDaFaixa = oddIA >= toleranciaMin && oddIA <= toleranciaMax;
-
-  if (!dentroDaFaixa) {
-    setErroVerificado(true);
-    setTimeout(() => {
-      setFaixaMinError(faixaMin.toFixed(2));
-      setFaixaMaxError(faixaMax.toFixed(2));
-      setOddIAError(oddIA.toFixed(2));
-      setShowModalErro(true);
-    }, 200);
-  } else {
-    setErroVerificado(true); // Marca como verificado para não repetir
-  }
-
-  return null;
-})()}
-
-
-
               <button onClick={() => setPanelFlip(false)} style={{
                 marginTop:"20px",background:"rgba(14,165,233,0.2)",border:"1px solid #0ea5e955",
                 color:"#38bdf8",borderRadius:"8px",padding:"12px",fontWeight:600,cursor:"pointer",width:"100%"
@@ -1060,13 +930,6 @@ const analiseFormatada = formatAnaliseTexto(resultado);
       )}
 
       <IndiqueModal/>
-      <ModalErroCaptura
-  show={showModalErro}
-  onClose={() => setShowModalErro(false)}
-  faixaMin={faixaMinError}
-  faixaMax={faixaMaxError}
-  oddIA={oddIAError}
-/>
     </main>
   );
 }
