@@ -193,6 +193,8 @@ export default function HomePage() {
   const [anoCompeticao, setAnoCompeticao] = useState("");
   const [timeA, setTimeA] = useState("");
   const [timeB, setTimeB] = useState("");
+  const [oddA, setOddA] = useState("");
+  const [oddB, setOddB] = useState("");
   const [mercado, setMercado] = useState("");
   const [odd, setOdd] = useState("");
   const [resultado, setResultado] = useState("");
@@ -812,9 +814,54 @@ const analiseFormatada = formatAnaliseTexto(resultado);
 
 
 
+  
   <label>🎮 Confronto:</label>
-  <input style={inputStyle} value={timeA} onChange={(e)=>setTimeA(e.target.value)} placeholder="Time da Casa"/>
-  <input style={inputStyle} value={timeB} onChange={(e)=>setTimeB(e.target.value)} placeholder="Time Visitante"/>
+<input 
+  style={inputStyle} 
+  value={timeA} 
+  onChange={(e)=>setTimeA(e.target.value)} 
+  placeholder="Time da Casa"
+/>
+
+<input 
+  style={inputStyle} 
+  value={timeB} 
+  onChange={(e)=>setTimeB(e.target.value)} 
+  placeholder="Time Visitante"
+/>
+
+{/* 🔢 ODDS DOS TIMES (obrigatório) */}
+<div style={{ display: "flex", gap: "10px", marginBottom: "14px", marginTop: "10px" }}>
+  
+  <div style={{ flex: 1 }}>
+    <label style={{ color: "#fff", fontSize: "12px", marginBottom: "4px" }}>
+      Odd {timeA || "Time A"}:
+    </label>
+    <input
+      type="number"
+      value={oddA}
+      onChange={(e) => setOddA(e.target.value)}
+      placeholder="Ex: 1.80"
+      style={{ ...inputStyle, textAlign: "center" }}
+      required
+    />
+  </div>
+
+  <div style={{ flex: 1 }}>
+    <label style={{ color: "#fff", fontSize: "12px", marginBottom: "4px" }}>
+      Odd {timeB || "Time B"}:
+    </label>
+    <input
+      type="number"
+      value={oddB}
+      onChange={(e) => setOddB(e.target.value)}
+      placeholder="Ex: 2.05"
+      style={{ ...inputStyle, textAlign: "center" }}
+      required
+    />
+  </div>
+
+</div>
 
   <label>🎯 Mercado (opcional):</label>
   <input style={inputStyle} value={mercado} onChange={(e)=>setMercado(e.target.value)} placeholder="Ex: Over 2.5 Gols"/>
