@@ -819,15 +819,32 @@ const analiseFormatada = formatAnaliseTexto(resultado);
   alignItems: "center",
   marginBottom: "6px"
 }}>
+ {/* Linha: Confronto (esquerda) + ODDS (direita) */}
+<div style={{ 
+  display: "flex", 
+  justifyContent: "space-between", 
+  alignItems: "flex-end",
+  marginBottom: "6px"
+}}>
+  
+  {/* Label Confronto */}
   <label>🎮 Confronto:</label>
 
-  <label>📊 ODDS:</label>
+  {/* Label ODDS alinhada como "Data do Jogo" */}
+  <div style={{ display: "flex", flexDirection: "column" }}>
+    <label style={{ 
+      color: "#fff", 
+      fontSize: "12px", 
+      marginBottom: "4px"
+    }}>
+      📊 ODDS:
+    </label>
+  </div>
+
 </div>
 
-{/* LINHA 1 — Time da Casa + Odd */}
+{/* Linha 1 — Time da Casa + Odd Casa */}
 <div style={{ display: "flex", gap: "10px", marginBottom: "8px" }}>
-  
-  {/* Time da Casa */}
   <input
     style={{ ...inputStyle, flex: 3 }}
     value={timeA}
@@ -835,7 +852,6 @@ const analiseFormatada = formatAnaliseTexto(resultado);
     placeholder="Time da Casa"
   />
 
-  {/* Odd Casa */}
   <input
     type="number"
     value={oddA}
@@ -849,13 +865,10 @@ const analiseFormatada = formatAnaliseTexto(resultado);
     }}
     required
   />
-
 </div>
 
-{/* LINHA 2 — Time Visitante + Odd */}
+{/* Linha 2 — Time Visitante + Odd Visitante */}
 <div style={{ display: "flex", gap: "10px", marginBottom: "14px" }}>
-  
-  {/* Time Visitante */}
   <input
     style={{ ...inputStyle, flex: 3 }}
     value={timeB}
@@ -863,7 +876,6 @@ const analiseFormatada = formatAnaliseTexto(resultado);
     placeholder="Time Visitante"
   />
 
-  {/* Odd Visitante */}
   <input
     type="number"
     value={oddB}
@@ -877,8 +889,8 @@ const analiseFormatada = formatAnaliseTexto(resultado);
     }}
     required
   />
-
 </div>
+
 
   <label>🎯 Mercado (opcional):</label>
   <input style={inputStyle} value={mercado} onChange={(e)=>setMercado(e.target.value)} placeholder="Ex: Over 2.5 Gols"/>
