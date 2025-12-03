@@ -408,28 +408,7 @@ if (esporte === "cartola") {
       setDadosUser({ ...dados, creditos: dados.creditos - 1 });
       setResultado(resposta);
       setPanelFlip(true);
-      const matchProb = resposta.match(/• .*?— (\d+)%/g);
-if (matchProb && matchProb.length >= 3) {
-  const probs = matchProb.map(p => parseInt(p.replace(/\D/g, "")));
-
-  const maior = Math.max(...probs);
-  const idx = probs.indexOf(maior);
-
-  const nomes = [timeA, "Empate", timeB];
-  setFavoritoIA(nomes[idx]);
-}
-
-// Pega favorito das odds do mercado (as casas)
-const matchOdds = resposta.match(/entre\s([\d.]+)\se\s([\d.]+)/);
-if (matchOdds) {
-  const odd1 = parseFloat(matchOdds[1]);
-  const odd2 = parseFloat(matchOdds[2]);
-
-  if (!isNaN(odd1) && !isNaN(odd2)) {
-    if (odd1 < odd2) setFavoritoCasa(timeA);
-    else setFavoritoCasa(timeB);
-  }
-}
+    
 
 // Ativa verificação
 setPrecisaVerificar(true);
@@ -881,62 +860,91 @@ const analiseFormatada = formatAnaliseTexto(resultado);
                 borderRadius:"10px",padding:"15px",maxHeight:"300px",overflowY:"auto"
               }} dangerouslySetInnerHTML={{ __html: analiseFormatada }}/>
 
-              {precisaVerificar && favoritoIA && favoritoCasa && (
-  <div style={{
-    marginTop:"15px",
-    background:"rgba(251,191,36,0.1)",
-    border:"1px solid #facc1577",
-    borderRadius:"10px",
-    padding:"12px",
-    color:"#facc15",
-    fontWeight:600
-  }}>
-    ⚠️ <b>Verificação de Coerência da Análise</b><br/><br/>
+              {/* VALIDAÇÃO REAL DA FAIXA DE ODDS */}
+{resultado && (
+  (() => {
+    // captura FAIXA das casas: "entre X e Y"
+    const faixa = resultado.match(/entre\s([\d.]+)\s*e\s*([\d.]+)/i);
 
-    • Favorito pela IA: <span style={{color:"#fff"}}>{favoritoIA}</span><br/>
-    • Favorito pelas Odds de Mercado: <span style={{color:"#fff"}}>{favoritoCasa}</span><br/><br/>
+    // captura ODD usada pela IA: primeira "@1.78"
+    const oddMatch = resultado.match(/@\s*([\d.]+)/);
 
-    {favoritoIA !== favoritoCasa ? (
-      <>
-        🚨 <b>Divergência detectada!</b><br/>
-        Isso pode indicar erro de captura ou inconsistência nos dados.<br/><br/>
+    if (!faixa || !oddMatch) return null;
 
-        <button
-          onClick={() => {
-            setPanelFlip(false);
-            setResultado("");
-            alert("Recalcule a análise. Se houver erro confirmado, reembolsaremos este crédito via suporte.");
-          }}
-          style={{
-            marginTop:"10px",
-            width:"100%",
-            background:"rgba(239,68,68,0.2)",
-            border:"1px solid #ef4444",
-            borderRadius:"8px",
-            padding:"10px",
-            color:"#ef4444",
-            fontWeight:700,
-            cursor:"pointer"
-          }}
-        >
-          🔁 Recalcular Análise
-        </button>
-      </>
-    ) : (
+    const faixaMin = parseFloat(faixa[1]);
+    const faixaMax = parseFloat(faixa[2]);
+    const oddIA = parseFloat(oddMatch[1]);
+
+    const oddsOk = oddIA >= faixaMin && oddIA <= faixaMax;
+
+    return (
       <div style={{
-        marginTop:"10px",
-        padding:"10px",
-        background:"rgba(34,197,94,0.2)",
+        marginTop:"15px",
+        background:"rgba(17,24,39,0.6)",
         border:"1px solid #22c55e55",
-        borderRadius:"8px",
-        color:"#22c55e",
-        fontWeight:700
+        borderRadius:"10px",
+        padding:"15px",
+        color:"#fff"
       }}>
-        ✔ A análise está coerente com o mercado.
+        <h4 style={{color:"#22c55e", marginTop:0}}>🧭 Verificação de Odd de Mercado</h4>
+
+        <div style={{marginBottom:"10px"}}>
+          Faixa real das casas: <b>{faixaMin} – {faixaMax}</b><br/>
+          Odd usada pela IA: <b>{oddIA}</b>
+        </div>
+
+        {!oddsOk ? (
+          <>
+            <div style={{
+              padding:"10px",
+              background:"rgba(239,68,68,0.2)",
+              border:"1px solid #ef444477",
+              borderRadius:"8px",
+              marginBottom:"12px",
+              color:"#ef4444",
+              fontWeight:700
+            }}>
+              🚨 A odd usada pela IA está FORA da faixa das casas.<br/>
+              Isso indica erro de captura.
+            </div>
+
+            <button
+              onClick={() => {
+                setPanelFlip(false);
+                setResultado("");
+                alert("Erro detectado! Faça a análise novamente.");
+              }}
+              style={{
+                width:"100%",
+                background:"#ef4444",
+                border:"none",
+                padding:"12px",
+                borderRadius:"8px",
+                color:"#fff",
+                fontWeight:700,
+                cursor:"pointer"
+              }}
+            >
+              🔁 Refazer Análise
+            </button>
+          </>
+        ) : (
+          <div style={{
+            padding:"10px",
+            background:"rgba(34,197,94,0.2)",
+            border:"1px solid #22c55e55",
+            borderRadius:"8px",
+            color:"#22c55e",
+            fontWeight:700
+          }}>
+            ✔ Odds coerentes com a faixa de mercado.
+          </div>
+        )}
       </div>
-    )}
-  </div>
+    );
+  })()
 )}
+
 
               <button onClick={() => setPanelFlip(false)} style={{
                 marginTop:"20px",background:"rgba(14,165,233,0.2)",border:"1px solid #0ea5e955",
