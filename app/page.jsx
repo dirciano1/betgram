@@ -790,7 +790,6 @@ const analiseFormatada = formatAnaliseTexto(resultado);
   style={{
     display: "flex",
     gap: "10px",
-    marginBottom: "14px",
   }}
 >
   {/* Coluna da competição */}
@@ -823,7 +822,7 @@ const analiseFormatada = formatAnaliseTexto(resultado);
 </div>
 
 {/* LINHA: Confronto (campo grande) + ODDS (campo pequeno) */}
-<div style={{ display: "flex", gap: "10px", marginBottom: "14px" }}>
+<div style={{ display: "flex", gap: "10px"}}>
 
   {/* Coluna do Confronto */}
   <div style={{ flex: 1 }}>
