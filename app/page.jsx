@@ -579,7 +579,7 @@ if (esporte === "cartola") {
         </p>
 
         <p style={{ color: "#ccc", fontSize: "0.95rem", marginBottom: "20px", lineHeight: "1.4" }}>
-          Neste caso, recomendamos <b style={{ color:"#22c55e" }}>refazer a análise</b> e entrar no 
+          Neste caso, recomendamos voltar <b style={{ color:"#22c55e" }}> e refazer a análise</b> e entrar no 
           <b style={{ color:"#0ea5e9" }}> chat de suporte</b> para solicitar 
           <b style={{ color:"#fff" }}> reembolso do crédito</b> utilizado.
         </p>
