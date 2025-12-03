@@ -888,10 +888,6 @@ const analiseFormatada = formatAnaliseTexto(resultado);
 
 </div>
 
-</div>
-
-
-
   <label>🎯 Mercado (opcional):</label>
   <input style={inputStyle} value={mercado} onChange={(e)=>setMercado(e.target.value)} placeholder="Ex: Over 2.5 Gols"/>
 
