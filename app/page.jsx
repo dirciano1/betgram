@@ -821,15 +821,7 @@ const analiseFormatada = formatAnaliseTexto(resultado);
 }}>
   <label>🎮 Confronto:</label>
 
-  <span style={{ 
-    color: "red",
-    fontWeight: "bold",
-    fontSize: "12px",
-    marginRight: "4px",
-    letterSpacing: "1px"
-  }}>
-    ODDS
-  </span>
+  <label>📊 ODDS:</label>
 </div>
 
 {/* LINHA 1 — Time da Casa + Odd */}
