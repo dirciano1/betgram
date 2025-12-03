@@ -574,8 +574,8 @@ if (esporte === "cartola") {
         </p>
 
         <p style={{ color: "#ccc", fontSize: "0.95rem", marginBottom: "15px", lineHeight: "1.4" }}>
-          Se notar que a <b style={{ color:"#facc15" }}>faixa aproximada das casas</b> não corresponde 
-          às odds usadas na análise, isso pode indicar um erro de captura.
+          Se notar que a <b style={{ color:"#facc15" }}>Odds de mercado hoje:</b> não corresponde 
+          às odds da sua casa de aposta, isso pode indicar um erro de captura.
         </p>
 
         <p style={{ color: "#ccc", fontSize: "0.95rem", marginBottom: "20px", lineHeight: "1.4" }}>
