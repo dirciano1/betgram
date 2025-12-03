@@ -185,6 +185,10 @@ function SelectEsporte({ value, onChange }) {
 }
 
 export default function HomePage() {
+const [favoritoIA, setFavoritoIA] = useState(null);
+const [favoritoCasa, setFavoritoCasa] = useState(null);
+const [precisaVerificar, setPrecisaVerificar] = useState(false);
+
   const [user, setUser] = useState(null);
   const [dadosUser, setDadosUser] = useState(null);
   const [esporte, setEsporte] = useState("futebol");
@@ -404,6 +408,31 @@ if (esporte === "cartola") {
       setDadosUser({ ...dados, creditos: dados.creditos - 1 });
       setResultado(resposta);
       setPanelFlip(true);
+      const matchProb = resposta.match(/• .*?— (\d+)%/g);
+if (matchProb && matchProb.length >= 3) {
+  const probs = matchProb.map(p => parseInt(p.replace(/\D/g, "")));
+
+  const maior = Math.max(...probs);
+  const idx = probs.indexOf(maior);
+
+  const nomes = [timeA, "Empate", timeB];
+  setFavoritoIA(nomes[idx]);
+}
+
+// Pega favorito das odds do mercado (as casas)
+const matchOdds = resposta.match(/entre\s([\d.]+)\se\s([\d.]+)/);
+if (matchOdds) {
+  const odd1 = parseFloat(matchOdds[1]);
+  const odd2 = parseFloat(matchOdds[2]);
+
+  if (!isNaN(odd1) && !isNaN(odd2)) {
+    if (odd1 < odd2) setFavoritoCasa(timeA);
+    else setFavoritoCasa(timeB);
+  }
+}
+
+// Ativa verificação
+setPrecisaVerificar(true);
     } catch (e) {
       alert("Erro ao gerar análise.");
       console.error(e);
@@ -851,6 +880,64 @@ const analiseFormatada = formatAnaliseTexto(resultado);
                 background:"rgba(11,19,36,0.7)",border:"1px solid rgba(34,197,94,0.2)",
                 borderRadius:"10px",padding:"15px",maxHeight:"300px",overflowY:"auto"
               }} dangerouslySetInnerHTML={{ __html: analiseFormatada }}/>
+
+              {precisaVerificar && favoritoIA && favoritoCasa && (
+  <div style={{
+    marginTop:"15px",
+    background:"rgba(251,191,36,0.1)",
+    border:"1px solid #facc1577",
+    borderRadius:"10px",
+    padding:"12px",
+    color:"#facc15",
+    fontWeight:600
+  }}>
+    ⚠️ <b>Verificação de Coerência da Análise</b><br/><br/>
+
+    • Favorito pela IA: <span style={{color:"#fff"}}>{favoritoIA}</span><br/>
+    • Favorito pelas Odds de Mercado: <span style={{color:"#fff"}}>{favoritoCasa}</span><br/><br/>
+
+    {favoritoIA !== favoritoCasa ? (
+      <>
+        🚨 <b>Divergência detectada!</b><br/>
+        Isso pode indicar erro de captura ou inconsistência nos dados.<br/><br/>
+
+        <button
+          onClick={() => {
+            setPanelFlip(false);
+            setResultado("");
+            alert("Recalcule a análise. Se houver erro confirmado, reembolsaremos este crédito via suporte.");
+          }}
+          style={{
+            marginTop:"10px",
+            width:"100%",
+            background:"rgba(239,68,68,0.2)",
+            border:"1px solid #ef4444",
+            borderRadius:"8px",
+            padding:"10px",
+            color:"#ef4444",
+            fontWeight:700,
+            cursor:"pointer"
+          }}
+        >
+          🔁 Recalcular Análise
+        </button>
+      </>
+    ) : (
+      <div style={{
+        marginTop:"10px",
+        padding:"10px",
+        background:"rgba(34,197,94,0.2)",
+        border:"1px solid #22c55e55",
+        borderRadius:"8px",
+        color:"#22c55e",
+        fontWeight:700
+      }}>
+        ✔ A análise está coerente com o mercado.
+      </div>
+    )}
+  </div>
+)}
+
               <button onClick={() => setPanelFlip(false)} style={{
                 marginTop:"20px",background:"rgba(14,165,233,0.2)",border:"1px solid #0ea5e955",
                 color:"#38bdf8",borderRadius:"8px",padding:"12px",fontWeight:600,cursor:"pointer",width:"100%"
