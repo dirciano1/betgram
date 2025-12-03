@@ -812,31 +812,30 @@ const analiseFormatada = formatAnaliseTexto(resultado);
 </div>
 
   
- <label>🎮 Confronto:</label>
+ {/* LABEL CONFRONTO + ODDS ESCOLHIDOS NA MESMA LINHA */}
+<div style={{ 
+  display: "flex", 
+  justifyContent: "space-between",
+  alignItems: "center",
+  marginBottom: "6px"
+}}>
+  <label>🎮 Confronto:</label>
 
-{/* Cabeçalho com texto ODDS alinhado na coluna da direita */}
-<div style={{ display: "flex", gap: "10px", marginBottom: "4px" }}>
-  <div style={{ flex: 3 }} />
-  <div style={{ 
-    flex: 1, 
-    display: "flex", 
-    justifyContent: "center", 
-    alignItems: "flex-end" 
+  <span style={{ 
+    color: "red",
+    fontWeight: "bold",
+    fontSize: "12px",
+    marginRight: "4px",
+    letterSpacing: "1px"
   }}>
-    <span style={{ 
-      color: "red", 
-      fontWeight: "bold", 
-      fontSize: "12px",
-      letterSpacing: "1px"
-    }}>
-      ODDS
-    </span>
-  </div>
+    ODDS
+  </span>
 </div>
 
-{/* Linha 1: Time da Casa + Odd da Casa */}
+{/* LINHA 1 — Time da Casa + Odd */}
 <div style={{ display: "flex", gap: "10px", marginBottom: "8px" }}>
-  {/* Nome do time da casa */}
+  
+  {/* Time da Casa */}
   <input
     style={{ ...inputStyle, flex: 3 }}
     value={timeA}
@@ -844,25 +843,27 @@ const analiseFormatada = formatAnaliseTexto(resultado);
     placeholder="Time da Casa"
   />
 
-  {/* Odd do time da casa */}
-  <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-    <label style={{ color: "#fff", fontSize: "12px", marginBottom: "4px" }}>
-      Odd Time da Casa:
-    </label>
-    <input
-      type="number"
-      value={oddA}
-      onChange={(e) => setOddA(e.target.value)}
-      placeholder="Ex: 5.80"
-      style={{ ...inputStyle, textAlign: "center", fontWeight: "600" }}
-      required
-    />
-  </div>
+  {/* Odd Casa */}
+  <input
+    type="number"
+    value={oddA}
+    onChange={(e) => setOddA(e.target.value)}
+    placeholder="Ex: 5.80"
+    style={{ 
+      ...inputStyle, 
+      flex: 1, 
+      textAlign: "center",
+      fontWeight: "600"
+    }}
+    required
+  />
+
 </div>
 
-{/* Linha 2: Time Visitante + Odd Visitante */}
+{/* LINHA 2 — Time Visitante + Odd */}
 <div style={{ display: "flex", gap: "10px", marginBottom: "14px" }}>
-  {/* Nome do time visitante */}
+  
+  {/* Time Visitante */}
   <input
     style={{ ...inputStyle, flex: 3 }}
     value={timeB}
@@ -870,20 +871,23 @@ const analiseFormatada = formatAnaliseTexto(resultado);
     placeholder="Time Visitante"
   />
 
-  {/* Odd do time visitante */}
-  <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-    <label style={{ color: "#fff", fontSize: "12px", marginBottom: "4px" }}>
-      Odd Time Visitante:
-    </label>
-    <input
-      type="number"
-      value={oddB}
-      onChange={(e) => setOddB(e.target.value)}
-      placeholder="Ex: 1.70"
-      style={{ ...inputStyle, textAlign: "center", fontWeight: "600" }}
-      required
-    />
-  </div>
+  {/* Odd Visitante */}
+  <input
+    type="number"
+    value={oddB}
+    onChange={(e) => setOddB(e.target.value)}
+    placeholder="Ex: 1.70"
+    style={{ 
+      ...inputStyle, 
+      flex: 1, 
+      textAlign: "center",
+      fontWeight: "600"
+    }}
+    required
+  />
+
+</div>
+
 </div>
 
 
