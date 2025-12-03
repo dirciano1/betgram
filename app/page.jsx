@@ -480,7 +480,7 @@ if (esporte === "cartola") {
 
      // === Odds de Mercado (faixa aproximada) ===
     .replace(/🧭\s*Odds de mercado hoje \(faixa aproximada\):/gi,
-      '<span style="color:#22c55e;font-weight:700;">🧭 Odds de mercado hoje (faixa aproximada):</span>'
+      '<span style="color:#facc15;font-weight:700;">🧭 Odds de mercado hoje (faixa aproximada):</span>'
     )
     
     // === Valor Esperado (EV) ===
