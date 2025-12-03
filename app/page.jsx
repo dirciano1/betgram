@@ -185,6 +185,7 @@ function SelectEsporte({ value, onChange }) {
 }
 
 export default function HomePage() {
+  const [showErroModal, setShowErroModal] = useState(false);
   const [user, setUser] = useState(null);
   const [dadosUser, setDadosUser] = useState(null);
   const [esporte, setEsporte] = useState("futebol");
@@ -558,6 +559,42 @@ if (esporte === "cartola") {
       </div>
     );
   }
+
+  function ErroAnaliseModal() {
+  if (!showErroModal) return null;
+
+  return (
+    <div style={modalBackdropStyle}>
+      <div style={modalContentStyle}>
+        <h3 style={{ color: "#ef4444", marginBottom: "10px" }}>⚠️ Possível Erro de Captura</h3>
+
+        <p style={{ color: "#ddd", fontSize: "0.95rem", marginBottom: "15px", lineHeight: "1.4" }}>
+          Em raros casos a IA pode capturar a odd do mercado errada, especialmente quando 
+          o site de origem está instável ou quando a linha do mercado aparece fora da ordem.
+        </p>
+
+        <p style={{ color: "#ccc", fontSize: "0.95rem", marginBottom: "15px", lineHeight: "1.4" }}>
+          Se notar que a <b style={{ color:"#facc15" }}>faixa aproximada das casas</b> não corresponde 
+          às odds usadas na análise, isso pode indicar um erro de captura.
+        </p>
+
+        <p style={{ color: "#ccc", fontSize: "0.95rem", marginBottom: "20px", lineHeight: "1.4" }}>
+          Neste caso, recomendamos <b style={{ color:"#22c55e" }}>refazer a análise</b> e entrar no 
+          <b style={{ color:"#0ea5e9" }}> chat de suporte</b> para solicitar 
+          <b style={{ color:"#fff" }}> reembolso do crédito</b> utilizado.
+        </p>
+
+        <button
+          onClick={() => setShowErroModal(false)}
+          style={{ ...buttonConfirmStyle, width: "100%" }}
+        >
+          Entendido
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // -----------------------------------------------------
 // 👇 CONTROLE COMPLETO DE TTS (Texto para Voz)
 // -----------------------------------------------------
@@ -851,6 +888,26 @@ const analiseFormatada = formatAnaliseTexto(resultado);
                 background:"rgba(11,19,36,0.7)",border:"1px solid rgba(34,197,94,0.2)",
                 borderRadius:"10px",padding:"15px",maxHeight:"300px",overflowY:"auto"
               }} dangerouslySetInnerHTML={{ __html: analiseFormatada }}/>
+              <div style={{
+  marginTop: "15px",
+  fontSize: "0.85rem",
+  textAlign: "center",
+  color: "#94a3b8"
+}}>
+  Se algo parecer fora do padrão:
+  <span
+    onClick={() => setShowErroModal(true)}
+    style={{
+      color: "#22c55e",
+      fontWeight: 600,
+      cursor: "pointer",
+      marginLeft: "5px"
+    }}
+  >
+    IA cometeu um erro? Saiba mais
+  </span>
+</div>
+
               <button onClick={() => setPanelFlip(false)} style={{
                 marginTop:"20px",background:"rgba(14,165,233,0.2)",border:"1px solid #0ea5e955",
                 color:"#38bdf8",borderRadius:"8px",padding:"12px",fontWeight:600,cursor:"pointer",width:"100%"
@@ -929,7 +986,9 @@ const analiseFormatada = formatAnaliseTexto(resultado);
         <BetgramPayModal onClose={handleClosePayModal} user={user}/>
       )}
 
-      <IndiqueModal/>
+      <IndiqueModal />
+      <ErroAnaliseModal />
+
     </main>
   );
 }
