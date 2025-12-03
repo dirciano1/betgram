@@ -811,15 +811,6 @@ const analiseFormatada = formatAnaliseTexto(resultado);
   </div>
 </div>
 
-  
- {/* LABEL CONFRONTO + ODDS ESCOLHIDOS NA MESMA LINHA */}
-<div style={{ 
-  display: "flex", 
-  justifyContent: "space-between",
-  alignItems: "center",
-  marginBottom: "6px"
-}}>
- {/* Linha: Confronto (esquerda) + ODDS (direita) */}
 <div style={{ 
   display: "flex", 
   justifyContent: "space-between", 
