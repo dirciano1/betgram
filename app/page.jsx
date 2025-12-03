@@ -847,7 +847,7 @@ const analiseFormatada = formatAnaliseTexto(resultado);
 
   {/* Coluna das ODDS */}
   <div style={{ width: "140px" }}>
-    <label>📊 ODDS:</label>
+    <label>📊 Odds:</label>
 
     <input
       type="number"
