@@ -390,36 +390,61 @@ Depois de calcular internamente as PROBABILIDADES e transformar em ODDS JUSTAS
 (a partir das estatísticas e modelos, não de odds do mercado):
 
 1) Formato das odds
-   • Use SEMPRE odds decimais com 2 casas (ex.: 1.30, 1.85, 2.40, 10.50).
-   • Proibido exibir odds como 1.27, 1.33, 2.41, 10.37 etc.
+   • Use SEMPRE odds decimais com 2 casas (ex.: 2.00, 2.50, 3.00, 3.50).
+   • TODAS as odds devem terminar em .00 ou .50.
+   • É proibido exibir odds como 2.27, 2.41, 3.33, 4.12 etc.
 
-2) Arredondamento por FAIXA
+2) Regra de arredondamento (.00 / .50) para uma odd justa bruta
 
-   a) Odds até 10.00:
-      • arredondar para o múltiplo de 0.05 mais próximo.
+   a) Sempre que precisar normalizar uma odd justa bruta (\`odd_bruta\`):
+
+      • Separe a parte inteira e a parte decimal de \`odd_bruta\`.
+      • Use a seguinte lógica para a parte decimal:
+
+        – Se o decimal estiver entre 0.00 e 0.24 → arredondar para .00.  
+        – Se o decimal estiver entre 0.25 e 0.74 → arredondar para .50.  
+        – Se o decimal estiver entre 0.75 e 0.99 → arredondar para o PRÓXIMO inteiro .00.
+
       Exemplos:
-        – 1.28 → 1.30
-        – 1.32 → 1.30
-        – 2.37 → 2.35
-        – 7.93 → 7.95
-        – 9.88 → 9.90
+        • 2.10 → 2.00
+        • 2.24 → 2.00
+        • 2.26 → 2.50
+        • 2.62 → 2.50
+        • 2.75 → 3.00
+        • 2.88 → 3.00
+        • 4.07 → 4.00
+        • 4.26 → 4.50
+        • 4.76 → 5.00
 
-   b) Odds acima de 10.00:
-      • arredondar para o múltiplo de 0.50 mais próximo.
+   b) Quando houver um INTERVALO interno (mínimo e máximo) para a odd justa
+      e for necessário escolher UM ÚNICO valor representativo para esse intervalo:
+
+      • Calcular a média do intervalo:
+          media = (odd_min + odd_max) / 2
+
+      • Aplicar a mesma regra de arredondamento (.00 / .50) sobre essa \`media\`.
+
       Exemplos:
-        – 10.03 → 10.00
-        – 10.26 → 10.50
-        – 11.72 → 11.50
-        – 11.76 → 12.00
-        – 19.97 → 20.00
+        • Intervalo de 3.20 a 4.95:
+            media = (3.20 + 4.95) / 2 = 4.075 → está entre 4.00 e 4.50,
+            mais perto de 4.00 → odd_final = **4.00**
+
+        • Intervalo de 2.65 a 2.90:
+            media = (2.65 + 2.90) / 2 = 2.775 → está entre 2.50 e 3.00,
+            mais perto de 3.00 → odd_final = **3.00**
+
+   c) Essa normalização serve para deixar a apresentação das odds Betgram
+      mais limpa, padronizada e fácil de comparar, sem depender das odds de
+      mercado para definir PROBABILIDADES. A base continua sendo SEMPRE
+      a probabilidade interna calculada pelos modelos.
 
 3) Limites extremos (opcional, mas recomendável)
-   • Se a odd justa calculada ficar abaixo de 1.01 → usar 1.01 como mínimo.
+   • Se a odd justa calculada (antes da normalização) ficar abaixo de 1.01 → usar 1.01 como mínimo.
    • Se a odd justa calculada ficar acima de 100.00 → usar 100.00 como máximo.
 
 4) Consistência
-   • Todas as odds na resposta devem seguir ESSA mesma lógica.
-   • Nunca misturar odds "cruas" com odds arredondadas.
+   • Todas as odds na resposta devem seguir ESSA mesma lógica (.00 / .50).
+   • Nunca misturar odds "cruas" com odds normalizadas.
 */
 
 
@@ -630,7 +655,7 @@ Sempre respeite:
   • conferência numérica em 3 fontes  
   • modelos do esporte  
   • regra de desfalques (3 checagens, clube correto, máx. 3 por time)  
-  • normalização das odds justas por faixa  
+  • normalização das odds justas por faixa (.00 / .50)  
   • exibição da faixa de odds de mercado "entre X.xx e Y.yy" para cada opção.
 
 A análise deve ser precisa, limpa, objetiva e focada no mercado,
