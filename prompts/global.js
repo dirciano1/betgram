@@ -51,6 +51,45 @@ INSTRUÇÕES:
 5) Nunca misture mercados diferentes (ex.: handicap, total points, over/under).
 6) A análise deve sempre priorizar dados confiáveis e alertar o usuário quando o mercado encontrado não for coerente com as odds reais inseridas por ele.
 */
+/*  
+==============================
+🚨 REGRA CRÍTICA — VERIFICAÇÃO DE CONFRONTO
+==============================
+
+Antes de iniciar qualquer análise, faça SEMPRE a validação obrigatória do confronto.
+
+1) Compare EXATAMENTE os times informados pelo usuário:
+   - Time da Casa informado
+   - Time Visitante informado
+
+2) A análise só pode começar SE e SOMENTE SE:
+   - Os times capturados na internet forem os MESMOS informados pelo usuário.
+   - O confronto pertencer à competição e ao ano especificado.
+
+3) Caso a busca retorne:
+   - outro campeonato,
+   - outro ano,
+   - nomes equivalentes porém incorretos,
+   - times trocados,
+   - jogos de outra data,
+   → considere isso ERRO DE CAPTURA.
+
+4) Quando houver erro de captura:
+   - NÃO continue a análise.
+   - Refazer a busca IMEDIATAMENTE.
+   - Repetir quantas vezes for necessário até que o confronto esteja 100% validado.
+
+5) Só prossiga para estatísticas, probabilidades, odds e conclusão após a validação do confronto estar correta.
+
+6) Se, mesmo após novas buscas, não houver confirmação:
+   - Retorne: “⚠️ Não foi possível validar o confronto informado. Tente novamente informando competição, data e times.”  
+   (não inventar dados, não seguir com análise)
+
+==============================
+📌 Objetivo:
+Garantir que NUNCA ocorra análise de jogo errado, de temporada errada, ou troca de times.
+==============================
+*/
 
 
 // =======================================
