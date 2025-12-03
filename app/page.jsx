@@ -811,77 +811,59 @@ const analiseFormatada = formatAnaliseTexto(resultado);
   </div>
 </div>
 
-<div style={{ 
-  display: "flex", 
-  justifyContent: "space-between", 
-  alignItems: "flex-end",
-  marginBottom: "6px"
-}}>
-  
-  {/* Label Confronto */}
-  <label>🎮 Confronto:</label>
+{/* LINHA: Confronto (campo grande) + ODDS (campo pequeno) */}
+<div style={{ display: "flex", gap: "10px", marginBottom: "14px" }}>
 
-  {/* Label ODDS alinhada como "Data do Jogo" */}
-  <div style={{ display: "flex", flexDirection: "column" }}>
-    <label style={{ 
-      color: "#fff", 
-      fontSize: "12px", 
-      marginBottom: "4px"
-    }}>
-      📊 ODDS:
-    </label>
+  {/* Coluna do Confronto */}
+  <div style={{ flex: 1 }}>
+    <label>🎮 Confronto:</label>
+    <input
+      type="text"
+      value={timeA}
+      onChange={(e) => setTimeA(e.target.value)}
+      placeholder="Time da Casa"
+      style={inputStyle}
+    />
+
+    <input
+      type="text"
+      value={timeB}
+      onChange={(e) => setTimeB(e.target.value)}
+      placeholder="Time Visitante"
+      style={inputStyle}
+    />
+  </div>
+
+  {/* Coluna das ODDS */}
+  <div style={{ width: "140px" }}>
+    <label>📊 ODDS:</label>
+
+    <input
+      type="number"
+      value={oddA}
+      onChange={(e) => setOddA(e.target.value)}
+      placeholder="Ex: 5.80"
+      style={{
+        ...inputStyle,
+        width: "140px",
+        textAlign: "center"
+      }}
+    />
+
+    <input
+      type="number"
+      value={oddB}
+      onChange={(e) => setOddB(e.target.value)}
+      placeholder="Ex: 1.70"
+      style={{
+        ...inputStyle,
+        width: "140px",
+        textAlign: "center"
+      }}
+    />
   </div>
 
 </div>
-
-{/* Linha 1 — Time da Casa + Odd Casa */}
-<div style={{ display: "flex", gap: "10px", marginBottom: "8px" }}>
-  <input
-    style={{ ...inputStyle, flex: 3 }}
-    value={timeA}
-    onChange={(e) => setTimeA(e.target.value)}
-    placeholder="Time da Casa"
-  />
-
-  <input
-    type="number"
-    value={oddA}
-    onChange={(e) => setOddA(e.target.value)}
-    placeholder="Ex: 5.80"
-    style={{ 
-      ...inputStyle, 
-      flex: 1, 
-      textAlign: "center",
-      fontWeight: "600"
-    }}
-    required
-  />
-</div>
-
-{/* Linha 2 — Time Visitante + Odd Visitante */}
-<div style={{ display: "flex", gap: "10px", marginBottom: "14px" }}>
-  <input
-    style={{ ...inputStyle, flex: 3 }}
-    value={timeB}
-    onChange={(e) => setTimeB(e.target.value)}
-    placeholder="Time Visitante"
-  />
-
-  <input
-    type="number"
-    value={oddB}
-    onChange={(e) => setOddB(e.target.value)}
-    placeholder="Ex: 1.70"
-    style={{ 
-      ...inputStyle, 
-      flex: 1, 
-      textAlign: "center",
-      fontWeight: "600"
-    }}
-    required
-  />
-</div>
-
 
   <label>🎯 Mercado (opcional):</label>
   <input style={inputStyle} value={mercado} onChange={(e)=>setMercado(e.target.value)} placeholder="Ex: Over 2.5 Gols"/>
