@@ -418,10 +418,21 @@ if (esporte === "cartola") {
   async function handleAnalise() {
   if (!user) return alert("⚠️ Faça login primeiro.");
 
-  // 👉 Se for modo CARTOLA, NÃO verificar timeA e timeB
+  // 👉 Se for modo CARTOLA, NÃO verificar times e odds
   if (esporte !== "cartola") {
+
     if (!timeA || !timeB) {
-      return alert("Preencha os dois times.");
+      return alert("⚠️ Preencha os dois times.");
+    }
+
+    // 👉 Agora valida as odds obrigatórias
+    if (!oddA || !oddB) {
+      return alert("⚠️ Preencha as ODDS dos dois times antes de analisar.");
+    }
+
+    // 👉 Valida se é número válido
+    if (isNaN(oddA) || isNaN(oddB) || oddA <= 1 || oddB <= 1) {
+      return alert("⚠️ As ODDS precisam ser números válidos acima de 1.00.");
     }
   }
 
