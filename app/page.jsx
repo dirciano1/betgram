@@ -815,7 +815,8 @@ const analiseFormatada = formatAnaliseTexto(resultado);
 
 
   
-  <label>🎮 Confronto:</label>
+ <label>🎮 Confronto:</label>
+
 <input 
   style={inputStyle} 
   value={timeA} 
@@ -830,38 +831,71 @@ const analiseFormatada = formatAnaliseTexto(resultado);
   placeholder="Time Visitante"
 />
 
-{/* 🔢 ODDS DOS TIMES (obrigatório) */}
-<div style={{ display: "flex", gap: "10px", marginBottom: "14px", marginTop: "10px" }}>
+{/* TÍTULO "ODDS" ALINHADO À DIREITA */}
+<div style={{ 
+  display: "flex", 
+  justifyContent: "flex-end", 
+  marginTop: "6px", 
+  marginBottom: "2px",
+  marginRight: "4px"
+}}>
+  <span style={{ 
+    color: "red", 
+    fontWeight: "bold", 
+    fontSize: "12px",
+    letterSpacing: "1px"
+  }}>
+    ODDS
+  </span>
+</div>
+
+{/* BLOCO DAS ODDS DOS TIMES */}
+<div style={{ 
+  display: "flex", 
+  gap: "10px", 
+  marginBottom: "14px"
+}}>
   
+  {/* Odd Time da Casa */}
   <div style={{ flex: 1 }}>
     <label style={{ color: "#fff", fontSize: "12px", marginBottom: "4px" }}>
-      Odd {timeA || "Time A"}:
+      Odd Time da Casa:
     </label>
     <input
       type="number"
       value={oddA}
       onChange={(e) => setOddA(e.target.value)}
-      placeholder="Ex: 1.80"
-      style={{ ...inputStyle, textAlign: "center" }}
+      placeholder="Ex: 5.80"
+      style={{ 
+        ...inputStyle, 
+        textAlign: "center",
+        fontWeight: "600"
+      }}
       required
     />
   </div>
 
+  {/* Odd Time Visitante */}
   <div style={{ flex: 1 }}>
     <label style={{ color: "#fff", fontSize: "12px", marginBottom: "4px" }}>
-      Odd {timeB || "Time B"}:
+      Odd Time Visitante:
     </label>
     <input
       type="number"
       value={oddB}
       onChange={(e) => setOddB(e.target.value)}
-      placeholder="Ex: 2.05"
-      style={{ ...inputStyle, textAlign: "center" }}
+      placeholder="Ex: 1.70"
+      style={{ 
+        ...inputStyle, 
+        textAlign: "center",
+        fontWeight: "600"
+      }}
       required
     />
   </div>
 
 </div>
+
 
   <label>🎯 Mercado (opcional):</label>
   <input style={inputStyle} value={mercado} onChange={(e)=>setMercado(e.target.value)} placeholder="Ex: Over 2.5 Gols"/>
