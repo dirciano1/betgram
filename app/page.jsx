@@ -698,7 +698,7 @@ const analiseFormatada = formatAnaliseTexto(resultado);
   justifyContent:"center",
   fontSize:"1.6rem"
 }}>
-  <img src="/icon.png" alt="Logo" style={{width:"36px",height:"36px",objectFit:"contain"}}/>
+  <img src="/icon.png" alt="Logo" style={{width:"56px",height:"56px",objectFit:"contain"}}/>
   <span style={{color:"#fff"}}>Bem-vindo à <span style={{color:"#22c55e"}}>BetGram</span></span>
 </h2>
           <p style={{color:"#ccc"}}>Gere análises inteligentes e descubra as melhores apostas.</p>
@@ -729,7 +729,7 @@ const analiseFormatada = formatAnaliseTexto(resultado);
       display: "flex", flexDirection: "column", alignItems: "center",
     }}>
       <h2 style={{display:"flex",alignItems:"center",gap:"8px",justifyContent:"center",fontSize:"1.6rem"}}>
-        <img src="/icon.png" alt="Logo BetGram" style={{width:"36px",height:"36px",objectFit:"contain"}}/>
+        <img src="/icon.png" alt="Logo BetGram" style={{width:"56px",height:"56px",objectFit:"contain"}}/>
         <span style={{color:"#22c55e"}}>BetGram -<span style={{color:"#fff"}}> Analisador Esportivo</span></span>
       </h2>
 
