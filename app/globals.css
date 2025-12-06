@@ -198,14 +198,7 @@ a:hover {
   color: #38bdf8; /* Azul claro para destacar o título */
 }
 
-html, body {
-  margin: 0;
-  padding: 0;
-  background: #0b1324;
-  color: #fff;
-  font-family: monospace;
-  margin-top:-2vh;
-}
+
 
 @media (max-width: 729px) {
   html, body {
@@ -220,6 +213,7 @@ html, body {
   padding-bottom:50px;
 }
 }
+
 
 
 
