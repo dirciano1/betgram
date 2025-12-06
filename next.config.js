@@ -7,36 +7,36 @@ const nextConfig = {
   poweredByHeader: false,
 
   // Força páginas a rodarem sempre no modo dinâmico
-  // Isso impede cache de API no Vercel Edge
+  // (mantém seu comportamento atual com SWC)
   experimental: {
     forceSwcTransforms: true,
   },
 
-  // Forçar SEM cache em todas as rotas
-  headers() {
+  // Forçar SEM cache em todas as rotas (HTTP)
+  async headers() {
     return [
       {
         source: "/(.*)",
         headers: [
           {
             key: "Cache-Control",
-            value: "no-store, no-cache, must-revalidate, private"
+            value: "no-store, no-cache, must-revalidate, private",
           },
           {
             key: "Pragma",
-            value: "no-cache"
+            value: "no-cache",
           },
           {
             key: "Expires",
-            value: "0"
-          }
-        ]
-      }
+            value: "0",
+          },
+        ],
+      },
     ];
   },
 
-  // Desabilita cache do Vercel
-  fetchCache: "force-no-store",
+  // Removido: fetchCache (não é mais suportado nessas versões)
+  // Desabilita modo serverless empacotando standalone (bom pro Vercel)
   output: "standalone",
 };
 
