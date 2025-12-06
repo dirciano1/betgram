@@ -5,7 +5,7 @@ html, body {
   background: #0b1324;
   color: #fff;
   font-family: monospace;
-  margin-top:-5px;
+  margin-top:-2vh;
 }
 
 main {
@@ -220,11 +220,6 @@ html, body {
   padding-bottom:50px;
 }
 }
-
-
-
-
-
 
 
 
