@@ -736,7 +736,7 @@ const analiseFormatada = formatAnaliseTexto(resultado);
       <div style={{
         width: "100%", maxWidth: "700px", background: "rgba(17,24,39,0.85)",
         border: "1px solid rgba(34,197,94,0.25)", borderRadius: "16px",
-        boxShadow: "0 0 25px rgba(34,197,94,0.08)", padding: "10px", backdropFilter: "blur(8px)",
+        boxShadow: "0 0 25px rgba(34,197,94,0.08)", padding: "0px", backdropFilter: "blur(8px)",
       }}>
         {/* Cabeçalho */}
         <div style={{ marginBottom: "25px" }}>
