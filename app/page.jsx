@@ -725,7 +725,7 @@ const analiseFormatada = formatAnaliseTexto(resultado);
   return (
     <main style={{
       minHeight: "100vh", background: "linear-gradient(135deg,#0b1324,#111827)",
-      color: "#fff", fontFamily: "Inter, sans-serif", padding: "4vh 20px 8vh",
+      color: "#fff", fontFamily: "Inter, sans-serif", padding: "10px 20px 20px",
       display: "flex", flexDirection: "column", alignItems: "center",
     }}>
       <h2 style={{display:"flex",alignItems:"center",gap:"8px",justifyContent:"center",fontSize:"1.6rem"}}>
