@@ -698,7 +698,7 @@ const analiseFormatada = formatAnaliseTexto(resultado);
   justifyContent:"center",
   fontSize:"1.6rem"
 }}>
-  <img src="/icon.png" alt="Logo" style={{width:"46px",height:"46px",objectFit:"contain"}}/>
+  <img src="/icon.png" alt="Logo" style={{width:"36px",height:"36px",objectFit:"contain"}}/>
   <span style={{color:"#fff"}}>Bem-vindo à <span style={{color:"#22c55e"}}>BetGram</span></span>
 </h2>
           <p style={{color:"#ccc"}}>Gere análises inteligentes e descubra as melhores apostas.</p>
@@ -725,18 +725,18 @@ const analiseFormatada = formatAnaliseTexto(resultado);
   return (
     <main style={{
       minHeight: "100vh", background: "linear-gradient(135deg,#0b1324,#111827)",
-      color: "#fff", fontFamily: "Inter, sans-serif", padding: "0px 20px 20px",
+      color: "#fff", fontFamily: "Inter, sans-serif", padding: "0px 20px 8vh",
       display: "flex", flexDirection: "column", alignItems: "center",
     }}>
       <h2 style={{display:"flex",alignItems:"center",gap:"8px",justifyContent:"center",fontSize:"1.6rem"}}>
-        <img src="/icon.png" alt="Logo BetGram" style={{width:"46px",height:"46px",objectFit:"contain"}}/>
+        <img src="/icon.png" alt="Logo BetGram" style={{width:"36px",height:"36px",objectFit:"contain"}}/>
         <span style={{color:"#22c55e"}}>BetGram -<span style={{color:"#fff"}}> Analisador Esportivo</span></span>
       </h2>
 
       <div style={{
         width: "100%", maxWidth: "700px", background: "rgba(17,24,39,0.85)",
         border: "1px solid rgba(34,197,94,0.25)", borderRadius: "16px",
-        boxShadow: "0 0 25px rgba(34,197,94,0.08)", padding: "0px", backdropFilter: "blur(8px)",
+        boxShadow: "0 0 25px rgba(34,197,94,0.08)", padding: "10px", backdropFilter: "blur(8px)",
       }}>
         {/* Cabeçalho */}
         <div style={{ marginBottom: "25px" }}>
