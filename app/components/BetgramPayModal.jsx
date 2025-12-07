@@ -113,13 +113,13 @@ export default function BetgramPayModal({ onClose, user }) {
             <p style={{ color: "#ccc" }}>Escolha um plano de créditos:</p>
 
             <button style={buttonConfirmStyle} onClick={() => gerarPix(10)}>
-              100 Análises – R$ 10,00
+              100 Créditos – R$ 10,00
             </button>
             <button style={buttonConfirmStyle} onClick={() => gerarPix(25)}>
-              300 Análises – R$ 25,00
+              300 Créditos – R$ 25,00
             </button>
             <button style={buttonConfirmStyle} onClick={() => gerarPix(50)}>
-              700 Análises – R$ 50,00
+              700 Créditos – R$ 50,00
             </button>
 
             <button
@@ -210,5 +210,6 @@ export default function BetgramPayModal({ onClose, user }) {
     </div>
   );
 }
+
 
 
