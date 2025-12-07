@@ -6,12 +6,12 @@ import { useState, useEffect } from "react";
 
 export default function PaymentPage() {
   const params = useSearchParams();
-  const uid = params.get("uid"); // pega o usuário que veio no link
+  const uid = params.get("uid"); // pega o uid passado no link
 
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    // Abre automaticamente assim que a página carregar
+    // Abre o modal automaticamente ao carregar
     setShow(true);
   }, []);
 
@@ -41,7 +41,8 @@ export default function PaymentPage() {
         <BetgramPayModal
           user={{ uid }}
           onClose={() => {
-            window.close(); // fecha a aba após a compra, se quiser
+            // Fecha a aba quando terminar (opcional)
+            window.close();
           }}
         />
       )}
