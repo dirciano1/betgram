@@ -53,6 +53,18 @@ const modalBackdropStyle = {
   zIndex: 1000,
 };
 
+const addCreditosButtonStyle = {
+  flex: "1 1 48%",
+  minWidth: "140px",
+  background: "rgba(34,197,94,0.15)",
+  border: "1px solid #22c55e55",
+  borderRadius: "8px",
+  padding: "8px",
+  color: "#22c55e",
+  fontWeight: 600,
+  cursor: "pointer",
+};
+
 const modalContentStyle = {
   background: "#111827",
   border: "2px solid #22c55e",
