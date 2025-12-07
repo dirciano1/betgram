@@ -109,7 +109,7 @@ export default function BetgramPayModal({ onClose, user }) {
       <div style={modalContentStyle}>
         {etapa === "planos" && (
           <>
-            <h3 style={{ color: "#22c55e" }}>💳 Betgram Pay</h3>
+            <h3 style={{ color: "#22c55e" }}>💳 NeoGram Pay</h3>
             <p style={{ color: "#ccc" }}>Escolha um plano de créditos:</p>
 
             <button style={buttonConfirmStyle} onClick={() => gerarPix(10)}>
@@ -214,3 +214,4 @@ export default function BetgramPayModal({ onClose, user }) {
     </div>
   );
 }
+
