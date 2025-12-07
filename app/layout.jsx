@@ -81,17 +81,6 @@ export default function RootLayout({ children }) {
             gtag('config', 'AW-17759121897');
           `}
         </Script>
-
-        {/*
-        ------------------------------------------------------
-        ⭐ JIVOCHAT — SUPORTE ONLINE
-        Carrega em todas as páginas (logado e deslogado)
-        ------------------------------------------------------
-        */}
-        <Script
-          src="//code.jivosite.com/widget/DYJJvyDmji"
-          strategy="afterInteractive"
-        />
       </body>
     </html>
   );
