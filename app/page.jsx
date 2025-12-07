@@ -767,11 +767,21 @@ const analiseFormatada = formatAnaliseTexto(resultado);
               border:"1px solid #0ea5e955",borderRadius:"8px",padding:"8px",color:"#38bdf8",
               fontWeight:600,cursor:"pointer"
             }}>🕓 Histórico</button>
-            <button onClick={() => setShowBetgramPayModal(true)} style={{
-              flex:"1 1 48%",minWidth:"140px",background:"rgba(34,197,94,0.15)",
-              border:"1px solid #22c55e55",borderRadius:"8px",padding:"8px",color:"#22c55e",
-              fontWeight:600,cursor:"pointer"
-            }}>➕ Adicionar Créditos</button>
+            <button
+  type="button"
+  style={addCreditosButtonStyle}
+  onClick={() => {
+    if (!user) {
+      alert("Faça login primeiro.");
+      return;
+    }
+
+    const url = `https://dirciano1.github.io/neogram/payments?uid=${user.uid}`;
+    window.open(url, "_blank");
+  }}
+>
+  ➕ Adicionar Créditos
+</button>
             
           </div>
         </div>
