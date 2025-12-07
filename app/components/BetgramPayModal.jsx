@@ -131,10 +131,6 @@ export default function BetgramPayModal({ onClose, user }) {
             >
               🎁 Indique um amigo e ganhe 20 análises grátis
             </button>
-
-            <button onClick={onClose} style={buttonCancelStyle}>
-              ↩ Voltar
-            </button>
           </>
         )}
 
@@ -214,4 +210,5 @@ export default function BetgramPayModal({ onClose, user }) {
     </div>
   );
 }
+
 
