@@ -67,13 +67,12 @@ export default function BetgramPayModal({ onClose, user }) {
       });
 
       const data = await res.json();
-
       setTxid(data.txid);
 
-      // 👇 AJUSTE PARA ABACATEPAY
+      // Ajustado para AbacatePay
       setQr({
         img: data.qrcode,
-        copia: data.qrcode_text
+        copia: data.qrcode_text,
       });
 
       setEtapa("pagamento");
@@ -147,10 +146,8 @@ export default function BetgramPayModal({ onClose, user }) {
               <p>Gerando QR...</p>
             ) : (
               <>
-                {/* QR CODE — Ajustado */}
                 <img src={qr.img} width="180" />
 
-                {/* COPIA E COLA — Ajustado */}
                 <textarea
                   readOnly
                   value={qr.copia}
@@ -175,24 +172,30 @@ export default function BetgramPayModal({ onClose, user }) {
                 </button>
 
                 <p style={{ color: "#ccc" }}>Aguardando pagamento...</p>
-                
 
                 <button onClick={onClose} style={buttonCancelStyle}>
                   Cancelar
                 </button>
-                <button
-  onClick={onClose}
-  style={{
-    ...buttonCancelStyle,
-    background: "linear-gradient(90deg, #3b82f6, #2563eb)", // azul igual ao botão de indicar
-    border: "1px solid #60a5fa",
-    color: "#fff",
-    fontWeight: 700,
-  }}
->
-  Já Fiz o Pagamento
-</button>
 
+                {/* 🔥 BOTÃO MODIFICADO */}
+                <button
+                  onClick={() => {
+                    onClose(); // fecha o modal normal
+                    window.parent.postMessage("fechar_pagamento", "*"); // fecha iframe no NeoGram
+                    try {
+                      window.close(); // fecha aba se estiver separada
+                    } catch (e) {}
+                  }}
+                  style={{
+                    ...buttonCancelStyle,
+                    background: "linear-gradient(90deg, #3b82f6, #2563eb)",
+                    border: "1px solid #60a5fa",
+                    color: "#fff",
+                    fontWeight: 700,
+                  }}
+                >
+                  Já Fiz o Pagamento
+                </button>
               </>
             )}
           </>
@@ -211,5 +214,3 @@ export default function BetgramPayModal({ onClose, user }) {
     </div>
   );
 }
-
-
